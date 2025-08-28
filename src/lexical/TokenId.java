@@ -41,6 +41,7 @@ public enum TokenId {
     punt_semicolon,
     punt_coma,
     punt_point,
+    punt_colon,
 
     // Operators Tokens
     op_mayor,
