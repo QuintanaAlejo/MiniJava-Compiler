@@ -1,4 +1,4 @@
 ///[SinErrores]
 "hola"
-v1 + chau
-if class}
+V1 + == ) chau
+if class }} 882

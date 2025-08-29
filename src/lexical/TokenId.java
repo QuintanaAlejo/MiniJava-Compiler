@@ -3,16 +3,15 @@ package lexical;
 public enum TokenId {
     // Keywords Tokens
     kw_class,
-    kw_interface,
     kw_extends,
-    kw_implements,
     kw_public,
-    kw_private,
     kw_static,
     kw_void,
     kw_boolean,
     kw_char,
     kw_int,
+    kw_abstract,
+    kw_final,
     kw_if,
     kw_else,
     kw_while,
@@ -24,8 +23,8 @@ public enum TokenId {
     kw_true,
     kw_false,
 
-    // Identifiers Tokens ??????
-    id_Clase,
+    // Identifiers Tokens
+    id_Class,
     id_MetVar,
 
     // Literals Tokens
@@ -40,30 +39,30 @@ public enum TokenId {
     punt_closeKey,
     punt_semicolon,
     punt_coma,
-    punt_point,
+    punt_dot,
     punt_colon,
 
     // Operators Tokens
-    op_mayor,
-    op_menor,
-    op_negacion,
-    op_igual,
-    op_mayorIgual,
-    op_menorIgual,
-    op_distinto,
-    op_suma,
-    op_resta,
-    op_multiplicacion,
+    op_greater,
+    op_less,
+    op_not,
+    op_equal,
+    op_greaterOrEqual,
+    op_lessOrEqual,
+    op_notEqual,
+    op_plus,
+    op_minus,
+    op_multiplication,
     op_division,
     op_and,
     op_or,
     op_modulo,
 
+    // Operation Tokens
+    assignment,
+    increment,
+    decrement,
 
-    asignacion,
-    incremento,
-    decremento,
-
+    // End of File Token
     EOF
-
 }
