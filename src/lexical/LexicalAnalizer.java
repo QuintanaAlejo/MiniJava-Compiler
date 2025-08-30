@@ -165,7 +165,7 @@ public class LexicalAnalizer {
                 } else {
                     updateLexeme();
                     updateActualChar();
-                    throw new LexicalException(lexeme, sourceManager.getLineNumber(), 1, lexeme); // Ajustar parametros de exception
+                    throw new LexicalException(lexeme, sourceManager.getLineNumber(), sourceManager.getColumnNumber(),"Simbolo no reconocido.");
                 }
             }
         }
@@ -177,9 +177,9 @@ public class LexicalAnalizer {
             updateActualChar();
             return e7();
         } else if (actualChar == '\''){
-            throw new LexicalException(lexeme, sourceManager.getLineNumber(), 1, lexeme); // Ajustar parametros de exception
+            throw new LexicalException(lexeme, sourceManager.getLineNumber(), sourceManager.getColumnNumber(), "Literal caracter vacio.");
         } else if (actualChar == SourceManager.END_OF_FILE || actualChar == '\n'){
-            throw new LexicalException(lexeme, sourceManager.getLineNumber(), 1, lexeme); // Ajustar parametros de exception
+            throw new LexicalException(lexeme, sourceManager.getLineNumber(), sourceManager.getColumnNumber(), "Literal caracter no cerrado.");
         } else {
             updateLexeme();
             updateActualChar();
@@ -226,7 +226,7 @@ public class LexicalAnalizer {
             updateActualChar();
             return new Token(TokenId.lit_string, lexeme, sourceManager.getLineNumber());
         } else if (actualChar == SourceManager.END_OF_FILE || actualChar == '\n'){
-            throw new LexicalException(lexeme, sourceManager.getLineNumber(), 1, lexeme); // Ajustar parametros de exception
+            throw new LexicalException(lexeme, sourceManager.getLineNumber(), sourceManager.getColumnNumber(), "String no cerrado.");
         } else {
             return e3();
         }
@@ -268,7 +268,7 @@ public class LexicalAnalizer {
         if (actualChar == '*') {
             return e12();
         } else if (actualChar == SourceManager.END_OF_FILE){
-            throw new LexicalException(lexeme, sourceManager.getLineNumber(), 1, lexeme); // Ajustar parametros de exception
+            throw new LexicalException(lexeme, sourceManager.getLineNumber(), sourceManager.getColumnNumber(), "Comentario multilinea no cerrado"); // Ajustar parametros de exception
         } else {
             return e11();
         }
@@ -370,12 +370,12 @@ public class LexicalAnalizer {
     }
 
     public Token e28() throws LexicalException{
-        updateLexeme();
-        updateActualChar();
         if (actualChar == '&'){
+            updateLexeme();
+            updateActualChar();
             return e29();
         } else {
-            throw new LexicalException(lexeme, sourceManager.getLineNumber(), 1, lexeme); // Ajustar parametros de exception
+            throw new LexicalException(lexeme, sourceManager.getLineNumber(), sourceManager.getColumnNumber(), "Operador invalido.");
         }
     }
 
@@ -384,12 +384,12 @@ public class LexicalAnalizer {
     }
 
     public Token e30() throws LexicalException{
-        updateLexeme();
-        updateActualChar();
         if (actualChar == '|'){
+            updateLexeme();
+            updateActualChar();
             return e31();
         } else {
-            throw new LexicalException(lexeme, 1, 1, lexeme); // Ajustar parametros de exception
+            throw new LexicalException(lexeme, sourceManager.getLineNumber(), sourceManager.getColumnNumber(), "Operador invalido.");
         }
     }
 

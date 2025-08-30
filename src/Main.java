@@ -4,8 +4,6 @@ import lexical.Token;
 import lexical.TokenId;
 import sourcemanager.SourceManager;
 import sourcemanager.SourceManagerImpl;
-
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -17,8 +15,8 @@ public class Main {
         LexicalAnalizer la = null;
 
         try {
-            //sm.open("resources/conErrores/lexConErrores01.java"); // CABLE BORRAR
-            sm.open("resources/sinErrores/lexSinErrores02.java"); // CABLE BORRAR
+            sm.open("resources/conErrores/lexConErrores01.java"); // CABLE BORRAR
+            //sm.open("resources/sinErrores/lexSinErrores02.java"); // CABLE BORRAR
             //sm.open(args[0]);
             la = new LexicalAnalizer(sm);
         } catch (IOException e){
