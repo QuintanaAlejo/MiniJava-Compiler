@@ -56,7 +56,7 @@ public enum TokenId {
     op_division,
     op_and,
     op_or,
-    op_modulo,
+    op_module,
 
     // Operation Tokens
     assignment,
@@ -64,5 +64,8 @@ public enum TokenId {
     decrement,
 
     // End of File Token
-    EOF
+    EOF,
+
+    // Init
+    init
 }
