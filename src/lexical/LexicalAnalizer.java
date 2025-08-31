@@ -19,7 +19,8 @@ public class LexicalAnalizer {
 
     public Token getToken() throws LexicalException{
         lexeme = "";
-        return e0();
+        //System.out.printf("Actual char: '%s'\n", actualChar);
+        return initialState();
     }
 
     private void updateLexeme(){
@@ -30,127 +31,127 @@ public class LexicalAnalizer {
     private void updateActualChar() {
         try {
             actualChar = sourceManager.getNextChar();
+            //System.out.printf("Actual char: '%s'\n", actualChar);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public Token e0 () throws LexicalException {
-        //System.out.printf("Actual char: '%s'\n", actualChar);
+    public Token initialState() throws LexicalException {
         switch (actualChar){
             // White spaces
             case ' ', '\n', '\t', '\r': {
                 updateActualChar();
-                return e0();
+                return initialState();
             }
 
             // Punctuation
             case '(': {
                 updateLexeme();
                 updateActualChar();
-                return e32();
+                return openParenthesisState();
             }
             case ')': {
                 updateLexeme();
                 updateActualChar();
-                return e33();
+                return closeParenthesisState();
             }
             case '{': {
                 updateLexeme();
                 updateActualChar();
-                return e34();
+                return openKeyState();
             }
             case '}': {
                 updateLexeme();
                 updateActualChar();
-                return e35();
+                return closeKeyState();
             }
             case '.': {
                 updateLexeme();
                 updateActualChar();
-                return e36();
+                return dotState();
             }
             case ',': {
                 updateLexeme();
                 updateActualChar();
-                return e37();
+                return comaState();
             }
             case ';': {
                 updateLexeme();
                 updateActualChar();
-                return e38();
+                return semicolonState();
             }
             case ':': {
                 updateLexeme();
                 updateActualChar();
-                return e39();
+                return colonState();
             }
 
             // Operators
             case '=': {
                 updateLexeme();
                 updateActualChar();
-                return e14();
+                return assignmentState();
             }
             case '<': {
                 updateLexeme();
                 updateActualChar();
-                return e16();
+                return lessState();
             }
             case '>': {
                 updateLexeme();
                 updateActualChar();
-                return e18();
+                return greaterState();
             }
             case '+': {
                 updateLexeme();
                 updateActualChar();
-                return e20();
+                return plusState();
             }
             case '-': {
                 updateLexeme();
                 updateActualChar();
-                return e22();
+                return minusState();
             }
             case '!': {
                 updateLexeme();
                 updateActualChar();
-                return e24();
+                return notState();
             }
             case '*': {
                 updateLexeme();
                 updateActualChar();
-                return e26();
+                return multiplicationState();
             }
             case '%': {
                 updateLexeme();
                 updateActualChar();
-                return e27();
+                return moduleState();
             }
             case '/': {
                 updateLexeme();
                 updateActualChar();
-                return e9();
+                return divisionState();
             }
             case '&': {
                 updateLexeme();
                 updateActualChar();
-                return e28();
+                return andState_1();
             }
             case '|': {
                 updateLexeme();
                 updateActualChar();
-                return e30();
+                return orState_1();
             }
             case '"': {
                 updateLexeme();
                 updateActualChar();
-                return e3();
+                return litStringState();
             }
             case '\'': {
                 updateLexeme();
                 updateActualChar();
-                return e6();
+                return litCharState_1();
             }
             case SourceManager.END_OF_FILE: {
                 return new Token(TokenId.EOF, lexeme, sourceManager.getLineNumber());
@@ -171,11 +172,11 @@ public class LexicalAnalizer {
         }
     }
 
-    public Token e6() throws LexicalException{
+    public Token litCharState_1() throws LexicalException{
         if (actualChar == '\\'){
             updateLexeme();
             updateActualChar();
-            return e7();
+            return litCharState_2();
         } else if (actualChar == '\''){
             throw new LexicalException(lexeme, sourceManager.getLineNumber(), sourceManager.getColumnNumber(), "Literal caracter vacio.");
         } else if (actualChar == SourceManager.END_OF_FILE || actualChar == '\n'){
@@ -188,13 +189,47 @@ public class LexicalAnalizer {
                 updateActualChar();
                 return new Token(TokenId.lit_char, lexeme, sourceManager.getLineNumber());
             } else {
-                throw new LexicalException(lexeme, sourceManager.getLineNumber(), sourceManager.getColumnNumber(), lexeme); // Ajustar parametros de exception
+                throw new LexicalException(lexeme, sourceManager.getLineNumber(), sourceManager.getColumnNumber(), "Literal caracter invalido.");
             }
         }
     }
 
-    public Token e7() throws LexicalException{
-        return null;
+    public Token litCharState_2() throws LexicalException {
+        if (actualChar == 'u') {
+            updateLexeme();
+            updateActualChar();
+            return unicodeState();
+        } else if (actualChar == SourceManager.END_OF_FILE || actualChar == '\n') {
+            throw new LexicalException(lexeme, sourceManager.getLineNumber(), sourceManager.getColumnNumber(), "Literal caracter no cerrado.");
+        } else {
+            updateLexeme();
+            updateActualChar();
+            if (actualChar == '\'') {
+                updateLexeme();
+                updateActualChar();
+                return new Token(TokenId.lit_char, lexeme, sourceManager.getLineNumber());
+            } else {
+                throw new LexicalException(lexeme, sourceManager.getLineNumber(), sourceManager.getColumnNumber(), "Literal caracter invalido.");
+            }
+        }
+    }
+
+    public Token unicodeState() throws LexicalException{
+        for (int i = 0; i < 4; i++) {
+            if (Character.isDigit(actualChar) || (actualChar >= 'a' && actualChar <= 'f') || (actualChar >= 'A' && actualChar <= 'F')){
+                updateLexeme();
+                updateActualChar();
+            } else {
+                throw new LexicalException(lexeme, sourceManager.getLineNumber(), sourceManager.getColumnNumber(), "Secuencia invalida.");
+            }
+        }
+        if (actualChar == '\''){
+            updateLexeme();
+            updateActualChar();
+            return new Token(TokenId.lit_char, lexeme, sourceManager.getLineNumber());
+        } else {
+            throw new LexicalException(lexeme, sourceManager.getLineNumber(), sourceManager.getColumnNumber(), "Literal caracter invalido.");
+        }
     }
 
     public Token metVarState() throws LexicalException{
@@ -213,26 +248,28 @@ public class LexicalAnalizer {
             updateLexeme();
             updateActualChar();
             return numberState();
-        } else {
+        } else if (lexeme.length() <= 9) {
             return new Token(TokenId.lit_int, lexeme, sourceManager.getLineNumber());
+        } else {
+            throw new LexicalException(lexeme, sourceManager.getLineNumber(), sourceManager.getColumnNumber(), "Numero demasiado grande");
         }
     }
 
-    public Token e3() throws LexicalException{
-        updateLexeme();
-        updateActualChar();
+    public Token litStringState() throws LexicalException{
         if (actualChar == '"'){
             updateLexeme();
             updateActualChar();
             return new Token(TokenId.lit_string, lexeme, sourceManager.getLineNumber());
-        } else if (actualChar == SourceManager.END_OF_FILE || actualChar == '\n'){
+        } else if (actualChar == SourceManager.END_OF_FILE || actualChar == '\n' || actualChar == '\r'){
             throw new LexicalException(lexeme, sourceManager.getLineNumber(), sourceManager.getColumnNumber(), "String no cerrado.");
         } else {
-            return e3();
+            updateLexeme();
+            updateActualChar();
+            return litStringState();
         }
     }
 
-    public Token classState() throws LexicalException {
+    public Token classState(){
         if (Character.isLetterOrDigit(actualChar) || actualChar == '_'){
             updateLexeme();
             updateActualChar();
@@ -242,190 +279,190 @@ public class LexicalAnalizer {
         }
     }
 
-    public Token e9() throws LexicalException {
+    public Token divisionState() throws LexicalException {
         if (actualChar == '/'){
-            return e10();
+            return singleLineCommentState();
         } else if (actualChar == '*') {
-            return e11();
+            return multiLineCommentState_1();
         } else {
             return new Token(TokenId.op_division, lexeme, sourceManager.getLineNumber());
         }
     }
 
-    public Token e10() throws LexicalException {
+    public Token singleLineCommentState() throws LexicalException {
         updateActualChar();
         if (actualChar == '\n') {
             lexeme = "";
             updateActualChar();
-            return e0();
+            return initialState();
         } else {
-            return e10();
+            return singleLineCommentState();
         }
     }
 
-    public Token e11() throws LexicalException {
+    public Token multiLineCommentState_1() throws LexicalException {
         updateActualChar();
         if (actualChar == '*') {
-            return e12();
+            return multiLineCommentState_2();
         } else if (actualChar == SourceManager.END_OF_FILE){
             throw new LexicalException(lexeme, sourceManager.getLineNumber(), sourceManager.getColumnNumber(), "Comentario multilinea no cerrado"); // Ajustar parametros de exception
         } else {
-            return e11();
+            return multiLineCommentState_1();
         }
     }
 
-    public Token e12() throws LexicalException{
+    public Token multiLineCommentState_2() throws LexicalException{
         updateActualChar();
         if (actualChar == '/') {
-            return e0();
+            return initialState();
         } else {
-            return e11();
+            return multiLineCommentState_1();
         }
     }
 
-    public Token e14() throws LexicalException {
+    public Token assignmentState(){
         if (actualChar == '='){
             updateLexeme();
             updateActualChar();
-            return e15();
+            return equalState();
         } else {
             return new Token(TokenId.assignment, lexeme, sourceManager.getLineNumber());
         }
     }
 
-    public Token e15() throws LexicalException{
+    public Token equalState(){
         return new Token(TokenId.op_equal, lexeme, sourceManager.getLineNumber());
     }
 
-    public Token e16() throws LexicalException{
+    public Token lessState(){
         if (actualChar == '='){
             updateLexeme();
             updateActualChar();
-            return e17();
+            return lessOrEqualState();
         } else {
             return new Token(TokenId.op_less, lexeme, sourceManager.getLineNumber());
         }
     }
 
-    public Token e17() throws LexicalException{
+    public Token lessOrEqualState(){
         return new Token(TokenId.op_lessOrEqual, lexeme, sourceManager.getLineNumber());
     }
 
-    public Token e18() throws LexicalException{
+    public Token greaterState(){
         if (actualChar == '='){
             updateLexeme();
             updateActualChar();
-            return e19();
+            return greaterOrEqualState();
         } else {
             return new Token(TokenId.op_greater, lexeme, sourceManager.getLineNumber());
         }
     }
 
-    public Token e19() throws LexicalException{
+    public Token greaterOrEqualState(){
         return new Token(TokenId.op_greaterOrEqual, lexeme, sourceManager.getLineNumber());
     }
 
-    public Token e20() throws LexicalException{
+    public Token plusState(){
         if (actualChar == '+'){
-            return e21();
+            return incrementState();
         } else {
             return new Token(TokenId.op_plus, lexeme, sourceManager.getLineNumber());
         }
     }
 
-    public Token e21() {
+    public Token incrementState() {
         return new Token(TokenId.increment, lexeme, sourceManager.getLineNumber());
     }
 
-    public Token e22() throws LexicalException{
+    public Token minusState(){
         if (actualChar == '-'){
-            return e23();
+            return decrementState();
         } else {
             return new Token(TokenId.op_minus, lexeme, sourceManager.getLineNumber());
         }
     }
 
-    public Token e23() {
+    public Token decrementState() {
         return new Token(TokenId.decrement, lexeme, sourceManager.getLineNumber());
     }
 
-    public Token e24() throws LexicalException{
+    public Token notState(){
         if (actualChar == '='){
-            return e25();
+            return notEqualState();
         } else {
             return new Token(TokenId.op_not, lexeme, sourceManager.getLineNumber());
         }
     }
 
-    public Token e25() {
+    public Token notEqualState() {
         return new Token(TokenId.op_notEqual, lexeme, sourceManager.getLineNumber());
     }
 
-    public Token e26() {
+    public Token multiplicationState() {
         return new Token(TokenId.op_multiplication, lexeme, sourceManager.getLineNumber());
     }
 
-    public Token e27() {
-        return new Token(TokenId.op_modulo, lexeme, sourceManager.getLineNumber());
+    public Token moduleState() {
+        return new Token(TokenId.op_module, lexeme, sourceManager.getLineNumber());
     }
 
-    public Token e28() throws LexicalException{
+    public Token andState_1() throws LexicalException{
         if (actualChar == '&'){
             updateLexeme();
             updateActualChar();
-            return e29();
+            return andState_2();
         } else {
             throw new LexicalException(lexeme, sourceManager.getLineNumber(), sourceManager.getColumnNumber(), "Operador invalido.");
         }
     }
 
-    public Token e29() {
+    public Token andState_2() {
         return new Token(TokenId.op_and, lexeme, sourceManager.getLineNumber());
     }
 
-    public Token e30() throws LexicalException{
+    public Token orState_1() throws LexicalException{
         if (actualChar == '|'){
             updateLexeme();
             updateActualChar();
-            return e31();
+            return orState_2();
         } else {
             throw new LexicalException(lexeme, sourceManager.getLineNumber(), sourceManager.getColumnNumber(), "Operador invalido.");
         }
     }
 
-    public Token e31() {
+    public Token orState_2() {
         return new Token(TokenId.op_or, lexeme, sourceManager.getLineNumber());
     }
 
-    public Token e32() {
+    public Token openParenthesisState() {
         return new Token(TokenId.punt_openParenthesis, lexeme, sourceManager.getLineNumber());
     }
 
-    public Token e33() {
+    public Token closeParenthesisState() {
         return new Token(TokenId.punt_closeParenthesis, lexeme, sourceManager.getLineNumber());
     }
 
-    public Token e34() {
+    public Token openKeyState() {
         return new Token(TokenId.punt_openKey, lexeme, sourceManager.getLineNumber());
     }
 
-    public Token e35() {
+    public Token closeKeyState() {
         return new Token(TokenId.punt_closeKey, lexeme, sourceManager.getLineNumber());
     }
 
-    public Token e36() {
+    public Token dotState() {
         return new Token(TokenId.punt_dot, lexeme, sourceManager.getLineNumber());
     }
 
-    public Token e37() {
+    public Token comaState() {
         return new Token(TokenId.punt_coma, lexeme, sourceManager.getLineNumber());
     }
 
-    public Token e38() {
+    public Token semicolonState() {
         return new Token(TokenId.punt_semicolon, lexeme, sourceManager.getLineNumber());
     }
 
-    public Token e39() {
+    public Token colonState() {
         return new Token(TokenId.punt_colon, lexeme, sourceManager.getLineNumber());
     }
 }
