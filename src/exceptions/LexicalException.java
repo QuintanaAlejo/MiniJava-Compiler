@@ -1,7 +1,5 @@
 package exceptions;
 
-import lexical.LexicalAnalizer;
-
 public class LexicalException extends Exception{
     private final String lexeme;
     private final int lineNumber;
@@ -15,9 +13,12 @@ public class LexicalException extends Exception{
         this.explain = explain;
     }
 
-    public void printMessage(){
-        System.out.printf("Error lexico! '%s' en la linea %d, columna %d: %s\n", lexeme, lineNumber, column, explain);
-        System.out.println();
+    public void printMessage(String entireLine){
+        System.out.printf("Error lexico en la linea %d, columna %d: '%s' %s\n", lineNumber, column, lexeme, explain);
+        System.out.println("Detalle: " + entireLine);
+        for (int i = 0; i < column + 8; i++)
+            System.out.print(" ");
+        System.out.println("^");
         System.out.println("[Error:"+lexeme+"|"+lineNumber+"]");
     }
 }

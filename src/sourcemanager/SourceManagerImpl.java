@@ -57,6 +57,11 @@ public class SourceManagerImpl implements SourceManager{
     }
 
     @Override
+    public String getEntireLine() {
+        return currentLine;
+    }
+
+    @Override
     public int getLineNumber() {
         return lineNumber;
     }
