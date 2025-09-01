@@ -281,8 +281,10 @@ public class LexicalAnalizer {
 
     public Token divisionState() throws LexicalException {
         if (actualChar == '/'){
+            lexeme = "";
             return singleLineCommentState();
         } else if (actualChar == '*') {
+            lexeme = "";
             return multiLineCommentState_1();
         } else {
             return new Token(TokenId.op_division, lexeme, sourceManager.getLineNumber());

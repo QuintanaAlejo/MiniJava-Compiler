@@ -15,7 +15,7 @@ public class Main {
         LexicalAnalizer la = null;
 
         try {
-            //sm.open("resources/withErrors/lexConErrores02.java"); // CABLE BORRAR
+            //sm.open("resources/withErrors/multilineComment.java"); // CABLE BORRAR
             //sm.open("resources/sinErrores/lexSinErrores02.java"); // CABLE BORRAR
             sm.open(args[0]);
             la = new LexicalAnalizer(sm);
