@@ -19,19 +19,16 @@ public class LexicalAnalizer {
 
     public Token getToken() throws LexicalException{
         lexeme = "";
-        //System.out.printf("Actual char: '%s'\n", actualChar);
         return initialState();
     }
 
     private void updateLexeme(){
         lexeme += actualChar;
-        //System.out.println("Actual lexeme: '" + lexeme + "'");
     }
 
     private void updateActualChar() {
         try {
             actualChar = sourceManager.getNextChar();
-            //System.out.printf("Actual char: '%s'\n", actualChar);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -153,6 +150,7 @@ public class LexicalAnalizer {
                 updateActualChar();
                 return litCharState_1();
             }
+            // End of file
             case SourceManager.END_OF_FILE: {
                 return new Token(TokenId.EOF, lexeme, sourceManager.getLineNumber());
             }
@@ -164,9 +162,10 @@ public class LexicalAnalizer {
                 } else if (Character.isDigit(actualChar)){
                     return numberState();
                 } else {
+                    int errorColumnNumber = sourceManager.getColumnNumber();
                     updateLexeme();
                     updateActualChar();
-                    throw new LexicalException(lexeme, sourceManager.getLineNumber(), sourceManager.getColumnNumber(),"Simbolo no reconocido.");
+                    throw new LexicalException(lexeme, sourceManager.getLineNumber(), errorColumnNumber,"Simbolo no reconocido.");
                 }
             }
         }
@@ -232,7 +231,7 @@ public class LexicalAnalizer {
         }
     }
 
-    public Token metVarState() throws LexicalException{
+    public Token metVarState(){
         if (Character.isLetterOrDigit(actualChar) || actualChar == '_'){
             updateLexeme();
             updateActualChar();
@@ -256,6 +255,15 @@ public class LexicalAnalizer {
     }
 
     public Token litStringState() throws LexicalException{
+        if (actualChar =='\\'){
+            updateLexeme();
+            updateActualChar();
+            if (actualChar == '"') {
+                updateLexeme();
+                updateActualChar();
+                return litStringState();
+            }
+        }
         if (actualChar == '"'){
             updateLexeme();
             updateActualChar();

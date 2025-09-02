@@ -9,26 +9,24 @@ import java.util.Objects;
 
 public class Main {
     public static void main(String[] args){
-        SourceManager sm = new SourceManagerImpl();
+        SourceManager sourceManager = new SourceManagerImpl();
         boolean error = false;
         Token token = new Token(TokenId.init, "", -1);
-        LexicalAnalizer la = null;
+        LexicalAnalizer lexicalAnalizer = null;
 
         try {
-            //sm.open("resources/withErrors/multilineComment.java"); // CABLE BORRAR
-            //sm.open("resources/sinErrores/lexSinErrores02.java"); // CABLE BORRAR
-            sm.open(args[0]);
-            la = new LexicalAnalizer(sm);
+            sourceManager.open(args[0]);
+            lexicalAnalizer = new LexicalAnalizer(sourceManager);
         } catch (IOException e){
             throw new RuntimeException(e);
         }
 
         do {
             try{
-                token = la.getToken();
+                token = lexicalAnalizer.getToken();
                 System.out.println("(" + token.getTokenId() + ", " + token.getLexeme() + ", " + token.getLinea() + ")");
             } catch (LexicalException e){
-                e.printMessage(sm.getEntireLine());
+                e.printMessage(sourceManager.getEntireLine());
                 error = true;
             }
         } while (!Objects.equals(token.getTokenId(), TokenId.EOF));

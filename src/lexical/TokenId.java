@@ -66,6 +66,6 @@ public enum TokenId {
     // End of File Token
     EOF,
 
-    // Init
+    // Init Token
     init
 }
