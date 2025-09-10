@@ -6,13 +6,13 @@ import sourcemanager.SourceManager;
 import java.io.IOException;
 import java.util.Objects;
 
-public class LexicalAnalizer {
+public class LexicalAnalyzer {
     String lexeme;
     char actualChar;
     SourceManager sourceManager;
     Keywords tokenId = new Keywords();
 
-    public LexicalAnalizer(SourceManager sourceManager) throws IOException {
+    public LexicalAnalyzer(SourceManager sourceManager) throws IOException {
         this.sourceManager = sourceManager;
         updateActualChar();
     }

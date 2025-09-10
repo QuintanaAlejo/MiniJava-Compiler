@@ -1,5 +1,5 @@
 import exceptions.LexicalException;
-import lexical.LexicalAnalizer;
+import lexical.LexicalAnalyzer;
 import lexical.Token;
 import lexical.TokenId;
 import sourcemanager.SourceManager;
@@ -12,18 +12,18 @@ public class Main {
         SourceManager sourceManager = new SourceManagerImpl();
         boolean error = false;
         Token token = new Token(TokenId.init, "", -1);
-        LexicalAnalizer lexicalAnalizer = null;
+        LexicalAnalyzer lexicalAnalyzer = null;
 
         try {
             sourceManager.open(args[0]);
-            lexicalAnalizer = new LexicalAnalizer(sourceManager);
+            lexicalAnalyzer = new LexicalAnalyzer(sourceManager);
         } catch (IOException e){
             throw new RuntimeException(e);
         }
 
         do {
             try{
-                token = lexicalAnalizer.getToken();
+                token = lexicalAnalyzer.getToken();
                 System.out.println("(" + token.getTokenId() + ", " + token.getLexeme() + ", " + token.getLinea() + ")");
             } catch (LexicalException e){
                 e.printMessage(sourceManager.getEntireLine());
