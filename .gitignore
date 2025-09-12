@@ -24,3 +24,6 @@ hs_err_pid*
 replay_pid*
 
 /.idea
+
+# Folderes design files
+.DS_Store
