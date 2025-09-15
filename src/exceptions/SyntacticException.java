@@ -7,7 +7,7 @@ public class SyntacticException extends Exception {
 
     public SyntacticException(String currentToken, String expectedTokenName, int line) {
         this.currentToken = currentToken;
-        this.expectedToken= expectedTokenName;
+        this.expectedToken = expectedTokenName;
         this.line = line;
     }
 

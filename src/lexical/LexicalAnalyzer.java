@@ -26,6 +26,10 @@ public class LexicalAnalyzer {
         lexeme += actualChar;
     }
 
+    public int getLineNumber(){
+        return sourceManager.getLineNumber();
+    }
+
     private void updateActualChar() {
         try {
             actualChar = sourceManager.getNextChar();

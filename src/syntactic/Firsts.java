@@ -80,7 +80,7 @@ import java.util.*;
 */
 
 public class Firsts {
-    Map<String, ArrayList<TokenId>> map = new HashMap<String, ArrayList<TokenId>>();
+    static Map<String, ArrayList<TokenId>> map = new HashMap<String, ArrayList<TokenId>>();
     String[] nonTerminals = {"Inicial", "ListaClases", "Clase", "ModificadorOpcional", "HerenciaOpcional", "ListaMiembros", "ModificadorOpcionalNoVacio",
             "Miembro", "MiembroMetodo", "Constructor", "TipoMetodo", "Tipo", "TipoPrimitivo", "ArgsFormales", "ListaArgsFormalesOpcional", "ListaArgsFormales",
             "ArgsFormalesFinal", "ArgFormal", "BloqueOpcional", "Bloque", "ListaSentencias", "Sentencia", "AsignacionLLamada", "VarLocal", "Return", "ExpresionOpcional",
@@ -220,9 +220,7 @@ public class Firsts {
 
     }
 
-
-
-    public boolean isFirst(String head, Token token) {
+    public static boolean isFirst(String head, Token token) {
         if (map.containsKey(head)) {
             return map.get(head).contains(token.getTokenId());
         }
