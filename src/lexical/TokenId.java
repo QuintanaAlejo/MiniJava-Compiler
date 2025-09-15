@@ -22,6 +22,7 @@ public enum TokenId {
     kw_null,
     kw_true,
     kw_false,
+    kw_for,
 
     // Identifiers Tokens
     id_Class,
