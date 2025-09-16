@@ -100,6 +100,7 @@ public class Firsts {
         map.get("HerenciaOpcional").add(TokenId.kw_extends);
         map.get("ModificadorOpcionalNoVacio").addAll(Arrays.asList(TokenId.kw_abstract, TokenId.kw_static, TokenId.kw_final));
         map.get("Miembro").add(TokenId.kw_void);
+        map.get("MiembroMetodo").add(TokenId.punt_semicolon);
         map.get("Constructor").add(TokenId.kw_public);
         map.get("TipoMetodo").add(TokenId.kw_void);
         map.get("Tipo").add(TokenId.id_Class);
@@ -134,39 +135,17 @@ public class Firsts {
         map.get("ListaExps").add(TokenId.punt_coma);
 
         // Segunda pasada: agregar referencias a otros no terminales
-        map.get("Inicial").addAll(map.get("ListaClases"));
-        map.get("ListaClases").addAll(map.get("Clase"));
-        map.get("Clase").addAll(map.get("ModificadorOpcional"));
-        map.get("ListaMiembros").addAll(map.get("Miembro"));
-        map.get("Miembro").addAll(map.get("Constructor"));
-        map.get("Miembro").addAll(map.get("ModificadorOpcionalNoVacio"));
-        map.get("Miembro").addAll(map.get("Tipo"));
-        map.get("MiembroMetodo").addAll(map.get("ArgsFormales"));
-        map.get("MiembroMetodo").add(TokenId.punt_semicolon);
-        map.get("TipoMetodo").addAll(map.get("Tipo"));
+
+        // 1. Los más básicos (no dependen de otros)
         map.get("Tipo").addAll(map.get("TipoPrimitivo"));
+        map.get("ArgFormal").addAll(map.get("Tipo"));
+        map.get("TipoMetodo").addAll(map.get("Tipo"));
+        map.get("MiembroMetodo").addAll(map.get("ArgsFormales"));
+        map.get("AccesoVarMetodo").addAll(map.get("ArgsActuales"));
+        map.get("ArgsPosibles").addAll(map.get("ArgsActuales"));
         map.get("ListaArgsFormalesOpcional").addAll(map.get("ListaArgsFormales"));
         map.get("ListaArgsFormales").addAll(map.get("ArgFormal"));
-        map.get("ArgFormal").addAll(map.get("Tipo"));
         map.get("BloqueOpcional").addAll(map.get("Bloque"));
-        map.get("ListaSentencias").addAll(map.get("Sentencia"));
-        map.get("Sentencia").addAll(map.get("AsignacionLLamada"));
-        map.get("Sentencia").addAll(map.get("VarLocal"));
-        map.get("Sentencia").addAll(map.get("Return"));
-        map.get("Sentencia").addAll(map.get("If"));
-        map.get("Sentencia").addAll(map.get("While"));
-        map.get("Sentencia").addAll(map.get("Bloque"));
-        map.get("Sentencia").addAll(map.get("For"));
-        map.get("AsignacionLLamada").addAll(map.get("Expresion"));
-        map.get("ExpresionOpcional").addAll(map.get("Expresion"));
-        map.get("ExpresionFor").addAll(map.get("TipoPrimitivo"));
-        map.get("ExpresionFor").addAll(map.get("Expresion"));
-        map.get("Expresion").addAll(map.get("ExpresionCompuesta"));
-        map.get("ExpresionExtra").addAll(map.get("OperadorAsignacion"));
-        map.get("ExpresionCompuesta").addAll(map.get("ExpresionBasica"));
-        map.get("ExpresionCompuestaFinal").addAll(map.get("OperadorBinario"));
-        map.get("ExpresionBasica").addAll(map.get("OperadorUnario"));
-        map.get("ExpresionBasica").addAll(map.get("Operando"));
         map.get("Operando").addAll(map.get("Primitivo"));
         map.get("Operando").addAll(map.get("Referencia"));
         map.get("Referencia").addAll(map.get("Primario"));
@@ -174,9 +153,41 @@ public class Firsts {
         map.get("Primario").addAll(map.get("LlamadaConstructor"));
         map.get("Primario").addAll(map.get("LlamadaMetodoEstatico"));
         map.get("Primario").addAll(map.get("ExpresionParentizada"));
-        map.get("ArgsPosibles").addAll(map.get("ArgsActuales"));
-        map.get("ListaExpsOpcional").addAll(map.get("Expresion"));
         map.get("ElemEncadenado").addAll(map.get("ArgsActuales"));
+        map.get("ListaExpsOpcional").addAll(map.get("Expresion"));
+
+        // 2. Los que dependen de los anteriores
+        map.get("ExpresionBasica").addAll(map.get("OperadorUnario"));
+        map.get("ExpresionBasica").addAll(map.get("Operando"));
+        map.get("ExpresionCompuesta").addAll(map.get("ExpresionBasica"));
+        map.get("ExpresionCompuestaFinal").addAll(map.get("OperadorBinario"));
+        map.get("ExpresionExtra").addAll(map.get("OperadorAsignacion"));
+        map.get("Expresion").addAll(map.get("ExpresionCompuesta"));
+        map.get("ExpresionOpcional").addAll(map.get("Expresion"));
+        map.get("AsignacionLLamada").addAll(map.get("Expresion"));
+        map.get("ExpresionFor").addAll(map.get("TipoPrimitivo"));
+        map.get("ExpresionFor").addAll(map.get("Expresion"));
+
+        // 3. Los que dependen de los anteriores
+        map.get("Sentencia").addAll(map.get("AsignacionLLamada"));
+        map.get("Sentencia").addAll(map.get("VarLocal"));
+        map.get("Sentencia").addAll(map.get("Return"));
+        map.get("Sentencia").addAll(map.get("If"));
+        map.get("Sentencia").addAll(map.get("While"));
+        map.get("Sentencia").addAll(map.get("Bloque"));
+        map.get("Sentencia").addAll(map.get("For"));
+        map.get("ListaSentencias").addAll(map.get("Sentencia"));
+
+        // 4. Los que dependen de los anteriores
+        map.get("ListaMiembros").addAll(map.get("Miembro"));
+        map.get("Miembro").addAll(map.get("Constructor"));
+        map.get("Miembro").addAll(map.get("ModificadorOpcionalNoVacio"));
+        map.get("Miembro").addAll(map.get("Tipo"));
+
+        // 5. Los que dependen de los anteriores
+        map.get("Clase").addAll(map.get("ModificadorOpcional"));
+        map.get("ListaClases").addAll(map.get("Clase"));
+        map.get("Inicial").addAll(map.get("ListaClases"));
     }
 
     public static boolean isFirst(String head, Token token) {

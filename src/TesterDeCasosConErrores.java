@@ -1,6 +1,7 @@
 import java.io.*;
 import java.util.ArrayList;
 
+//import com.sun.tools.javac.Main;
 import org.hamcrest.CoreMatchers;
 import org.junit.After;
 import org.junit.Test;
@@ -18,7 +19,7 @@ public class TesterDeCasosConErrores {
     
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
-    private static final String testFilesDirectoryPath = "resources/withErrors/";
+    private static final String testFilesDirectoryPath = "resources/conErrores/";
     private boolean fullCompilerOuputPrintingInEachTest = true;
      
     @Before
@@ -36,7 +37,9 @@ public class TesterDeCasosConErrores {
         File folder = new File(testFilesDirectoryPath);
         ArrayList<String> names = new ArrayList();
         for(File f: folder.listFiles()){
-            names.add(f.getName());
+            if (f.isFile() && f.getName().endsWith(".java")) {
+                names.add(f.getName());
+            }
         }
         names.sort(String::compareTo);
         return names;
