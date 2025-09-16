@@ -27,3 +27,5 @@ replay_pid*
 
 # Folderes design files
 .DS_Store
+
+.iml
