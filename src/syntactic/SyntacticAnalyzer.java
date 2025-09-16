@@ -72,23 +72,132 @@ public class SyntacticAnalyzer {
                case "kw_final" -> match(TokenId.kw_final);
           }
      }
-     private void HerenciaOpcional() throws SyntacticException {}
-     private void ListaMiembros() throws SyntacticException {}
-     private void ModificadorOpcionalNoVacio() throws SyntacticException {}
-     private void Miembro() throws SyntacticException {}
-     private void MiembroMetodo() throws SyntacticException {}
-     private void Constructor() throws SyntacticException {}
-     private void TipoMetodo() throws SyntacticException {}
-     private void Tipo() throws SyntacticException {}
-     private void TipoPrimitivo() throws SyntacticException {}
-     private void ArgsFormales() throws SyntacticException {}
-     private void ListaArgsFormalesOpcional() throws SyntacticException {}
-     private void ListaArgsFormales() throws SyntacticException {}
-     private void ArgsFormalesFinal() throws SyntacticException {}
-     private void ArgFormal() throws SyntacticException {}
-     private void BloqueOpcional() throws SyntacticException {}
-     private void Bloque() throws SyntacticException {}
-     private void ListaSentencias() throws SyntacticException {}
+     private void HerenciaOpcional() throws SyntacticException {
+          if(currentToken.getTokenId().equals(TokenId.kw_extends)){
+                 match(TokenId.kw_extends);
+                 match(TokenId.id_Class);
+          }
+     }
+     private void ListaMiembros() throws SyntacticException {
+          if(Firsts.isFirst("Miembro", currentToken)){
+                 Miembro();
+                 ListaMiembros();
+          }
+     }
+     private void Miembro() throws SyntacticException {
+          if (Firsts.isFirst("Constructor", currentToken)) {
+               Constructor();
+          } else if (Firsts.isFirst("ModificadorOpcionalNoVacio", currentToken)) {
+               ModificadorOpcionalNoVacio();
+               TipoMetodo();
+               match(TokenId.id_MetVar);
+               ArgsFormales();
+               BloqueOpcional();
+          } else if (Firsts.isFirst("Tipo", currentToken)) {
+               Tipo();
+               match(TokenId.id_MetVar);
+               BloqueOpcional();
+          } else if (currentToken.getTokenId().equals(TokenId.kw_void)) {
+               match(TokenId.kw_void);
+               match(TokenId.id_MetVar);
+               ArgsFormales();
+               BloqueOpcional();
+          } else {
+               throw new SyntacticException(currentToken.toString(), "Miembro", lexicalAnalyzer.getLineNumber());
+          }
+     }
+     private void ModificadorOpcionalNoVacio() throws SyntacticException {
+          switch (currentToken.getTokenId().toString()){
+               case "kw_public" -> match(TokenId.kw_public);
+               case "kw_abstract" -> match(TokenId.kw_abstract);
+               case "kw_final" -> match(TokenId.kw_final);
+               default -> throw new SyntacticException(currentToken.toString(), "ModificadorOpcionalNoVacio", lexicalAnalyzer.getLineNumber());
+          }
+     }
+     private void MiembroMetodo() throws SyntacticException {
+          if (Firsts.isFirst("ArgsFormales", currentToken)) {
+               ArgsFormales();
+               BloqueOpcional();
+          } else {
+               throw new SyntacticException(currentToken.toString(), "MiembroMetodo", lexicalAnalyzer.getLineNumber()); //La tengo que tirar?
+          }
+     }
+     private void Constructor() throws SyntacticException {
+          match(TokenId.kw_public);
+          match(TokenId.id_Class);
+          ArgsFormales();
+          Bloque();
+     }
+     private void TipoMetodo() throws SyntacticException {
+          if (Firsts.isFirst("Tipo", currentToken)) {
+               Tipo();
+          } else if (currentToken.getTokenId().equals(TokenId.kw_void)) {
+               match(TokenId.kw_void);
+          } else {
+               throw new SyntacticException(currentToken.toString(), "TipoMetodo", lexicalAnalyzer.getLineNumber());
+          }
+     }
+     private void Tipo() throws SyntacticException {
+          if (Firsts.isFirst("TipoPrimitivo", currentToken)) {
+               TipoPrimitivo();
+          } else if (currentToken.getTokenId().equals(TokenId.id_Class)) {
+               match(TokenId.id_Class);
+          } else {
+               throw new SyntacticException(currentToken.toString(), "Tipo", lexicalAnalyzer.getLineNumber());
+          }
+     }
+     private void TipoPrimitivo() throws SyntacticException {
+          switch (currentToken.getTokenId().toString()){
+               case "kw_int" -> match(TokenId.kw_int);
+               case "kw_char" -> match(TokenId.kw_char);
+               case "kw_boolean" -> match(TokenId.kw_boolean);
+               default -> throw new SyntacticException(currentToken.toString(), "TipoPrimitivo", lexicalAnalyzer.getLineNumber());
+          }
+     }
+     private void ArgsFormales() throws SyntacticException {
+          match(TokenId.punt_openParenthesis);
+          ListaArgsFormalesOpcional();
+          match(TokenId.punt_closeParenthesis);
+     }
+     private void ListaArgsFormalesOpcional() throws SyntacticException {
+          if(Firsts.isFirst("ListaArgsFormales", currentToken)){
+               ListaArgsFormales();
+          }
+     }
+     private void ListaArgsFormales() throws SyntacticException {
+          ArgFormal();
+          ArgsFormalesFinal();
+     }
+     private void ArgsFormalesFinal() throws SyntacticException {
+          if(currentToken.getTokenId().equals(TokenId.punt_coma)){
+               match(TokenId.punt_coma);
+               ArgsFormalesFinal();
+          }
+     }
+     private void ArgFormal() throws SyntacticException {
+          Tipo();
+          match(TokenId.id_MetVar);
+     }
+     private void BloqueOpcional() throws SyntacticException {
+          if(Firsts.isFirst("Bloque", currentToken)){
+               Bloque();
+          } else if (currentToken.getTokenId().equals(TokenId.punt_semicolon)) {
+               match(TokenId.punt_semicolon);
+          } else {
+               throw new SyntacticException(currentToken.toString(), "BloqueOpcional", lexicalAnalyzer.getLineNumber());
+          }
+     }
+     private void Bloque() throws SyntacticException {
+          match(TokenId.punt_openKey);
+          ListaSentencias();
+          match(TokenId.punt_closeKey);
+     }
+     private void ListaSentencias() throws SyntacticException {
+          if(Firsts.isFirst("Sentencia", currentToken)){
+               Sentencia();
+               ListaSentencias();
+          }
+     }
      private void Sentencia() throws SyntacticException {}
      private void AsignacionLLamada() throws SyntacticException {}
      private void VarLocal() throws SyntacticException {}
