@@ -266,7 +266,7 @@ public class SyntacticAnalyzer {
      private void Sentencia() throws SyntacticException {
           if(currentToken.getTokenId().equals(TokenId.punt_semicolon)){
                match(TokenId.punt_semicolon);
-          } else if(Firsts.isFirst("AsignacionLlamada", currentToken)){
+          } else if(Firsts.isFirst("AsignacionLLamada", currentToken)){
                AsignacionLLamada();
                match(TokenId.punt_semicolon);
           } else if(Firsts.isFirst("VarLocal", currentToken)){

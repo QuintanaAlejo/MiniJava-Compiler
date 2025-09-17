@@ -6,9 +6,7 @@ import lexical.TokenId;
 import sourcemanager.SourceManager;
 import sourcemanager.SourceManagerImpl;
 import syntactic.SyntacticAnalyzer;
-
 import java.io.IOException;
-import java.util.Objects;
 
 public class Main {
     public static void main(String[] args){

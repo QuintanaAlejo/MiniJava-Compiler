@@ -141,20 +141,18 @@ public class Firsts {
         map.get("ArgFormal").addAll(map.get("Tipo"));
         map.get("TipoMetodo").addAll(map.get("Tipo"));
         map.get("MiembroMetodo").addAll(map.get("ArgsFormales"));
-        map.get("AccesoVarMetodo").addAll(map.get("ArgsActuales"));
         map.get("ArgsPosibles").addAll(map.get("ArgsActuales"));
-        map.get("ListaArgsFormalesOpcional").addAll(map.get("ListaArgsFormales"));
         map.get("ListaArgsFormales").addAll(map.get("ArgFormal"));
+        map.get("ListaArgsFormalesOpcional").addAll(map.get("ListaArgsFormales"));
         map.get("BloqueOpcional").addAll(map.get("Bloque"));
         map.get("Operando").addAll(map.get("Primitivo"));
-        map.get("Operando").addAll(map.get("Referencia"));
-        map.get("Referencia").addAll(map.get("Primario"));
         map.get("Primario").addAll(map.get("AccesoVarMetodo"));
         map.get("Primario").addAll(map.get("LlamadaConstructor"));
         map.get("Primario").addAll(map.get("LlamadaMetodoEstatico"));
         map.get("Primario").addAll(map.get("ExpresionParentizada"));
+        map.get("Referencia").addAll(map.get("Primario"));
+        map.get("Operando").addAll(map.get("Referencia"));
         map.get("ElemEncadenado").addAll(map.get("ArgsActuales"));
-        map.get("ListaExpsOpcional").addAll(map.get("Expresion"));
 
         // 2. Los que dependen de los anteriores
         map.get("ExpresionBasica").addAll(map.get("OperadorUnario"));
@@ -165,6 +163,7 @@ public class Firsts {
         map.get("Expresion").addAll(map.get("ExpresionCompuesta"));
         map.get("ExpresionOpcional").addAll(map.get("Expresion"));
         map.get("AsignacionLLamada").addAll(map.get("Expresion"));
+        map.get("ListaExpsOpcional").addAll(map.get("Expresion"));
         map.get("ExpresionFor").addAll(map.get("TipoPrimitivo"));
         map.get("ExpresionFor").addAll(map.get("Expresion"));
 
@@ -179,10 +178,10 @@ public class Firsts {
         map.get("ListaSentencias").addAll(map.get("Sentencia"));
 
         // 4. Los que dependen de los anteriores
-        map.get("ListaMiembros").addAll(map.get("Miembro"));
         map.get("Miembro").addAll(map.get("Constructor"));
         map.get("Miembro").addAll(map.get("ModificadorOpcionalNoVacio"));
         map.get("Miembro").addAll(map.get("Tipo"));
+        map.get("ListaMiembros").addAll(map.get("Miembro"));
 
         // 5. Los que dependen de los anteriores
         map.get("Clase").addAll(map.get("ModificadorOpcional"));
