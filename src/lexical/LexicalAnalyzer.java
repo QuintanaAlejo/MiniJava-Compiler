@@ -378,6 +378,8 @@ public class LexicalAnalyzer {
 
     public Token plusState(){
         if (actualChar == '+'){
+            updateLexeme();
+            updateActualChar();
             return incrementState();
         } else {
             return new Token(TokenId.op_plus, lexeme, sourceManager.getLineNumber());
