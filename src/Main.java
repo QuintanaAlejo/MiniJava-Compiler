@@ -1,8 +1,5 @@
-import exceptions.LexicalException;
 import exceptions.SyntacticException;
 import lexical.LexicalAnalyzer;
-import lexical.Token;
-import lexical.TokenId;
 import sourcemanager.SourceManager;
 import sourcemanager.SourceManagerImpl;
 import syntactic.SyntacticAnalyzer;

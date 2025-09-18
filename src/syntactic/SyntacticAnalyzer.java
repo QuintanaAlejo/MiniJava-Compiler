@@ -236,6 +236,7 @@ public class SyntacticAnalyzer {
      private void ArgsFormalesFinal() throws SyntacticException {
           if(currentToken.getTokenId().equals(TokenId.punt_coma)){
                match(TokenId.punt_coma);
+               ArgFormal();
                ArgsFormalesFinal();
           }
      }
@@ -404,9 +405,9 @@ public class SyntacticAnalyzer {
      private void OperadorUnario() throws SyntacticException {
             switch (currentToken.getTokenId().toString()){
                  case "op_plus" -> match(TokenId.op_plus);
-                 case "op_increment" -> match(TokenId.increment);
+                 case "increment" -> match(TokenId.increment);
                  case "op_minus" -> match(TokenId.op_minus);
-                 case "op_decrement" -> match(TokenId.decrement);
+                 case "decrement" -> match(TokenId.decrement);
                  case "op_not" -> match(TokenId.op_not);
                  default -> throw new SyntacticException(currentToken.getLexeme(), "OperadorUnario", lexicalAnalyzer.getLineNumber());
             }
