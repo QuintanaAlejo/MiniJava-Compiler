@@ -28,6 +28,7 @@ public class Keywords {
         map.put("null", kw_null);
         map.put("true", kw_true);
         map.put("false", kw_false);
+        map.put("for", kw_for);
     }
 
     public TokenId getTokenId(String token){

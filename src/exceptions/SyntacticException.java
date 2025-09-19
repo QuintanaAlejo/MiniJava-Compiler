@@ -10,6 +10,9 @@ public class SyntacticException extends Exception {
         this.expectedToken = expectedTokenName;
         this.line = line;
     }
+    public String getExpectedToken() {
+        return expectedToken;
+    }
 
     public void printError() {
         System.out.println("Se esperaba un "+expectedToken+" pero se encontro "+currentToken);

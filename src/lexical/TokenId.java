@@ -58,6 +58,7 @@ public enum TokenId {
     op_and,
     op_or,
     op_module,
+    op_ternary,
 
     // Operation Tokens
     assignment,

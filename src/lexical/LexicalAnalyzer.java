@@ -154,6 +154,11 @@ public class LexicalAnalyzer {
                 updateActualChar();
                 return litCharState_1();
             }
+            case '?': {
+                updateLexeme();
+                updateActualChar();
+                return new Token(TokenId.op_ternary, lexeme, sourceManager.getLineNumber());
+            }
             // End of file
             case SourceManager.END_OF_FILE: {
                 return new Token(TokenId.EOF, lexeme, sourceManager.getLineNumber());
@@ -392,6 +397,8 @@ public class LexicalAnalyzer {
 
     public Token minusState(){
         if (actualChar == '-'){
+            updateLexeme();
+            updateActualChar();
             return decrementState();
         } else {
             return new Token(TokenId.op_minus, lexeme, sourceManager.getLineNumber());
@@ -404,6 +411,8 @@ public class LexicalAnalyzer {
 
     public Token notState(){
         if (actualChar == '='){
+            updateLexeme();
+            updateActualChar();
             return notEqualState();
         } else {
             return new Token(TokenId.op_not, lexeme, sourceManager.getLineNumber());

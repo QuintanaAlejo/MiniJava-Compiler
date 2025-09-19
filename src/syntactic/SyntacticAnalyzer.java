@@ -3,32 +3,52 @@ package syntactic;
 import exceptions.*;
 import lexical.*;
 import java.io.IOException;
+import java.util.Objects;
 
 /* Reglas de produccion de la gramatica
 <Inicial> ::= <ListaClases> eof
+
 <ListaClases> ::= <Clase> <ListaClases> | €
+
 <Clase> ::= <ModificadorOpcional> class idClase <HerenciaOpcional> { <ListaMiembros> }
+
 <ModificadorOpcional> ::= abstract | static | final | €
+
 <HerenciaOpcional> ::= extends idClase | €
+
 <ListaMiembros> ::= <Miembro> <ListaMiembros> | €
+
 <ModificadorOpcionalNoVacio>  ::= abstract | static | final
+
 <Miembro> ::= <Constructor>
 <Miembro> ::= <ModificadorOpcionalNoVacio> <TipoMetodo> idMetVar <ArgsFormales> <BloqueOpcional>
 <Miembro> ::= void idMetVar <ArgsFormales> <BloqueOpcional>
 <Miembro> ::= <Tipo> idMetVar <MiembroMetodo>
 <MiembroMetodo> ::= <ArgsFormales> <BloqueOpcional> | ;
+
 <Constructor> ::= public idClase <ArgsFormales> <Bloque>
+
 <TipoMetodo> ::= <Tipo> | void
+
 <Tipo> := <TipoPrimitivo> | idClase
+
 <TipoPrimitivo> ::= boolean | char | int
+
 <ArgsFormales> ::= ( <ListaArgsFormalesOpcional> )
+
 <ListaArgsFormalesOpcional> ::= <ListaArgsFormales> | €
+
 <ListaArgsFormales> ::= <ArgFormal> <ArgsFormalesFinal>
 <ArgsFormalesFinal> ::= , <ArgFormal> <ArgsFormalesFinal> | €
+
 <ArgFormal> ::= <Tipo> idMetVar
+
 <BloqueOpcional> ::= <Bloque> | ;
+
 <Bloque> ::= { <ListaSentencias> }
+
 <ListaSentencias> ::= <Sentencia> <ListaSentencias> | €
+
 <Sentencia> ::=;
 <Sentencia> ::= <AsignacionLlamada> ;
 <Sentencia> ::= <VarLocal> ;
@@ -37,45 +57,76 @@ import java.io.IOException;
 <Sentencia> ::= <While>
 <Sentencia> ::= <Bloque>
 <Sentencia> ::= <For>
+
 <AsignacionLLamada> ::= <Expresion>
+
 <VarLocal> ::= var idMetVar = <ExpresionCompuesta>
+
 <Return> ::= return <ExpresionOpcional>
+
 <ExpresionOpcional> ::= <Expresion> | €
+
 <If> ::= if (<Expresion> ) <Sentencia> <Else>
 <Else> ::= else <Sentencia> | €
+
 <While> ::= while ( <Expresion> ) <Sentencia>
+
 <For> ::= for ( <ExpresionFor> ) <Sentencia>
-<ExpresionFor> ::= <TipoPrimitivo> idMetVar : idMetVar (ForEach)
-<ExpresionFor> ::= <Expresion>;<Expresion>;<Expresion>
+<ExpresionFor> ::= <VarLocal> <ForTipo>| <Expresion> <ForNormal>
+<ForTipo>::= <ForNormal> | <ForEach>
+<ForEach> ::= : idMetVar
+<ForNormal> ::= ; <Expresion>;<Expresion>
+
 <Expresion> ::= <ExpresionCompuesta> <ExpresionExtra>
 <ExpresionExtra> ::= <OperadorAsignacion> <ExpresionCompuesta> | €
+
 <OperadorAsignacion> := =
+
 <ExpresionCompuesta> ::= <ExpresionBasica> <ExpresionCompuestaFinal>
-<ExpresionCompuestaFinal> ::= <OperadorBinario> <ExpresionBasica> <ExpresionCompuestaFinal> | €
+<ExpresionCompuestaFinal> ::= <OperadorBinario> <ExpresionBasica> <ExpresionCompuestaFinal>
+<ExpresionCompuestaFinal> ::= ? <Expresion> : <Expresion> | €
+
 <OperadorBinario> := || | && | == | != | < | > | <= |>= |+ | - | * | / | %
+
 <ExpresionBasica> ::= <OperadorUnario> <Operando>
 <ExpresionBasica> ::= <Operando>
+
 <OperadorUnario> := + | ++ | - | -- | !
+
 <Operando> ::= <Primitvo>
 <Operando> ::= <Referencia>
+
 <Primitivo> ::= true | false | intLiteral | charLiteral | null
+
 <Referencia> ::= <Primario> <ReferenciaEncadenada>
 <ReferenciaEncadenada> ::= .idMetVar <ElemEncadenado> <ReferenciaEncadeanda> | €
+
 <Primario> ::= this
 <Primario> ::= stringLiteral
 <Primario> ::= <AccesoVarMetodo>
 <Primario> ::= <LlamadaConstructor>
 <Primario> ::= <LlamadaMetodoEstatico>
 <Primario> ::= <ExpresionParentizada>
+
 <AccesoVarMetodo> ::= idMetVar <ArgsPosibles>
+
 <ArgsPosibles> ::= <ArgsActuales> | €
+
 <LlamadaConstructor> ::= new idClase <ArgsActuales>
+
 <ExpresionParentizada> ::= ( <Expresion> )
+
 <LlamadaMetodoEstatico> ::= idClase . idMetVar <ArgsActuales>
+
 <ArgsActuales> ::= (<ListaExpsUpcional> )
+
 <ListaExpsOpcional> ::= <Expresion><ListaExps> | €
+
 <ListaExps> ::= , <Expresion><ListaExps> | €
+
 <ElemEncadenado> ::= <ArgsActuales> | €
+
+
 */
 
 public class SyntacticAnalyzer {
@@ -86,6 +137,20 @@ public class SyntacticAnalyzer {
      public SyntacticAnalyzer(LexicalAnalyzer lexicalAnalyzer){
           this.lexicalAnalyzer = lexicalAnalyzer;
           firsts = new Firsts();
+     }
+
+     public void synchronize(String aim) {
+          while(!currentToken.getTokenId().equals(TokenId.EOF)){
+               nextToken();
+               if (Objects.equals(currentToken.getTokenId().toString(), aim))
+                    break;
+          }
+          //Segun el aim que recibo, el metodo que tengo que llamar. Start Analisys no sirve
+          try{
+               startAnalysis();
+          } catch (SyntacticException e){
+                throw new RuntimeException(e);
+          }
      }
 
      public void match(TokenId expectedToken) throws SyntacticException {
@@ -132,7 +197,7 @@ public class SyntacticAnalyzer {
 
      private void ModificadorOpcional() throws SyntacticException {
           switch (currentToken.getTokenId().toString()){
-               case "kw_public" -> match(TokenId.kw_public);
+               case "kw_static" -> match(TokenId.kw_static);
                case "kw_abstract" -> match(TokenId.kw_abstract);
                case "kw_final" -> match(TokenId.kw_final);
           }
@@ -335,20 +400,34 @@ public class SyntacticAnalyzer {
           Sentencia();
      }
      private void ExpresionFor() throws SyntacticException {
-          if(Firsts.isFirst("TipoPrimitivo", currentToken)){
-               TipoPrimitivo();
-               match(TokenId.id_MetVar);
-               match(TokenId.punt_colon);
-               match(TokenId.id_MetVar);
+          if(Firsts.isFirst("VarLocal", currentToken)){
+               VarLocal();
+               ForTipo();
           } else if (Firsts.isFirst("Expresion", currentToken)) {
                Expresion();
-               match(TokenId.punt_semicolon);
-               Expresion();
-               match(TokenId.punt_semicolon);
-               Expresion();
+               ForNormal();
           } else {
                throw new SyntacticException(currentToken.getLexeme(), "ExpresionFor", lexicalAnalyzer.getLineNumber());
           }
+     }
+     private void ForTipo() throws SyntacticException {
+          if(Firsts.isFirst("ForNormal", currentToken)){
+               ForNormal();
+          } else if (Firsts.isFirst("ForEach", currentToken)) {
+               ForEach();
+          } else {
+               throw new SyntacticException(currentToken.getLexeme(), "ForTipo", lexicalAnalyzer.getLineNumber());
+          }
+     }
+     private void ForEach() throws SyntacticException {
+          match(TokenId.punt_colon);
+          match(TokenId.id_MetVar);
+     }
+     private void ForNormal() throws SyntacticException {
+          match(TokenId.punt_semicolon);
+          Expresion();
+          match(TokenId.punt_semicolon);
+          Expresion();
      }
      private void Expresion() throws SyntacticException {
           ExpresionCompuesta();
@@ -372,6 +451,11 @@ public class SyntacticAnalyzer {
                OperadorBinario();
                ExpresionBasica();
                ExpresionCompuestaFinal();
+          } else if (currentToken.getTokenId().equals(TokenId.op_ternary)) {
+               match(TokenId.op_ternary);
+               Expresion();
+               match(TokenId.punt_colon);
+               Expresion();
           }
      }
      private void OperadorBinario() throws SyntacticException {

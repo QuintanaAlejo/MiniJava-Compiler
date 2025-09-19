@@ -10,7 +10,7 @@ public class Main {
         SourceManager sourceManager = new SourceManagerImpl();
         boolean error = false;
         LexicalAnalyzer lexicalAnalyzer;
-        SyntacticAnalyzer syntacticAnalyzer;
+        SyntacticAnalyzer syntacticAnalyzer = null;
 
         try {
             sourceManager.open(args[0]);
@@ -25,6 +25,11 @@ public class Main {
         } catch (SyntacticException e) {
             e.printError();
             error = true;
+            switch (e.getExpectedToken()){
+                case "ModificadorOpcional" -> syntacticAnalyzer.synchronize("{");
+                case "Clase" -> syntacticAnalyzer.synchronize("}");
+            }
+
         }
 
         if (!error) {

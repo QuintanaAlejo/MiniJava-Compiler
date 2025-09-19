@@ -84,7 +84,7 @@ public class Firsts {
     String[] nonTerminals = {"Inicial", "ListaClases", "Clase", "ModificadorOpcional", "HerenciaOpcional", "ListaMiembros", "ModificadorOpcionalNoVacio",
             "Miembro", "MiembroMetodo", "Constructor", "TipoMetodo", "Tipo", "TipoPrimitivo", "ArgsFormales", "ListaArgsFormalesOpcional", "ListaArgsFormales",
             "ArgsFormalesFinal", "ArgFormal", "BloqueOpcional", "Bloque", "ListaSentencias", "Sentencia", "AsignacionLLamada", "VarLocal", "Return", "ExpresionOpcional",
-            "If", "Else", "While", "For", "ExpresionFor", "Expresion", "ExpresionExtra", "OperadorAsignacion", "ExpresionCompuesta", "ExpresionCompuestaFinal",
+            "If", "Else", "While", "For", "ExpresionFor", "ForTipo", "ForEach", "ForNormal", "Expresion", "ExpresionExtra", "OperadorAsignacion", "ExpresionCompuesta", "ExpresionCompuestaFinal",
             "OperadorBinario", "ExpresionBasica", "OperadorUnario", "Operando", "Primitivo", "Referencia", "ReferenciaEncadenada", "Primario", "AccesoVarMetodo",
             "ArgsPosibles", "LlamadaConstructor", "ExpresionParentizada", "LlamadaMetodoEstatico", "ArgsActuales", "ListaExpsOpcional", "ListaExps", "ElemEncadenado" };
 
@@ -116,6 +116,8 @@ public class Firsts {
         map.get("Else").add(TokenId.kw_else);
         map.get("While").add(TokenId.kw_while);
         map.get("For").add(TokenId.kw_for);
+        map.get("ForNormal").add(TokenId.punt_semicolon);
+        map.get("ForEach").add(TokenId.punt_colon);
         map.get("OperadorAsignacion").add(TokenId.assignment);
         map.get("OperadorBinario").addAll(Arrays.asList(
                 TokenId.op_or, TokenId.op_and, TokenId.op_equal, TokenId.op_notEqual,
@@ -164,8 +166,11 @@ public class Firsts {
         map.get("ExpresionOpcional").addAll(map.get("Expresion"));
         map.get("AsignacionLLamada").addAll(map.get("Expresion"));
         map.get("ListaExpsOpcional").addAll(map.get("Expresion"));
-        map.get("ExpresionFor").addAll(map.get("TipoPrimitivo"));
+        map.get("ExpresionFor").addAll(map.get("VarLocal"));
         map.get("ExpresionFor").addAll(map.get("Expresion"));
+        map.get("ForEach").addAll(map.get("Expresion"));
+        map.get("ForTipo").addAll(map.get("ForNormal"));
+        map.get("ForTipo").addAll(map.get("ForEach"));
 
         // 3. Los que dependen de los anteriores
         map.get("Sentencia").addAll(map.get("AsignacionLLamada"));
