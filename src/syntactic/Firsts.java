@@ -81,7 +81,7 @@ import java.util.*;
 
 public class Firsts {
     static Map<String, ArrayList<TokenId>> map = new HashMap<String, ArrayList<TokenId>>();
-    String[] nonTerminals = {"Inicial", "ListaClases", "Clase", "ModificadorOpcional", "HerenciaOpcional", "ListaMiembros", "ModificadorOpcionalNoVacio",
+    String[] nonTerminals = {"Inicial", "ListaClases", "ClaseInter", "Clase", "Interface", "ImplementacionOpcional", "ListaEncabezados", "Encabezado", "ModificadorOpcional", "HerenciaOpcional", "ListaMiembros", "ModificadorOpcionalNoVacio",
             "Miembro", "MiembroMetodo", "Constructor", "TipoMetodo", "Tipo", "TipoPrimitivo", "ArgsFormales", "ListaArgsFormalesOpcional", "ListaArgsFormales",
             "ArgsFormalesFinal", "ArgFormal", "BloqueOpcional", "Bloque", "ListaSentencias", "Sentencia", "AsignacionLLamada", "VarLocal", "Return", "ExpresionOpcional",
             "If", "Else", "While", "For", "ExpresionFor", "ForTipo", "ForEach", "ForNormal", "Expresion", "ExpresionExtra", "OperadorAsignacion", "ExpresionCompuesta", "ExpresionCompuestaFinal",
@@ -135,6 +135,8 @@ public class Firsts {
         map.get("LlamadaMetodoEstatico").add(TokenId.id_Class);
         map.get("ArgsActuales").add(TokenId.punt_openParenthesis);
         map.get("ListaExps").add(TokenId.punt_coma);
+        map.get("Interface").add(TokenId.kw_interface);
+        map.get("ImplementacionOpcional").add(TokenId.kw_implements);
 
         // Segunda pasada: agregar referencias a otros no terminales
 
@@ -190,7 +192,11 @@ public class Firsts {
 
         // 5. Los que dependen de los anteriores
         map.get("Clase").addAll(map.get("ModificadorOpcional"));
-        map.get("ListaClases").addAll(map.get("Clase"));
+        map.get("Encabezado").addAll(map.get("TipoMetodo"));
+        map.get("Clase").addAll(map.get("Encabezado"));
+        map.get("ClaseInter").addAll(map.get("Clase"));
+        map.get("ClaseInter").addAll(map.get("Interface"));
+        map.get("ListaClases").addAll(map.get("ClaseInter"));
         map.get("Inicial").addAll(map.get("ListaClases"));
     }
 

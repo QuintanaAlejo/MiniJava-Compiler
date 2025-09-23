@@ -29,6 +29,8 @@ public class Keywords {
         map.put("true", kw_true);
         map.put("false", kw_false);
         map.put("for", kw_for);
+        map.put("interface", kw_interface);
+        map.put("implements", kw_implements);
     }
 
     public TokenId getTokenId(String token){

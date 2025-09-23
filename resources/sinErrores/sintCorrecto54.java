@@ -4,6 +4,6 @@
 class A {
   int arr;
   void m() {
-    for (var i = 4 : arr) { ; }
+    for (var i : arr) { ; }
   }
 }

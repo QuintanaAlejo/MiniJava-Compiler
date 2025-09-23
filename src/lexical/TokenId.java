@@ -23,6 +23,8 @@ public enum TokenId {
     kw_true,
     kw_false,
     kw_for,
+    kw_interface,
+    kw_implements,
 
     // Identifiers Tokens
     id_Class,

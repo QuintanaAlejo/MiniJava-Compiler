@@ -2,15 +2,20 @@ package syntactic;
 
 import exceptions.*;
 import lexical.*;
-import java.io.IOException;
-import java.util.Objects;
 
 /* Reglas de produccion de la gramatica
 <Inicial> ::= <ListaClases> eof
 
-<ListaClases> ::= <Clase> <ListaClases> | €
 
-<Clase> ::= <ModificadorOpcional> class idClase <HerenciaOpcional> { <ListaMiembros> }
+<ListaClases> ::= <ClaseInter> <ListaClases> | €
+<ClaseInter> ::= <Clase> | <Interface>
+
+<Clase> ::= <ModificadorOpcional> class idClase <HerenciaOpcional> <ImplementacionOpcional> { <ListaMiembros> }
+
+<Interface> ::= interface idClase <HerenciaOpcional> { <ListaEncabezados> }
+<ImplementacionOpcional> ::= implements idClase | €
+<ListaEncabezados> ::= <Encabezado> <ListaEncabezado> | €
+<Encabezado> ::= <ModificadorOpcional> <TipoMetodo> idMetVar <ArgsFormales> ;
 
 <ModificadorOpcional> ::= abstract | static | final | €
 
@@ -23,8 +28,9 @@ import java.util.Objects;
 <Miembro> ::= <Constructor>
 <Miembro> ::= <ModificadorOpcionalNoVacio> <TipoMetodo> idMetVar <ArgsFormales> <BloqueOpcional>
 <Miembro> ::= void idMetVar <ArgsFormales> <BloqueOpcional>
-<Miembro> ::= <Tipo> idMetVar <MiembroMetodo>
-<MiembroMetodo> ::= <ArgsFormales> <BloqueOpcional> | ;
+<Miembro> ::= <Tipo> idMetVar <MetodoODeclaracion>
+<MetodoODeclaracion> ::= = <ExpresionCompuesta>; | Metodo
+<Metodo> ::= <ArgsFormales> <BloqueOpcional> | ;
 
 <Constructor> ::= public idClase <ArgsFormales> <Bloque>
 
@@ -62,6 +68,7 @@ import java.util.Objects;
 
 <VarLocal> ::= var idMetVar = <ExpresionCompuesta>
 
+
 <Return> ::= return <ExpresionOpcional>
 
 <ExpresionOpcional> ::= <Expresion> | €
@@ -71,9 +78,10 @@ import java.util.Objects;
 
 <While> ::= while ( <Expresion> ) <Sentencia>
 
+
 <For> ::= for ( <ExpresionFor> ) <Sentencia>
-<ExpresionFor> ::= <VarLocal> <ForTipo>| <Expresion> <ForNormal>
-<ForTipo>::= <ForNormal> | <ForEach>
+<ExpresionFor> ::= var idMetVar <ForTipo>| <Expresion> <ForNormal>
+<ForTipo>::= = <ExpresionCompuesta> <ForNormal> | <ForEach>
 <ForEach> ::= : idMetVar
 <ForNormal> ::= ; <Expresion>;<Expresion>
 
@@ -93,7 +101,7 @@ import java.util.Objects;
 
 <OperadorUnario> := + | ++ | - | -- | !
 
-<Operando> ::= <Primitvo>
+<Operando> ::= <Primitivo	>
 <Operando> ::= <Referencia>
 
 <Primitivo> ::= true | false | intLiteral | charLiteral | null
@@ -125,8 +133,6 @@ import java.util.Objects;
 <ListaExps> ::= , <Expresion><ListaExps> | €
 
 <ElemEncadenado> ::= <ArgsActuales> | €
-
-
 */
 
 public class SyntacticAnalyzer {
@@ -137,20 +143,6 @@ public class SyntacticAnalyzer {
      public SyntacticAnalyzer(LexicalAnalyzer lexicalAnalyzer){
           this.lexicalAnalyzer = lexicalAnalyzer;
           firsts = new Firsts();
-     }
-
-     public void synchronize(String aim) {
-          while(!currentToken.getTokenId().equals(TokenId.EOF)){
-               nextToken();
-               if (Objects.equals(currentToken.getTokenId().toString(), aim))
-                    break;
-          }
-          //Segun el aim que recibo, el metodo que tengo que llamar. Start Analisys no sirve
-          try{
-               startAnalysis();
-          } catch (SyntacticException e){
-                throw new RuntimeException(e);
-          }
      }
 
      public void match(TokenId expectedToken) throws SyntacticException {
@@ -179,9 +171,17 @@ public class SyntacticAnalyzer {
      }
 
      private void ListaClases() throws SyntacticException {
+          if(Firsts.isFirst("ClaseInter", currentToken)){
+               ClaseInter();
+               ListaClases();
+          }
+     }
+
+     private void ClaseInter() throws SyntacticException {
           if(Firsts.isFirst("Clase", currentToken)){
                Clase();
-               ListaClases();
+          } else if (Firsts.isFirst("Interface", currentToken)) {
+               Interface();
           }
      }
 
@@ -190,9 +190,41 @@ public class SyntacticAnalyzer {
           match(TokenId.kw_class);
           match(TokenId.id_Class);
           HerenciaOpcional();
+          ImplementacionOpcional();
           match(TokenId.punt_openKey);
           ListaMiembros();
           match(TokenId.punt_closeKey);
+     }
+
+     private void Interface() throws SyntacticException {
+          match(TokenId.kw_interface);
+          match(TokenId.id_Class);
+          HerenciaOpcional();
+          match(TokenId.punt_openKey);
+          ListaEncabezados();
+          match(TokenId.punt_closeKey);
+     }
+
+     private void ImplementacionOpcional() throws SyntacticException {
+          if(currentToken.getTokenId().equals(TokenId.kw_implements)){
+               match(TokenId.kw_implements);
+               match(TokenId.id_Class);
+          }
+     }
+
+     private void ListaEncabezados() throws SyntacticException {
+          if(Firsts.isFirst("Encabezado", currentToken)){
+               Encabezado();
+               ListaEncabezados();
+          }
+     }
+
+     private void Encabezado() throws SyntacticException {
+          //ModificadorOpcional();
+          TipoMetodo();
+          match(TokenId.id_MetVar);
+          ArgsFormales();
+          match(TokenId.punt_semicolon);
      }
 
      private void ModificadorOpcional() throws SyntacticException {
@@ -226,7 +258,7 @@ public class SyntacticAnalyzer {
           } else if (Firsts.isFirst("Tipo", currentToken)) {
                Tipo();
                match(TokenId.id_MetVar);
-               MiembroMetodo();
+               Metodo();
           } else if (currentToken.getTokenId().equals(TokenId.kw_void)) {
                match(TokenId.kw_void);
                match(TokenId.id_MetVar);
@@ -244,7 +276,7 @@ public class SyntacticAnalyzer {
                default -> throw new SyntacticException(currentToken.getLexeme(), "ModificadorOpcionalNoVacio", lexicalAnalyzer.getLineNumber());
           }
      }
-     private void MiembroMetodo() throws SyntacticException {
+     private void Metodo() throws SyntacticException {
           if (Firsts.isFirst("ArgsFormales", currentToken)) {
                ArgsFormales();
                BloqueOpcional();
@@ -400,8 +432,9 @@ public class SyntacticAnalyzer {
           Sentencia();
      }
      private void ExpresionFor() throws SyntacticException {
-          if(Firsts.isFirst("VarLocal", currentToken)){
-               VarLocal();
+          if(currentToken.getTokenId().equals(TokenId.kw_var)){
+               match(TokenId.kw_var);
+               match(TokenId.id_MetVar);
                ForTipo();
           } else if (Firsts.isFirst("Expresion", currentToken)) {
                Expresion();
@@ -411,7 +444,9 @@ public class SyntacticAnalyzer {
           }
      }
      private void ForTipo() throws SyntacticException {
-          if(Firsts.isFirst("ForNormal", currentToken)){
+          if(currentToken.getTokenId().equals(TokenId.assignment)){
+               match(TokenId.assignment);
+               ExpresionCompuesta();
                ForNormal();
           } else if (Firsts.isFirst("ForEach", currentToken)) {
                ForEach();
