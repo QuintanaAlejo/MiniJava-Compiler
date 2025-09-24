@@ -82,7 +82,7 @@ import java.util.*;
 public class Firsts {
     static Map<String, ArrayList<TokenId>> map = new HashMap<String, ArrayList<TokenId>>();
     String[] nonTerminals = {"Inicial", "ListaClases", "ClaseInter", "Clase", "Interface", "ImplementacionOpcional", "ListaEncabezados", "Encabezado", "ModificadorOpcional", "HerenciaOpcional", "ListaMiembros", "ModificadorOpcionalNoVacio",
-            "Miembro", "MiembroMetodo", "Constructor", "TipoMetodo", "Tipo", "TipoPrimitivo", "ArgsFormales", "ListaArgsFormalesOpcional", "ListaArgsFormales",
+            "Miembro", "Metodo", "Constructor", "TipoMetodo", "Tipo", "TipoPrimitivo", "ArgsFormales", "ListaArgsFormalesOpcional", "ListaArgsFormales",
             "ArgsFormalesFinal", "ArgFormal", "BloqueOpcional", "Bloque", "ListaSentencias", "Sentencia", "AsignacionLLamada", "VarLocal", "Return", "ExpresionOpcional",
             "If", "Else", "While", "For", "ExpresionFor", "ForTipo", "ForEach", "ForNormal", "Expresion", "ExpresionExtra", "OperadorAsignacion", "ExpresionCompuesta", "ExpresionCompuestaFinal",
             "OperadorBinario", "ExpresionBasica", "OperadorUnario", "Operando", "Primitivo", "Referencia", "ReferenciaEncadenada", "Primario", "AccesoVarMetodo",
@@ -100,7 +100,7 @@ public class Firsts {
         map.get("HerenciaOpcional").add(TokenId.kw_extends);
         map.get("ModificadorOpcionalNoVacio").addAll(Arrays.asList(TokenId.kw_abstract, TokenId.kw_static, TokenId.kw_final));
         map.get("Miembro").add(TokenId.kw_void);
-        map.get("MiembroMetodo").add(TokenId.punt_semicolon);
+        map.get("Metodo").add(TokenId.punt_semicolon);
         map.get("Constructor").add(TokenId.kw_public);
         map.get("TipoMetodo").add(TokenId.kw_void);
         map.get("Tipo").add(TokenId.id_Class);
@@ -144,7 +144,7 @@ public class Firsts {
         map.get("Tipo").addAll(map.get("TipoPrimitivo"));
         map.get("ArgFormal").addAll(map.get("Tipo"));
         map.get("TipoMetodo").addAll(map.get("Tipo"));
-        map.get("MiembroMetodo").addAll(map.get("ArgsFormales"));
+        map.get("Metodo").addAll(map.get("ArgsFormales"));
         map.get("ArgsPosibles").addAll(map.get("ArgsActuales"));
         map.get("ListaArgsFormales").addAll(map.get("ArgFormal"));
         map.get("ListaArgsFormalesOpcional").addAll(map.get("ListaArgsFormales"));

@@ -3,138 +3,6 @@ package syntactic;
 import exceptions.*;
 import lexical.*;
 
-/* Reglas de produccion de la gramatica
-<Inicial> ::= <ListaClases> eof
-
-
-<ListaClases> ::= <ClaseInter> <ListaClases> | €
-<ClaseInter> ::= <Clase> | <Interface>
-
-<Clase> ::= <ModificadorOpcional> class idClase <HerenciaOpcional> <ImplementacionOpcional> { <ListaMiembros> }
-
-<Interface> ::= interface idClase <HerenciaOpcional> { <ListaEncabezados> }
-<ImplementacionOpcional> ::= implements idClase | €
-<ListaEncabezados> ::= <Encabezado> <ListaEncabezado> | €
-<Encabezado> ::= <ModificadorOpcional> <TipoMetodo> idMetVar <ArgsFormales> ;
-
-<ModificadorOpcional> ::= abstract | static | final | €
-
-<HerenciaOpcional> ::= extends idClase | €
-
-<ListaMiembros> ::= <Miembro> <ListaMiembros> | €
-
-<ModificadorOpcionalNoVacio>  ::= abstract | static | final
-
-<Miembro> ::= <Constructor>
-<Miembro> ::= <ModificadorOpcionalNoVacio> <TipoMetodo> idMetVar <ArgsFormales> <BloqueOpcional>
-<Miembro> ::= void idMetVar <ArgsFormales> <BloqueOpcional>
-<Miembro> ::= <Tipo> idMetVar <MetodoODeclaracion>
-<MetodoODeclaracion> ::= = <ExpresionCompuesta>; | Metodo
-<Metodo> ::= <ArgsFormales> <BloqueOpcional> | ;
-
-<Constructor> ::= public idClase <ArgsFormales> <Bloque>
-
-<TipoMetodo> ::= <Tipo> | void
-
-<Tipo> := <TipoPrimitivo> | idClase
-
-<TipoPrimitivo> ::= boolean | char | int
-
-<ArgsFormales> ::= ( <ListaArgsFormalesOpcional> )
-
-<ListaArgsFormalesOpcional> ::= <ListaArgsFormales> | €
-
-<ListaArgsFormales> ::= <ArgFormal> <ArgsFormalesFinal>
-<ArgsFormalesFinal> ::= , <ArgFormal> <ArgsFormalesFinal> | €
-
-<ArgFormal> ::= <Tipo> idMetVar
-
-<BloqueOpcional> ::= <Bloque> | ;
-
-<Bloque> ::= { <ListaSentencias> }
-
-<ListaSentencias> ::= <Sentencia> <ListaSentencias> | €
-
-<Sentencia> ::=;
-<Sentencia> ::= <AsignacionLlamada> ;
-<Sentencia> ::= <VarLocal> ;
-<Sentencia> ::= <Return> ;
-<Sentencia> ::= <If>
-<Sentencia> ::= <While>
-<Sentencia> ::= <Bloque>
-<Sentencia> ::= <For>
-
-<AsignacionLLamada> ::= <Expresion>
-
-<VarLocal> ::= var idMetVar = <ExpresionCompuesta>
-
-
-<Return> ::= return <ExpresionOpcional>
-
-<ExpresionOpcional> ::= <Expresion> | €
-
-<If> ::= if (<Expresion> ) <Sentencia> <Else>
-<Else> ::= else <Sentencia> | €
-
-<While> ::= while ( <Expresion> ) <Sentencia>
-
-
-<For> ::= for ( <ExpresionFor> ) <Sentencia>
-<ExpresionFor> ::= var idMetVar <ForTipo>| <Expresion> <ForNormal>
-<ForTipo>::= = <ExpresionCompuesta> <ForNormal> | <ForEach>
-<ForEach> ::= : idMetVar
-<ForNormal> ::= ; <Expresion>;<Expresion>
-
-<Expresion> ::= <ExpresionCompuesta> <ExpresionExtra>
-<ExpresionExtra> ::= <OperadorAsignacion> <ExpresionCompuesta> | €
-
-<OperadorAsignacion> := =
-
-<ExpresionCompuesta> ::= <ExpresionBasica> <ExpresionCompuestaFinal>
-<ExpresionCompuestaFinal> ::= <OperadorBinario> <ExpresionBasica> <ExpresionCompuestaFinal>
-<ExpresionCompuestaFinal> ::= ? <Expresion> : <Expresion> | €
-
-<OperadorBinario> := || | && | == | != | < | > | <= |>= |+ | - | * | / | %
-
-<ExpresionBasica> ::= <OperadorUnario> <Operando>
-<ExpresionBasica> ::= <Operando>
-
-<OperadorUnario> := + | ++ | - | -- | !
-
-<Operando> ::= <Primitivo	>
-<Operando> ::= <Referencia>
-
-<Primitivo> ::= true | false | intLiteral | charLiteral | null
-
-<Referencia> ::= <Primario> <ReferenciaEncadenada>
-<ReferenciaEncadenada> ::= .idMetVar <ElemEncadenado> <ReferenciaEncadeanda> | €
-
-<Primario> ::= this
-<Primario> ::= stringLiteral
-<Primario> ::= <AccesoVarMetodo>
-<Primario> ::= <LlamadaConstructor>
-<Primario> ::= <LlamadaMetodoEstatico>
-<Primario> ::= <ExpresionParentizada>
-
-<AccesoVarMetodo> ::= idMetVar <ArgsPosibles>
-
-<ArgsPosibles> ::= <ArgsActuales> | €
-
-<LlamadaConstructor> ::= new idClase <ArgsActuales>
-
-<ExpresionParentizada> ::= ( <Expresion> )
-
-<LlamadaMetodoEstatico> ::= idClase . idMetVar <ArgsActuales>
-
-<ArgsActuales> ::= (<ListaExpsUpcional> )
-
-<ListaExpsOpcional> ::= <Expresion><ListaExps> | €
-
-<ListaExps> ::= , <Expresion><ListaExps> | €
-
-<ElemEncadenado> ::= <ArgsActuales> | €
-*/
-
 public class SyntacticAnalyzer {
      LexicalAnalyzer lexicalAnalyzer;
      Token currentToken;
@@ -258,7 +126,7 @@ public class SyntacticAnalyzer {
           } else if (Firsts.isFirst("Tipo", currentToken)) {
                Tipo();
                match(TokenId.id_MetVar);
-               Metodo();
+               MetodoODeclaracion();
           } else if (currentToken.getTokenId().equals(TokenId.kw_void)) {
                match(TokenId.kw_void);
                match(TokenId.id_MetVar);
@@ -276,12 +144,25 @@ public class SyntacticAnalyzer {
                default -> throw new SyntacticException(currentToken.getLexeme(), "ModificadorOpcionalNoVacio", lexicalAnalyzer.getLineNumber());
           }
      }
+     private void MetodoODeclaracion() throws SyntacticException {
+          if(currentToken.getTokenId().equals(TokenId.assignment)){
+               match(TokenId.assignment);
+               ExpresionCompuesta();
+               match(TokenId.punt_semicolon);
+          } else if (Firsts.isFirst("Metodo", currentToken)) {
+               Metodo();
+          } else {
+               throw new SyntacticException(currentToken.getLexeme(), "MetodoODeclaracion", lexicalAnalyzer.getLineNumber());
+          }
+     }
      private void Metodo() throws SyntacticException {
           if (Firsts.isFirst("ArgsFormales", currentToken)) {
                ArgsFormales();
                BloqueOpcional();
           } else if (currentToken.getTokenId().equals(TokenId.punt_semicolon)) {
                match(TokenId.punt_semicolon);
+          } else{
+                throw new SyntacticException(currentToken.getLexeme(), "Metodo", lexicalAnalyzer.getLineNumber());
           }
      }
      private void Constructor() throws SyntacticException {
