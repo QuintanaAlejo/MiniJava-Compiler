@@ -22,6 +22,9 @@ public enum TokenId {
     kw_null,
     kw_true,
     kw_false,
+    kw_for,
+    kw_interface,
+    kw_implements,
 
     // Identifiers Tokens
     id_Class,
@@ -57,6 +60,7 @@ public enum TokenId {
     op_and,
     op_or,
     op_module,
+    op_ternary,
 
     // Operation Tokens
     assignment,

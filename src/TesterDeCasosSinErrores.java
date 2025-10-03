@@ -3,6 +3,7 @@ import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
+//import com.sun.tools.javac.Main;
 import org.hamcrest.CoreMatchers;
 import org.junit.After;
 import org.junit.Test;
@@ -18,7 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class TesterDeCasosSinErrores {
 
     private static final String msgExito = "[SinErrores]";
-    private static final String testFilesDirectoryPath = "resources/withoutErrors/";
+    private static final String testFilesDirectoryPath = "resources/sinErrores/";
 
     //TODO: el tipo de esta variable init tiene que ser la clase que tiene el main
     private static final Main init = null;
@@ -43,7 +44,9 @@ public class TesterDeCasosSinErrores {
         File folder = new File(testFilesDirectoryPath);
         ArrayList<String> names = new ArrayList();
         for(File f: folder.listFiles()){
-            names.add(f.getName());
+            if (f.isFile() && f.getName().endsWith(".java")) {
+                names.add(f.getName());
+            }
         }
         names.sort(String::compareTo);
         return names;
