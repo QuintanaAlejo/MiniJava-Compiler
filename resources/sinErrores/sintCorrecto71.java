@@ -1,11 +1,13 @@
 ///[SinErrores]
 // Clase que implementa una interfaz sin herencia
 
-interface IPrinter {
-    void print();
+class Fortest{
+    int arr;
+    void m(){
+        for(var f : x.get()){;}
+        //for (; ; ){} ver
+        for (var elem : foo()){}
+    }
+
 }
 
-class Printer implements IPrinter {
-    void print() {
-    }
-}

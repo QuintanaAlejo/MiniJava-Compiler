@@ -337,7 +337,7 @@ public class SyntacticAnalyzer {
      }
      private void ForEach() throws SyntacticException {
           match(TokenId.punt_colon);
-          match(TokenId.id_MetVar);
+          Referencia();
      }
      private void ForNormal() throws SyntacticException {
           match(TokenId.punt_semicolon);
