@@ -10,10 +10,13 @@ y cada metodo o constructor mantiene la información de sus parámetros. De este
 y sienta las bases para etapas posteriores como la verificación de sentencias o la generación de código.
  */
 
+import exceptions.SemanticException;
+
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class TablaDeSimbolos {
-    private HashMap<String, Clase> clases;
+    private HashSet<Clase> clases;
     private HashMap<String, Interfaz> interfaces;
 
     private Clase claseActual;
@@ -21,11 +24,26 @@ public class TablaDeSimbolos {
     private Atributo atributoActual;
 
     public TablaDeSimbolos() {
-        this.clases = new HashMap<String, Clase>();
+        this.clases = new HashSet<Clase>();
         this.interfaces = new HashMap<String, Interfaz>();
 
         this.claseActual = null;
         this.metodoActual = null;
         this.atributoActual = null;
+    }
+
+    public void estaBienDeclarada() throws SemanticException {
+        for (Clase c : clases) {
+            c.estaBienDeclarada();
+        }
+    }
+
+    public boolean existeClase(String nombre) {
+        for (Clase c : clases) {
+            if (c.getNombre().equals(nombre)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

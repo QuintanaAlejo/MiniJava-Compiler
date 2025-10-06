@@ -1,3 +1,7 @@
+package Main;
+
+import TablaDeSimbolos.TablaDeSimbolos;
+import exceptions.SemanticException;
 import exceptions.SyntacticException;
 import lexical.LexicalAnalyzer;
 import sourcemanager.SourceManager;
@@ -6,12 +10,14 @@ import syntactic.SyntacticAnalyzer;
 import java.io.IOException;
 
 public class Main {
+    public static TablaDeSimbolos TS;
     public static void main(String[] args){
-        SourceManager sourceManager = new SourceManagerImpl();
         boolean error = false;
+
+        SourceManager sourceManager = new SourceManagerImpl();
         LexicalAnalyzer lexicalAnalyzer;
         SyntacticAnalyzer syntacticAnalyzer;
-
+        TS = new TablaDeSimbolos();
         try {
             sourceManager.open(args[0]);
             lexicalAnalyzer = new LexicalAnalyzer(sourceManager);
@@ -25,6 +31,15 @@ public class Main {
         } catch (SyntacticException e) {
             e.printError();
             error = true;
+        }
+
+        if(!error){
+            try {
+                TS.estaBienDeclarada();
+            } catch (SemanticException e) {
+                e.printError();
+                error = true;
+            }
         }
 
         if (!error) {
