@@ -32,17 +32,16 @@ public class Main {
             e.toString();
             error = true;
         }
-/*
+
         if(!error){
             try {
                 TS.estaBienDeclarada();
+                //TS.consolidar();
             } catch (SemanticException e) {
                 e.toString();
                 error = true;
             }
         }
-
- */
 
         if (!error) {
             System.out.println("Compilacion exitosa");

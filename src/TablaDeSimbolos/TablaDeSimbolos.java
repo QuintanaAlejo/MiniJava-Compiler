@@ -33,15 +33,14 @@ public class TablaDeSimbolos {
         this.metodoActual = null;
         this.atributoActual = null;
         this.constructorActual = null;
+        //Agregar todas las clases predefinidas
     }
-/*
+
     public void estaBienDeclarada() throws SemanticException {
         for (Clase c : clases.values()) {
             c.estaBienDeclarada();
         }
     }
-
- */
 
     public boolean existeClase(String nombre) {
         for (String c : clases.keySet()) {
@@ -79,6 +78,10 @@ public class TablaDeSimbolos {
     }
     public void setConstructorActual(Constructor constructorActual) {
         this.constructorActual = constructorActual;
+    }
+
+    public Clase getClase(String nombre) {
+        return this.clases.get(nombre);
     }
 
     public void insertarClase(Clase clase) throws SemanticException {

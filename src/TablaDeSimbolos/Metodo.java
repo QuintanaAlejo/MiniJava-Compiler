@@ -3,7 +3,6 @@ package TablaDeSimbolos;
 import lexical.Token;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import exceptions.SemanticException;
 
 public class Metodo {
@@ -29,17 +28,16 @@ public class Metodo {
             throw new SemanticException(parametro.getNombre(), "Parámetro repetido", parametro.getToken().getLinea()); //Ver
         }
     }
-/*
-    public void estaBienDeclarado(Token claseActual) throws SemanticException {
+
+    public void estaBienDeclarado() throws SemanticException {
         if (this.tipoRetorno == null) { // Ver
             throw new SemanticException(this.nombre.getLexeme(), "El método no tiene un tipo de retorno declarado.", this.nombre.getLinea());
         }
-        for (Parametro parametro : this.parametros) {
+        for (Parametro parametro : parametros.values()) {
             parametro.estaBienDeclarado();
+            //Si esa de tipo clase tiene que existir
         }
     }
-
- */
 
     public boolean tieneBloque() {
         return esAbstracto;

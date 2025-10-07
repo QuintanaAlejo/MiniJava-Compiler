@@ -59,13 +59,16 @@ public class SyntacticAnalyzer {
      }
 
      private void Clase() throws SyntacticException, SemanticException {
-          ModificadorOpcional();
+          Token mod = ModificadorOpcional();
           match(TokenId.kw_class);
           Token nombreClase = currentToken;
           match(TokenId.id_Class);
-          Clase c = new Clase(nombreClase);
+          Clase c = new Clase(nombreClase, mod);
           Main.TS.setClaseActual(c);
           Token padre = HerenciaOpcional();
+          if (padre != null) {
+               c.setPadre(padre);
+          }
           ImplementacionOpcional();
           match(TokenId.punt_openKey);
           ListaMiembros();
@@ -104,12 +107,17 @@ public class SyntacticAnalyzer {
           match(TokenId.punt_semicolon);
      }
 
-     private void ModificadorOpcional() throws SyntacticException {
+     private Token ModificadorOpcional() throws SyntacticException {
+          Token mod = currentToken;
           switch (currentToken.getTokenId().toString()){
                case "kw_static" -> match(TokenId.kw_static);
                case "kw_abstract" -> match(TokenId.kw_abstract);
                case "kw_final" -> match(TokenId.kw_final);
           }
+          if (mod.getLexeme().equals("kw_static") || mod.getLexeme().equals("kw_abstract") || mod.getLexeme().equals("kw_final")){
+               return mod;
+          }
+          return null;
      }
      private Token HerenciaOpcional() throws SyntacticException {
           Token nombrePadre = null;

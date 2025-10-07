@@ -24,7 +24,7 @@ public class Atributo {
     }
 
     public void estaBienDeclarado() {
-        if (this.tipo == null) {
+        if (tipo.getToken().getTokenId().toString().equals("id_Class")) {
             throw new RuntimeException("Error: El atributo " + this.nombre + " no tiene un tipo declarado.");
         }
     }
