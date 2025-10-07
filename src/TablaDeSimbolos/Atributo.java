@@ -15,6 +15,10 @@ public class Atributo {
         return nombre.getLexeme();
     }
 
+    public Token getToken() {
+        return nombre;
+    }
+
     public Tipo getTipo() {
         return tipo;
     }
@@ -24,5 +28,4 @@ public class Atributo {
             throw new RuntimeException("Error: El atributo " + this.nombre + " no tiene un tipo declarado.");
         }
     }
-
 }

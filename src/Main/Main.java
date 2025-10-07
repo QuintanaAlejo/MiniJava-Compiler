@@ -28,19 +28,21 @@ public class Main {
         try{
             syntacticAnalyzer = new SyntacticAnalyzer(lexicalAnalyzer);
             syntacticAnalyzer.startAnalysis();
-        } catch (SyntacticException e) {
-            e.printError();
+        } catch (SyntacticException | SemanticException e) {
+            e.toString();
             error = true;
         }
-
+/*
         if(!error){
             try {
                 TS.estaBienDeclarada();
             } catch (SemanticException e) {
-                e.printError();
+                e.toString();
                 error = true;
             }
         }
+
+ */
 
         if (!error) {
             System.out.println("Compilacion exitosa");

@@ -23,6 +23,14 @@ public class Constructor {
         }
     }
 
+    public String getNombre() {
+        return token.getLexeme();
+    }
+
+    public Token getToken() {
+        return token;
+    }
+
     public void agregarParametro(Parametro parametro) throws SemanticException {
         if (this.parametros.containsKey(parametro.getNombre())) {
             throw new SemanticException(parametro.getNombre(), "Parámetro repetido", parametro.getToken().getLinea()); //Ver

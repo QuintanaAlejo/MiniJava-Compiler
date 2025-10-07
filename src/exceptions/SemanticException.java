@@ -14,6 +14,7 @@ public class SemanticException extends Exception{
         return expectedToken;
     }
 
-    public void printError() {
+    public String toString() {
+        return "probando";
     }
 }

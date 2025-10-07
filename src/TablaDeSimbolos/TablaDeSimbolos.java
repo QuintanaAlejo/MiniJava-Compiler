@@ -11,39 +11,81 @@ y sienta las bases para etapas posteriores como la verificación de sentencias o
  */
 
 import exceptions.SemanticException;
+import lexical.Token;
 
 import java.util.HashMap;
 import java.util.HashSet;
 
 public class TablaDeSimbolos {
-    private HashSet<Clase> clases;
+    private HashMap<String, Clase> clases;
     private HashMap<String, Interfaz> interfaces;
 
     private Clase claseActual;
     private Metodo metodoActual;
     private Atributo atributoActual;
+    private Constructor constructorActual;
 
     public TablaDeSimbolos() {
-        this.clases = new HashSet<Clase>();
+        this.clases = new HashMap<String, Clase>();
         this.interfaces = new HashMap<String, Interfaz>();
 
         this.claseActual = null;
         this.metodoActual = null;
         this.atributoActual = null;
+        this.constructorActual = null;
     }
-
+/*
     public void estaBienDeclarada() throws SemanticException {
-        for (Clase c : clases) {
+        for (Clase c : clases.values()) {
             c.estaBienDeclarada();
         }
     }
 
+ */
+
     public boolean existeClase(String nombre) {
-        for (Clase c : clases) {
-            if (c.getNombre().equals(nombre)) {
+        for (String c : clases.keySet()) {
+            if (c.equals(nombre)) {
                 return true;
             }
         }
         return false;
+    }
+
+    //Getters y Setters de los actuales
+    public Clase getClaseActual() {
+        return claseActual;
+    }
+    public void setClaseActual(Clase claseActual) {
+        this.claseActual = claseActual;
+    }
+
+    public Metodo getMetodoActual() {
+        return metodoActual;
+    }
+    public void setMetodoActual(Metodo metodoActual) {
+        this.metodoActual = metodoActual;
+    }
+
+    public Atributo getAtributoActual() {
+        return atributoActual;
+    }
+    public void setAtributoActual(Atributo atributoActual) {
+        this.atributoActual = atributoActual;
+    }
+
+    public Constructor getConstructorActual() {
+        return constructorActual;
+    }
+    public void setConstructorActual(Constructor constructorActual) {
+        this.constructorActual = constructorActual;
+    }
+
+    public void insertarClase(Clase clase) throws SemanticException {
+        if (this.clases.containsKey(clase.getNombre())) {
+            throw new SemanticException(clase.getNombre(), "Clase repetida: " + clase.getNombre(), clase.getToken().getLinea());
+        } else {
+            this.clases.put(clase.getNombre(), clase);
+        }
     }
 }
