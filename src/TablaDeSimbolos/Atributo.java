@@ -1,6 +1,9 @@
 package TablaDeSimbolos;
 
+import exceptions.SemanticException;
 import lexical.Token;
+
+import static Main.Main.TS;
 
 public class Atributo {
     private Token nombre;
@@ -23,9 +26,11 @@ public class Atributo {
         return tipo;
     }
 
-    public void estaBienDeclarado() {
+    public void estaBienDeclarado() throws SemanticException {
         if (tipo.getToken().getTokenId().toString().equals("id_Class")) {
-            throw new RuntimeException("Error: El atributo " + this.nombre + " no tiene un tipo declarado.");
+            if (!TS.existeClase(tipo.getToken().getLexeme())) {
+                throw new SemanticException(tipo.getToken().getLexeme(), "El atributo " + nombre.getLexeme() + " es de tipo " + tipo.getToken().getLexeme() + " y la clase " + tipo.getToken().getLexeme() + " no existe.", tipo.getToken().getLinea());
+            }
         }
     }
 }

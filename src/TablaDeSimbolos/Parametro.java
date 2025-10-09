@@ -3,6 +3,8 @@ package TablaDeSimbolos;
 import lexical.Token;
 import exceptions.SemanticException;
 
+import static Main.Main.TS;
+
 public class Parametro {
     public Token nombre;
     public Tipo tipo;
@@ -20,9 +22,15 @@ public class Parametro {
         return nombre;
     }
 
+    public Tipo getTipo() {
+        return tipo;
+    }
+
     public void estaBienDeclarado() throws SemanticException {
-        if (this.tipo == null) {
-            throw new SemanticException(this.nombre.getLexeme(), "El parámetro no tiene un tipo declarado.", this.nombre.getLinea());
+        if (tipo.getToken().getTokenId().toString().equals("id_Class")) {
+            if (!TS.existeClase(tipo.getToken().getLexeme())) {
+                throw new SemanticException(tipo.getToken().getLexeme(), "El parámetro " + nombre.getLexeme() + " es de tipo " + tipo.getToken().getLexeme() + " y la clase " + tipo.getToken().getLexeme() + " no existe.", nombre.getLinea());
+            }
         }
     }
 }

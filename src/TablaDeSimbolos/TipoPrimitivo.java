@@ -15,6 +15,11 @@ public class TipoPrimitivo implements Tipo{
     }
 
     @Override
+    public void estaBienDeclarado() {
+        // Los tipos primitivos siempre están bien declarados
+    }
+
+    @Override
     public String getNombre() {
         return token.getLexeme();
     }

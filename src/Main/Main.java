@@ -13,11 +13,11 @@ public class Main {
     public static TablaDeSimbolos TS;
     public static void main(String[] args){
         boolean error = false;
-
         SourceManager sourceManager = new SourceManagerImpl();
         LexicalAnalyzer lexicalAnalyzer;
         SyntacticAnalyzer syntacticAnalyzer;
         TS = new TablaDeSimbolos();
+
         try {
             sourceManager.open(args[0]);
             lexicalAnalyzer = new LexicalAnalyzer(sourceManager);
@@ -28,17 +28,20 @@ public class Main {
         try{
             syntacticAnalyzer = new SyntacticAnalyzer(lexicalAnalyzer);
             syntacticAnalyzer.startAnalysis();
-        } catch (SyntacticException | SemanticException e) {
-            e.toString();
+        } catch (SyntacticException e){
+            e.printError();
+            error = true;
+        } catch (SemanticException e){
+            e.printError();
             error = true;
         }
 
         if(!error){
             try {
                 TS.estaBienDeclarada();
-                //TS.consolidar();
+                TS.consolidar();
             } catch (SemanticException e) {
-                e.toString();
+                e.printError();
                 error = true;
             }
         }

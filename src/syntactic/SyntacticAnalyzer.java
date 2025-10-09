@@ -63,12 +63,9 @@ public class SyntacticAnalyzer {
           match(TokenId.kw_class);
           Token nombreClase = currentToken;
           match(TokenId.id_Class);
-          Clase c = new Clase(nombreClase, mod);
-          Main.TS.setClaseActual(c);
           Token padre = HerenciaOpcional();
-          if (padre != null) {
-               c.setPadre(padre);
-          }
+          Clase c = new Clase(nombreClase, mod, padre);
+          Main.TS.setClaseActual(c);
           ImplementacionOpcional();
           match(TokenId.punt_openKey);
           ListaMiembros();
@@ -114,7 +111,7 @@ public class SyntacticAnalyzer {
                case "kw_abstract" -> match(TokenId.kw_abstract);
                case "kw_final" -> match(TokenId.kw_final);
           }
-          if (mod.getLexeme().equals("kw_static") || mod.getLexeme().equals("kw_abstract") || mod.getLexeme().equals("kw_final")){
+          if (mod.getLexeme().equals("static") || mod.getLexeme().equals("abstract") || mod.getLexeme().equals("final")){
                return mod;
           }
           return null;

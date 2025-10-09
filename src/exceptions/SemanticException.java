@@ -2,19 +2,19 @@ package exceptions;
 
 public class SemanticException extends Exception{
     private final String currentToken;
-    private final String expectedToken;
+    private final String error;
     private final int line;
 
-    public SemanticException(String currentToken, String expectedTokenName, int line) {
+    public SemanticException(String currentToken, String error, int line) {
         this.currentToken = currentToken;
-        this.expectedToken = expectedTokenName;
+        this.error = error;
         this.line = line;
     }
-    public String getExpectedToken() {
-        return expectedToken;
-    }
 
-    public String toString() {
-        return "probando";
+    public void printError() {
+        System.out.println("Error Semántico en linea " + line + ": " );
+        System.out.println(error);
+        System.out.println();
+        System.out.println("[Error:" + currentToken + "|" + line + "]");
     }
 }
