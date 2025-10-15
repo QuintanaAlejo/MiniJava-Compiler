@@ -3,7 +3,7 @@ import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
-//import com.sun.tools.javac.Main;
+import Main.Main;
 import org.hamcrest.CoreMatchers;
 import org.junit.After;
 import org.junit.Test;
@@ -44,9 +44,7 @@ public class TesterDeCasosSinErrores {
         File folder = new File(testFilesDirectoryPath);
         ArrayList<String> names = new ArrayList();
         for(File f: folder.listFiles()){
-            if (f.isFile() && f.getName().endsWith(".java")) {
-                names.add(f.getName());
-            }
+            names.add(f.getName());
         }
         names.sort(String::compareTo);
         return names;
