@@ -3,7 +3,6 @@ import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
-import Main.Main;
 import org.hamcrest.CoreMatchers;
 import org.junit.After;
 import org.junit.Test;
@@ -11,7 +10,7 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-
+import Main.Main;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 
