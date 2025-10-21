@@ -10,15 +10,18 @@ y cada metodo o constructor mantiene la información de sus parámetros. De este
 y sienta las bases para etapas posteriores como la verificación de sentencias o la generación de código.
  */
 
+import TablaDeSimbolos.NodosAST.sentencia.NodoBloque;
 import exceptions.SemanticException;
 import lexical.Token;
 import lexical.TokenId;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TablaDeSimbolos {
     private HashMap<String, Clase> clases;
     private HashMap<String, Interfaz> interfaces;
+    private ArrayList<NodoBloque> pilaDeBloques;
 
     private Clase claseActual;
     private Metodo metodoActual;
@@ -160,5 +163,20 @@ public class TablaDeSimbolos {
         } else {
             this.clases.put(clase.getNombre(), clase);
         }
+    }
+
+    public void apilarBloque(NodoBloque bloque){
+        pilaDeBloques.addFirst(bloque); // Como un push
+    }
+
+    public void desapilarBloqueActual(){
+        pilaDeBloques.removeFirst(); // Como un pop
+    }
+
+    public NodoBloque getBloqueActual(){
+        if(pilaDeBloques.isEmpty())
+            return null;
+        else
+            return pilaDeBloques.getFirst(); //Retorno el ultimo bloque agregado, funciona como una pila
     }
 }

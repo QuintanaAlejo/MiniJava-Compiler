@@ -2,6 +2,20 @@ package syntactic;
 
 import Main.Main;
 import TablaDeSimbolos.*;
+import TablaDeSimbolos.NodosAST.encadenado.NodoEncadenado;
+import TablaDeSimbolos.NodosAST.encadenado.NodoMetodoLlamadaEncadenada;
+import TablaDeSimbolos.NodosAST.expresion.*;
+import TablaDeSimbolos.NodosAST.expresion.acceso.NodoLlamadaMetodo;
+import TablaDeSimbolos.NodosAST.expresion.acceso.NodoString;
+import TablaDeSimbolos.NodosAST.expresion.acceso.NodoThis;
+import TablaDeSimbolos.NodosAST.expresion.acceso.NodoVarAcceso;
+import TablaDeSimbolos.NodosAST.expresion.literal.NodoBoolean;
+import TablaDeSimbolos.NodosAST.expresion.literal.NodoChar;
+import TablaDeSimbolos.NodosAST.expresion.literal.NodoInt;
+import TablaDeSimbolos.NodosAST.expresion.literal.NodoNull;
+import TablaDeSimbolos.NodosAST.expresion.operandos.NodoAcceso;
+import TablaDeSimbolos.NodosAST.expresion.operandos.NodoLiteral;
+import TablaDeSimbolos.NodosAST.sentencia.*;
 import exceptions.*;
 import lexical.*;
 
@@ -297,7 +311,7 @@ public class SyntacticAnalyzer {
      }
      private boolean BloqueOpcional() throws SyntacticException {
           if(Firsts.isFirst("Bloque", currentToken)){
-               Bloque();
+               Main.TS.getMetodoActual().setBloque(Bloque());
                return true;
           } else if (currentToken.getTokenId().equals(TokenId.punt_semicolon)) {
                match(TokenId.punt_semicolon);
@@ -306,81 +320,102 @@ public class SyntacticAnalyzer {
                throw new SyntacticException(currentToken.getLexeme(), "BloqueOpcional", lexicalAnalyzer.getLineNumber());
           }
      }
-     private void Bloque() throws SyntacticException {
+     private NodoBloque Bloque() throws SyntacticException {
           match(TokenId.punt_openKey);
-          ListaSentencias();
+          NodoBloque bloque = new NodoBloque();
+          ArrayList<NodoSentencia> sentencias = ListaSentencias();
           match(TokenId.punt_closeKey);
+          bloque.setSentencias(sentencias);
+          return bloque;
      }
-     private void ListaSentencias() throws SyntacticException {
+
+     private ArrayList<NodoSentencia> ListaSentencias() throws SyntacticException {
+          ArrayList<NodoSentencia> sentencias = new ArrayList<>();
           if(Firsts.isFirst("Sentencia", currentToken)){
-               Sentencia();
+               sentencias.add(Sentencia());
                ListaSentencias();
           }
+          return sentencias;
      }
-     private void Sentencia() throws SyntacticException {
+     private NodoSentencia Sentencia() throws SyntacticException {
           if(currentToken.getTokenId().equals(TokenId.punt_semicolon)){
                match(TokenId.punt_semicolon);
+               return new NodoSentenciaVacia();
           } else if(Firsts.isFirst("AsignacionLLamada", currentToken)){
-               AsignacionLLamada();
+               NodoAsignacionLlamada nodo = AsignacionLLamada();
                match(TokenId.punt_semicolon);
+               return nodo;
           } else if(Firsts.isFirst("VarLocal", currentToken)){
-               VarLocal();
+               NodoVarLocal nodo = VarLocal();
                match(TokenId.punt_semicolon);
+               return nodo;
           } else if(Firsts.isFirst("Return", currentToken)){
-               Return();
+               NodoReturn nodo = Return();
                match(TokenId.punt_semicolon);
+               return nodo;
           } else if(Firsts.isFirst("If", currentToken)){
-               If();
+               return If();
           } else if(Firsts.isFirst("While", currentToken)){
-               While();
+               return While();
           } else if(Firsts.isFirst("Bloque", currentToken)){
-               Bloque();
+               return Bloque();
           } else if(Firsts.isFirst("For", currentToken)){
-               For();
+               For(); //Logro
           } else {
                throw new SyntacticException(currentToken.getLexeme(), "Sentencia", lexicalAnalyzer.getLineNumber());
           }
+          return new NodoSentenciaVacia();
      }
-     private void AsignacionLLamada() throws SyntacticException {
+     private NodoAsignacionLlamada AsignacionLLamada() throws SyntacticException {
           Expresion();
+          return new NodoAsignacionLlamada(); //Ver
      }
-     private void VarLocal() throws SyntacticException {
+     private NodoVarLocal VarLocal() throws SyntacticException {
           match(TokenId.kw_var);
+          Token tokenVar = currentToken;
           match(TokenId.id_MetVar);
           match(TokenId.assignment);
-          ExpresionCompuesta();
+          NodoExpresion exp = ExpresionCompuesta(); //Aca tengo que guardar la expresion en el nodo
+          return new NodoVarLocal(tokenVar, exp);
      }
-     private void Return() throws SyntacticException {
+     private NodoReturn Return() throws SyntacticException {
           match(TokenId.kw_return);
-          ExpresionOpcional();
+          return new NodoReturn(ExpresionOpcional());
      }
-     private void ExpresionOpcional() throws SyntacticException {
+     private NodoExpresion ExpresionOpcional() throws SyntacticException {
           if(Firsts.isFirst("Expresion", currentToken)){
-                 Expresion();
+               return Expresion();
+          } else {
+               return new NodoExpresionVacia();
           }
      }
-     private void If() throws SyntacticException {
+     private NodoIf If() throws SyntacticException {
           match(TokenId.kw_if);
           match(TokenId.punt_openParenthesis);
-          Expresion();
+          NodoExpresion expresion = Expresion();
           match(TokenId.punt_closeParenthesis);
-          Sentencia();
-          Else();
+          NodoSentencia sentencia = Sentencia();
+          NodoSentencia senElse = Else();
+          return new NodoIf(expresion, sentencia, senElse);
      }
-     private void Else() throws SyntacticException {
+     private NodoSentencia Else() throws SyntacticException {
           if(currentToken.getTokenId().equals(TokenId.kw_else)){
                match(TokenId.kw_else);
-               Sentencia();
+               return Sentencia();
+          } else {
+               return new NodoSentenciaVacia();
           }
      }
-     private void While() throws SyntacticException {
+     private NodoWhile While() throws SyntacticException {
+          Token tokenWhile = currentToken;
           match(TokenId.kw_while);
           match(TokenId.punt_openParenthesis);
-          Expresion();
+          NodoExpresion expresion = Expresion();
           match(TokenId.punt_closeParenthesis);
-          Sentencia();
+          NodoSentencia sentencia = Sentencia();
+          return new NodoWhile(expresion, sentencia, tokenWhile);
      }
-     private void For() throws SyntacticException {
+     private void For() throws SyntacticException { //Es logro, ver despues
           match(TokenId.kw_for);
           match(TokenId.punt_openParenthesis);
           ExpresionFor();
@@ -420,12 +455,13 @@ public class SyntacticAnalyzer {
           match(TokenId.punt_semicolon);
           Expresion();
      }
-     private void Expresion() throws SyntacticException {
-          ExpresionCompuesta();
-          ExpresionExtra();
+     private NodoExpresion Expresion() throws SyntacticException {
+          NodoExpresion exp = ExpresionCompuesta();
+          return ExpresionExtra(exp);
      }
-     private void ExpresionExtra() throws SyntacticException {
+     private NodoExpresion ExpresionExtra(NodoExpresion exp) throws SyntacticException {
           if(Firsts.isFirst("OperadorAsignacion", currentToken)){
+               Token asignacion = currentToken;
                OperadorAsignacion();
                ExpresionCompuesta();
           }
@@ -433,134 +469,237 @@ public class SyntacticAnalyzer {
      private void OperadorAsignacion() throws SyntacticException {
           match(TokenId.assignment);
      }
-     private void ExpresionCompuesta() throws SyntacticException {
-          ExpresionBasica();
-          ExpresionCompuestaFinal();
+     private NodoExpresion ExpresionCompuesta() throws SyntacticException {
+          NodoExpresion expresionIzq = ExpresionBasica();
+          return ExpresionCompuestaFinal(expresionIzq);
      }
-     private void ExpresionCompuestaFinal() throws SyntacticException {
+     private NodoExpresion ExpresionCompuestaFinal(NodoExpresion expIzq) throws SyntacticException {
           if(Firsts.isFirst("OperadorBinario", currentToken)){
-               OperadorBinario();
-               ExpresionBasica();
-               ExpresionCompuestaFinal();
+               NodoExpresionBinaria expBin = OperadorBinario();
+               NodoExpresion expDer = ExpresionBasica();
+               expBin.setIzquierda(expIzq);
+               expBin.setDerecha(expDer);
+               return ExpresionCompuestaFinal(expBin);
           } else if (currentToken.getTokenId().equals(TokenId.op_ternary)) {
                match(TokenId.op_ternary);
                Expresion();
                match(TokenId.punt_colon);
                Expresion();
           }
+          return expIzq;
      }
-     private void OperadorBinario() throws SyntacticException {
+     private NodoExpresionBinaria OperadorBinario() throws SyntacticException {
+          Token tokenOp = currentToken;
+          NodoExpresionBinaria operadorBinario = new NodoExpresionBinaria(tokenOp);
           switch (currentToken.getTokenId().toString()){
-               case "op_or" -> match(TokenId.op_or);
-               case "op_and" -> match(TokenId.op_and);
-               case "op_equal" -> match(TokenId.op_equal);
-               case "op_notEqual" -> match(TokenId.op_notEqual);
-               case "op_less" -> match(TokenId.op_less);
-               case "op_greater" -> match(TokenId.op_greater);
-               case "op_lessOrEqual" -> match(TokenId.op_lessOrEqual);
-               case "op_greaterOrEqual" -> match(TokenId.op_greaterOrEqual);
-               case "op_plus" -> match(TokenId.op_plus);
-               case "op_minus" -> match(TokenId.op_minus);
-               case "op_multiplication" -> match(TokenId.op_multiplication);
-               case "op_division" -> match(TokenId.op_division);
-               case "op_module" -> match(TokenId.op_module);
+               case "op_or" -> {
+                    match(TokenId.op_or);
+                    return operadorBinario;
+               }
+               case "op_and" -> {
+                    match(TokenId.op_and);
+                    return operadorBinario;
+               }
+               case "op_equal" -> {
+                    match(TokenId.op_equal);
+                    return operadorBinario;
+               }
+               case "op_notEqual" -> {
+                    match(TokenId.op_notEqual);
+                    return operadorBinario;
+               }
+               case "op_less" -> {
+                    match(TokenId.op_less);
+                    return operadorBinario;
+               }
+               case "op_greater" -> {
+                    match(TokenId.op_greater);
+                    return operadorBinario;
+               }
+               case "op_lessOrEqual" -> {
+                    match(TokenId.op_lessOrEqual);
+                    return operadorBinario;
+               }
+               case "op_greaterOrEqual" -> {
+                    match(TokenId.op_greaterOrEqual);
+                    return operadorBinario;
+               }
+               case "op_plus" -> {
+                    match(TokenId.op_plus);
+                    return operadorBinario;
+               }
+               case "op_minus" -> {
+                    match(TokenId.op_minus);
+                    return operadorBinario;
+               }
+               case "op_multiplication" -> {
+                    match(TokenId.op_multiplication);
+                    return operadorBinario;
+               }
+               case "op_division" -> {
+                    match(TokenId.op_division);
+                    return operadorBinario;
+               }
+               case "op_module" -> {
+                    match(TokenId.op_module);
+                    return operadorBinario;
+               }
                default -> throw new SyntacticException(currentToken.getLexeme(), "OperadorBinario", lexicalAnalyzer.getLineNumber());
           }
      }
-     private void ExpresionBasica() throws SyntacticException {
+     private NodoExpresion ExpresionBasica() throws SyntacticException {
           if(Firsts.isFirst("OperadorUnario", currentToken)){
-               OperadorUnario();
-               Operando();
+               Token operador = OperadorUnario();
+               NodoOperando operando = Operando();
+               return new NodoExpresionUnaria(operador, operando);
           } else if (Firsts.isFirst("Operando", currentToken)) {
-               Operando();
+               return Operando();
           } else {
                throw new SyntacticException(currentToken.getLexeme(), "ExpresionBasica", lexicalAnalyzer.getLineNumber());
           }
      }
-     private void OperadorUnario() throws SyntacticException {
+     private Token OperadorUnario() throws SyntacticException {
             switch (currentToken.getTokenId().toString()){
-                 case "op_plus" -> match(TokenId.op_plus);
-                 case "increment" -> match(TokenId.increment);
-                 case "op_minus" -> match(TokenId.op_minus);
-                 case "decrement" -> match(TokenId.decrement);
-                 case "op_not" -> match(TokenId.op_not);
+                 case "op_plus" -> {
+                      Token plusToken = currentToken;
+                      match(TokenId.op_plus);
+                      return plusToken;
+                 }
+                 case "increment" -> {
+                      Token incrementToken = currentToken;
+                      match(TokenId.increment);
+                      return incrementToken;
+                 }
+                 case "op_minus" -> {
+                      Token minusToken = currentToken;
+                      match(TokenId.op_minus);
+                      return minusToken;
+                 }
+                 case "decrement" -> {
+                      Token decrementToken = currentToken;
+                      match(TokenId.decrement);
+                      return decrementToken;
+                 }
+                 case "op_not" -> {
+                      Token notToken = currentToken;
+                      match(TokenId.op_not);
+                      return notToken;
+                 }
                  default -> throw new SyntacticException(currentToken.getLexeme(), "OperadorUnario", lexicalAnalyzer.getLineNumber());
             }
      }
-     private void Operando() throws SyntacticException {
+     private NodoOperando Operando() throws SyntacticException {
           if(Firsts.isFirst("Primitivo", currentToken)){
-                 Primitivo();
+                 return Primitivo();
           } else if (Firsts.isFirst("Referencia", currentToken)) {
-                 Referencia();
+                 return Referencia();
           } else {
                  throw new SyntacticException(currentToken.getLexeme(), "Operando", lexicalAnalyzer.getLineNumber());
           }
      }
-     private void Primitivo() throws SyntacticException {
+     private NodoLiteral Primitivo() throws SyntacticException {
           switch (currentToken.getTokenId().toString()){
-               case "kw_true" -> match(TokenId.kw_true);
-               case "kw_false" -> match(TokenId.kw_false);
-               case "lit_int" -> match(TokenId.lit_int);
-               case "lit_char" -> match(TokenId.lit_char);
-               case "kw_null" -> match(TokenId.kw_null);
+               case "kw_true" -> {
+                    Token trueToken = currentToken;
+                    match(TokenId.kw_true);
+                    return new NodoBoolean(trueToken);
+               }
+               case "kw_false" -> {
+                    Token falseToken = currentToken;
+                    match(TokenId.kw_false);
+                    return new NodoBoolean(falseToken);
+               }
+               case "lit_int" -> {
+                    Token intToken = currentToken;
+                    match(TokenId.lit_int);
+                    return new NodoInt(intToken);
+               }
+               case "lit_char" -> {
+                    Token charToken = currentToken;
+                    match(TokenId.lit_char);
+                    return new NodoChar(charToken);
+               }
+               case "kw_null" -> {
+                    Token nullToken = currentToken;
+                    match(TokenId.kw_null);
+                    return new NodoNull(nullToken);
+               }
                default -> throw new SyntacticException(currentToken.getLexeme(), "Primitivo", lexicalAnalyzer.getLineNumber());
           }
      }
-     private void Referencia() throws SyntacticException {
-          Primario();
-          ReferenciaEncadenada();
+     private NodoAcceso Referencia() throws SyntacticException {
+          NodoAcceso nodoAcceso = Primario();
+          nodoAcceso.setEncadenado(ReferenciaEncadenada());
+          return nodoAcceso;
      }
-     private void ReferenciaEncadenada() throws SyntacticException {
+     private NodoEncadenado ReferenciaEncadenada() throws SyntacticException {
           if (Firsts.isFirst("ReferenciaEncadenada", currentToken)) {
                match(TokenId.punt_dot);
+               Token idToken = currentToken;
                match(TokenId.id_MetVar);
-               ElemEncadenado();
-               ReferenciaEncadenada();
+               //Como separo si es metodo o variable?
+               NodoEncadenado nodoEncadenado = ElemEncadenado(idToken);
+               NodoEncadenado proxNodoEncadenado = ReferenciaEncadenada();
+               nodoEncadenado.setSiguiente(proxNodoEncadenado);
+               return nodoEncadenado;
+          } else {
+               return null;
           }
      }
-     private void Primario() throws SyntacticException {
+     private NodoAcceso Primario() throws SyntacticException {
           if(currentToken.getTokenId().equals(TokenId.kw_this)){
-               match(TokenId.kw_this);
+               return accesoThis(currentToken);
           } else if (currentToken.getTokenId().equals(TokenId.lit_string)) {
-               match(TokenId.lit_string);
+               return litString(currentToken);
           } else if (Firsts.isFirst("AccesoVarMetodo", currentToken)) {
-               AccesoVarMetodo();
+               return AccesoVarMetodo(currentToken);
           } else if (Firsts.isFirst("LlamadaConstructor", currentToken)) {
-               LlamadaConstructor();
+               return LlamadaConstructor(currentToken);
           } else if (Firsts.isFirst("LlamadaMetodoEstatico", currentToken)) {
-               LlamadaMetodoEstatico();
+               return LlamadaMetodoEstatico(currentToken);
           } else if (Firsts.isFirst("ExpresionParentizada", currentToken)) {
-               ExpresionParentizada();
+               return ExpresionParentizada(currentToken);
           } else {
                throw new SyntacticException(currentToken.getLexeme(), "Primario", lexicalAnalyzer.getLineNumber());
           }
      }
-     private void AccesoVarMetodo() throws SyntacticException {
-          match(TokenId.id_MetVar);
-          ArgsPosibles();
+     private NodoAcceso accesoThis(Token token) throws SyntacticException {
+          match(TokenId.kw_this);
+          return new NodoThis(token, Main.TS.getClaseActual().getNombre());
      }
-     private void ArgsPosibles() throws SyntacticException {
+     private NodoAcceso litString(Token token) throws SyntacticException {
+          match(TokenId.lit_string);
+          return new NodoString(token);
+     }
+     private NodoAcceso AccesoVarMetodo(Token token) throws SyntacticException {
+          match(TokenId.id_MetVar);
+          return ArgsPosibles(token);
+     }
+     private NodoAcceso ArgsPosibles(Token token) throws SyntacticException {
           if(Firsts.isFirst("ArgsActuales", currentToken)){
-               ArgsActuales();
+               List<NodoExpresion> parametros = ArgsActuales();
+               return new NodoLlamadaMetodo(token, parametros);
+          } else{
+               return new NodoVarAcceso(token);
           }
      }
-     private void LlamadaConstructor() throws SyntacticException {
+     private NodoAcceso LlamadaConstructor(Token token) throws SyntacticException {
           match(TokenId.kw_new);
           match(TokenId.id_Class);
           ArgsActuales();
      }
-     private void ExpresionParentizada() throws SyntacticException {
+     private NodoAcceso ExpresionParentizada(Token token) throws SyntacticException {
           match(TokenId.punt_openParenthesis);
           Expresion();
           match(TokenId.punt_closeParenthesis);
      }
-     private void LlamadaMetodoEstatico() throws SyntacticException {
+     private NodoAcceso LlamadaMetodoEstatico(Token token) throws SyntacticException {
           match(TokenId.id_Class);
           match(TokenId.punt_dot);
           match(TokenId.id_MetVar);
           ArgsActuales();
      }
-     private void ArgsActuales() throws SyntacticException {
+     private ArrayList<NodoExpresion> ArgsActuales() throws SyntacticException {
           match(TokenId.punt_openParenthesis);
           ListaExpsOpcional();
           match(TokenId.punt_closeParenthesis);
@@ -578,9 +717,13 @@ public class SyntacticAnalyzer {
                ListaExps();
           }
      }
-     private void ElemEncadenado() throws SyntacticException {
+     private NodoEncadenado ElemEncadenado(Token id) throws SyntacticException {
           if(Firsts.isFirst("ArgsActuales", currentToken)){
-               ArgsActuales();
+               ArrayList<NodoExpresion> parametros = ArgsActuales();
+               NodoMetodoLlamadaEncadenada nodoMetodoLlamadaEncadenada = new NodoMetodoLlamadaEncadenada(id);
+               nodoMetodoLlamadaEncadenada.setParametros(parametros);
+               return new NodoMetodoLlamadaEncadenada(id);
           }
+          return null;
      }
 }

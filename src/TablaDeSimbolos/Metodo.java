@@ -1,5 +1,6 @@
 package TablaDeSimbolos;
 
+import TablaDeSimbolos.NodosAST.sentencia.NodoBloque;
 import lexical.Token;
 
 import java.util.HashMap;
@@ -12,6 +13,7 @@ public class Metodo {
     private HashMap<String, Parametro> parametros;
     private Token modificador;
     private boolean tieneBloque;
+    private NodoBloque bloque;
 
     public Metodo(Token nombre, Tipo tipoRetorno, Token modificador) {
         this.modificador = modificador;
@@ -71,5 +73,13 @@ public class Metodo {
 
     public Token getToken() {
         return nombre;
+    }
+
+    public NodoBloque getBloque() {
+        return bloque;
+    }
+
+    public void setBloque(NodoBloque bloque) {
+        this.bloque = bloque;
     }
 }
