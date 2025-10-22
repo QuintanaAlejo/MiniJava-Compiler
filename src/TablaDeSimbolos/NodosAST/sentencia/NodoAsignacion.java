@@ -4,20 +4,22 @@ import TablaDeSimbolos.NodosAST.expresion.NodoExpresion;
 import TablaDeSimbolos.NodosAST.expresion.operandos.NodoAcceso;
 import lexical.Token;
 
-public abstract class NodoAsignacion extends NodoSentencia{
-    private NodoExpresion ladoDerecho;
-    private NodoAcceso ladoIzquierdo;
+public class NodoAsignacion extends NodoSentencia{
+    private Token token;
+    private NodoExpresion expresion;
 
-    public NodoAsignacion(NodoAcceso ladoIzquierdo, NodoExpresion ladoDerecho, Token token) {
-        this.ladoDerecho = ladoDerecho;
-        this.ladoIzquierdo = ladoIzquierdo;
+    public NodoAsignacion(Token token, NodoExpresion expresion) {
+        this.token = token;
+        this.expresion = expresion;
     }
 
-    public void setLadoDerecho(NodoExpresion ladoDerecho) {
-        this.ladoDerecho = ladoDerecho;
+    @Override
+    public void generar() {
+        // Implementar la lógica de generación de código para la asignación
     }
 
-    public void setLadoIzquierdo(NodoAcceso ladoIzquierdo) {
-        this.ladoIzquierdo = ladoIzquierdo;
+    @Override
+    public void chequear() {
+        // Implementar la lógica de chequeo de tipos para la asignación
     }
 }

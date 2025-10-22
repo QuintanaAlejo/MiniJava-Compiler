@@ -9,14 +9,11 @@ import java.util.Map;
 public class NodoBloque extends NodoSentencia{
     private ArrayList<NodoSentencia> sentencias;
     private Map<String, NodoVarLocal> variablesLocales;
-    private boolean chequeado;
-    private boolean generado;
 
     public NodoBloque() {
         this.sentencias = new ArrayList<>();
         this.variablesLocales = new HashMap<>();
-        this.chequeado = false;
-        this.generado = false;
+
     }
 
     public void agregarSentencia(NodoSentencia sentencia) {
@@ -60,12 +57,6 @@ public class NodoBloque extends NodoSentencia{
         }
     }
 
-    @Override
-    public boolean isReturn() { //VER
-        if(!sentencias.isEmpty())
-            return getUltimaSentencia().isReturn();
-        else return false;
-    }
 
     private NodoSentencia getUltimaSentencia(){
         return sentencias.getLast();

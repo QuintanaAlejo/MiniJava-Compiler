@@ -1,5 +1,6 @@
 package TablaDeSimbolos.NodosAST.expresion;
 
+import TablaDeSimbolos.Tipo;
 import lexical.Token;
 
 public class NodoExpresionUnaria extends NodoExpresion{
@@ -20,5 +21,14 @@ public class NodoExpresionUnaria extends NodoExpresion{
         return operando;
     }
 
+    @Override
+    public Tipo chequear() {
+        // Implementación del chequeo semántico para la expresión unaria
+        return null;
+    }
 
+    @Override
+    public void generar() {
+        // Implementación de la generación de código para la expresión unaria
+    }
 }

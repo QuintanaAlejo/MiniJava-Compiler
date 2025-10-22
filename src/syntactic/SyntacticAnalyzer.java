@@ -4,11 +4,9 @@ import Main.Main;
 import TablaDeSimbolos.*;
 import TablaDeSimbolos.NodosAST.encadenado.NodoEncadenado;
 import TablaDeSimbolos.NodosAST.encadenado.NodoMetodoLlamadaEncadenada;
+import TablaDeSimbolos.NodosAST.encadenado.NodoVariableEncadeanda;
 import TablaDeSimbolos.NodosAST.expresion.*;
-import TablaDeSimbolos.NodosAST.expresion.acceso.NodoLlamadaMetodo;
-import TablaDeSimbolos.NodosAST.expresion.acceso.NodoString;
-import TablaDeSimbolos.NodosAST.expresion.acceso.NodoThis;
-import TablaDeSimbolos.NodosAST.expresion.acceso.NodoVarAcceso;
+import TablaDeSimbolos.NodosAST.expresion.acceso.*;
 import TablaDeSimbolos.NodosAST.expresion.literal.NodoBoolean;
 import TablaDeSimbolos.NodosAST.expresion.literal.NodoChar;
 import TablaDeSimbolos.NodosAST.expresion.literal.NodoInt;
@@ -161,7 +159,7 @@ public class SyntacticAnalyzer {
                for(Parametro p : args){
                     Main.TS.getMetodoActual().agregarParametro(p);
                }
-               Main.TS.getMetodoActual().setTieneBloque(BloqueOpcional());
+               BloqueOpcional();
                Main.TS.getClaseActual().agregarMetodo(m);
           } else if (Firsts.isFirst("Tipo", currentToken)) {
                Tipo t = Tipo();
@@ -178,7 +176,7 @@ public class SyntacticAnalyzer {
                for(Parametro p : args){
                     Main.TS.getMetodoActual().agregarParametro(p);
                }
-               Main.TS.getMetodoActual().setTieneBloque(BloqueOpcional());
+               BloqueOpcional();
                Main.TS.getClaseActual().agregarMetodo(m);
           } else {
                throw new SyntacticException(currentToken.getLexeme(), "Miembro", lexicalAnalyzer.getLineNumber());
@@ -215,7 +213,7 @@ public class SyntacticAnalyzer {
                for (Parametro p : args) {
                     Main.TS.getMetodoActual().agregarParametro(p);
                }
-               Main.TS.getMetodoActual().setTieneBloque(BloqueOpcional());
+               BloqueOpcional();
                Main.TS.getClaseActual().agregarMetodo(m);
           } else if (currentToken.getTokenId().equals(TokenId.punt_semicolon)) {
                Atributo a = new Atributo(nombre, t);
@@ -309,13 +307,16 @@ public class SyntacticAnalyzer {
           p = new Parametro(nombre, t);
           return p;
      }
-     private boolean BloqueOpcional() throws SyntacticException {
+     private NodoBloque BloqueOpcional() throws SyntacticException {
           if(Firsts.isFirst("Bloque", currentToken)){
-               Main.TS.getMetodoActual().setBloque(Bloque());
-               return true;
+               NodoBloque bloque = Bloque();
+               Main.TS.getMetodoActual().setBloque(bloque);
+               Main.TS.getMetodoActual().setTieneBloque(true);
+               return bloque;
           } else if (currentToken.getTokenId().equals(TokenId.punt_semicolon)) {
                match(TokenId.punt_semicolon);
-               return false;
+               Main.TS.getMetodoActual().setTieneBloque(false);
+               return new NodoBloqueVacio();
           } else {
                throw new SyntacticException(currentToken.getLexeme(), "BloqueOpcional", lexicalAnalyzer.getLineNumber());
           }
@@ -342,7 +343,7 @@ public class SyntacticAnalyzer {
                match(TokenId.punt_semicolon);
                return new NodoSentenciaVacia();
           } else if(Firsts.isFirst("AsignacionLLamada", currentToken)){
-               NodoAsignacionLlamada nodo = AsignacionLLamada();
+               NodoSentencia nodo = new NodoAsignacion(currentToken, AsignacionLLamada());
                match(TokenId.punt_semicolon);
                return nodo;
           } else if(Firsts.isFirst("VarLocal", currentToken)){
@@ -366,9 +367,8 @@ public class SyntacticAnalyzer {
           }
           return new NodoSentenciaVacia();
      }
-     private NodoAsignacionLlamada AsignacionLLamada() throws SyntacticException {
-          Expresion();
-          return new NodoAsignacionLlamada(); //Ver
+     private NodoExpresion AsignacionLLamada() throws SyntacticException {
+          return Expresion();
      }
      private NodoVarLocal VarLocal() throws SyntacticException {
           match(TokenId.kw_var);
@@ -460,11 +460,13 @@ public class SyntacticAnalyzer {
           return ExpresionExtra(exp);
      }
      private NodoExpresion ExpresionExtra(NodoExpresion exp) throws SyntacticException {
+          NodoExpresion nodoExpresion = null;
           if(Firsts.isFirst("OperadorAsignacion", currentToken)){
                Token asignacion = currentToken;
                OperadorAsignacion();
-               ExpresionCompuesta();
+               return new NodoExpresionAsignacion(exp, ExpresionCompuesta(), asignacion);
           }
+          return exp;
      }
      private void OperadorAsignacion() throws SyntacticException {
           match(TokenId.assignment);
@@ -633,18 +635,21 @@ public class SyntacticAnalyzer {
           return nodoAcceso;
      }
      private NodoEncadenado ReferenciaEncadenada() throws SyntacticException {
+          NodoEncadenado nodoEncadenado = null;
           if (Firsts.isFirst("ReferenciaEncadenada", currentToken)) {
                match(TokenId.punt_dot);
                Token idToken = currentToken;
                match(TokenId.id_MetVar);
-               //Como separo si es metodo o variable?
-               NodoEncadenado nodoEncadenado = ElemEncadenado(idToken);
-               NodoEncadenado proxNodoEncadenado = ReferenciaEncadenada();
-               nodoEncadenado.setSiguiente(proxNodoEncadenado);
-               return nodoEncadenado;
-          } else {
-               return null;
+               List<NodoExpresion> parametros = ElemEncadenado();
+               if(parametros != null){
+                    nodoEncadenado = new NodoMetodoLlamadaEncadenada(idToken);
+                    nodoEncadenado.setSiguiente(ReferenciaEncadenada());
+               } else {
+                    nodoEncadenado = new NodoVariableEncadeanda(idToken);
+                    nodoEncadenado.setSiguiente(ReferenciaEncadenada());
+               }
           }
+          return nodoEncadenado;
      }
      private NodoAcceso Primario() throws SyntacticException {
           if(currentToken.getTokenId().equals(TokenId.kw_this)){
@@ -685,45 +690,58 @@ public class SyntacticAnalyzer {
      }
      private NodoAcceso LlamadaConstructor(Token token) throws SyntacticException {
           match(TokenId.kw_new);
+          Token nombreClase = currentToken;
           match(TokenId.id_Class);
-          ArgsActuales();
+          NodoLlamadaConstructor nodoLlamadaConstructor = new NodoLlamadaConstructor(nombreClase);
+          nodoLlamadaConstructor.setParametros(ArgsActuales());
+          return nodoLlamadaConstructor;
      }
      private NodoAcceso ExpresionParentizada(Token token) throws SyntacticException {
           match(TokenId.punt_openParenthesis);
-          Expresion();
+          NodoExpresion exp = Expresion();
           match(TokenId.punt_closeParenthesis);
+          return new NodoExpresionParentizada(exp);
      }
      private NodoAcceso LlamadaMetodoEstatico(Token token) throws SyntacticException {
+          Token clase = currentToken;
           match(TokenId.id_Class);
           match(TokenId.punt_dot);
+          Token metodo = currentToken;
           match(TokenId.id_MetVar);
-          ArgsActuales();
+          NodoLlamadaMetodoEstatico llamada = new NodoLlamadaMetodoEstatico(clase, metodo);
+          llamada.setParametros(ArgsActuales());
+          return llamada;
      }
-     private ArrayList<NodoExpresion> ArgsActuales() throws SyntacticException {
+     private List<NodoExpresion> ArgsActuales() throws SyntacticException {
           match(TokenId.punt_openParenthesis);
-          ListaExpsOpcional();
+          List<NodoExpresion> parametrosActuales = ListaExpsOpcional();
           match(TokenId.punt_closeParenthesis);
+          return parametrosActuales;
      }
-     private void ListaExpsOpcional() throws SyntacticException {
+     private List<NodoExpresion> ListaExpsOpcional() throws SyntacticException {
+          List<NodoExpresion> parametros = new ArrayList<>();
           if(Firsts.isFirst("Expresion", currentToken)){
-               Expresion();
-               ListaExps();
+               NodoExpresion exp = Expresion();
+               parametros = ListaExps();
+               parametros.add(exp);
           }
+          return parametros;
      }
-     private void ListaExps() throws SyntacticException {
+     private List<NodoExpresion> ListaExps() throws SyntacticException {
+          List<NodoExpresion> parametros = new ArrayList<>();
           if(currentToken.getTokenId().equals(TokenId.punt_coma)){
                match(TokenId.punt_coma);
-               Expresion();
-               ListaExps();
+               NodoExpresion exp = Expresion();
+               parametros = ListaExps();
+               parametros.add(exp);
           }
+          return parametros;
      }
-     private NodoEncadenado ElemEncadenado(Token id) throws SyntacticException {
+     private List<NodoExpresion> ElemEncadenado() throws SyntacticException {
+          List<NodoExpresion> retorno = null;
           if(Firsts.isFirst("ArgsActuales", currentToken)){
-               ArrayList<NodoExpresion> parametros = ArgsActuales();
-               NodoMetodoLlamadaEncadenada nodoMetodoLlamadaEncadenada = new NodoMetodoLlamadaEncadenada(id);
-               nodoMetodoLlamadaEncadenada.setParametros(parametros);
-               return new NodoMetodoLlamadaEncadenada(id);
+               retorno = ArgsActuales();
           }
-          return null;
+          return retorno;
      }
 }

@@ -36,9 +36,4 @@ public class NodoWhile extends NodoSentencia{
         // Implementar generación de código para el nodo while
     }
 
-    @Override
-    public boolean isReturn() {
-        return false; //Implement return
-    }
-
 }

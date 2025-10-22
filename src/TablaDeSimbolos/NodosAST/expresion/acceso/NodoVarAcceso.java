@@ -1,4 +1,30 @@
 package TablaDeSimbolos.NodosAST.expresion.acceso;
 
-public class NodoVarAcceso {
+import TablaDeSimbolos.NodosAST.encadenado.NodoEncadenado;
+import TablaDeSimbolos.NodosAST.expresion.operandos.NodoAcceso;
+import TablaDeSimbolos.Tipo;
+import lexical.Token;
+
+public class NodoVarAcceso extends NodoAcceso {
+    private Token token;
+    private NodoEncadenado encadenado;
+
+    public NodoVarAcceso(Token token) {
+        this.token = token;
+    }
+
+    public void setEncadenado(NodoEncadenado encadenado) {
+        this.encadenado = encadenado;
+    }
+
+    @Override
+    public void generar() {
+        // Lógica para generar código para el nodo de acceso a variable
+    }
+
+    @Override
+    public Tipo chequear() {
+        // Lógica para chequear el tipo del nodo de acceso a variable
+        return null;
+    }
 }

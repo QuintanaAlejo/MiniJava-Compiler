@@ -5,16 +5,17 @@ import TablaDeSimbolos.Parametro;
 import lexical.Token;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class NodoMetodoLlamadaEncadenada extends NodoEncadenado{
-    private ArrayList<NodoExpresion> parametros;
+    private List<NodoExpresion> parametros;
     Token id;
 
     public NodoMetodoLlamadaEncadenada(Token id){
         this.id = id;
     }
 
-    public void setParametros(ArrayList<NodoExpresion> parametros){
+    public void setParametros(List<NodoExpresion> parametros){
         this.parametros = parametros;
     }
 

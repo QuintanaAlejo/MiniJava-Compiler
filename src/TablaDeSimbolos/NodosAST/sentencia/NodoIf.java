@@ -36,10 +36,4 @@ public class NodoIf extends NodoSentencia {
     public void generar() {
         // Implementación de la generación de código para el nodo if
     }
-
-    @Override
-    public boolean isReturn() {
-        //Implement return
-        return true;
-    }
 }

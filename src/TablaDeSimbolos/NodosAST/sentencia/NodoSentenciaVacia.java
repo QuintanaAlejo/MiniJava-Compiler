@@ -17,8 +17,4 @@ public class NodoSentenciaVacia extends NodoSentencia{
         // No hace nada
     }
 
-    @Override
-    public boolean isReturn() {
-        return false;
-    }
 }

@@ -22,9 +22,4 @@ public class NodoVarLocal extends NodoSentencia{
         // Implementar
     }
 
-    @Override
-    public boolean isReturn() {
-        return false;
-    }
-
 }

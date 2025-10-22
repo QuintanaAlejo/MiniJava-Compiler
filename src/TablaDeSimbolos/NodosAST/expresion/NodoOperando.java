@@ -1,4 +1,4 @@
 package TablaDeSimbolos.NodosAST.expresion;
 
-public class NodoOperando extends NodoExpresion{
+public abstract class NodoOperando extends NodoExpresion{
 }

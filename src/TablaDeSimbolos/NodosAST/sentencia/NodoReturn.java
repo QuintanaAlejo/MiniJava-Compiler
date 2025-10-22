@@ -19,8 +19,4 @@ public class NodoReturn extends NodoSentencia{
         // Implementación de la generación de código para el nodo return
     }
 
-    @Override
-    public boolean isReturn() {
-        return true;
-    }
 }
