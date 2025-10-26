@@ -1,11 +1,11 @@
 package TablaDeSimbolos;
 
 import TablaDeSimbolos.NodosAST.sentencia.NodoBloque;
+import TablaDeSimbolos.Tipos.Tipo;
 import lexical.Token;
 
 import java.util.HashMap;
 import exceptions.SemanticException;
-import static Main.Main.TS;
 
 public class Metodo {
     private Token nombre;
@@ -60,6 +60,13 @@ public class Metodo {
         //Los parámetros están bien declarados?
         for (Parametro p : parametros.values()) {
             p.estaBienDeclarado();
+        }
+    }
+
+    public void chequear() throws SemanticException{
+        //Chequear el bloque si tiene
+        if (tieneBloque && bloque != null){
+            bloque.chequear();
         }
     }
 

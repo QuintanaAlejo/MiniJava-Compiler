@@ -1,7 +1,8 @@
 package TablaDeSimbolos.NodosAST.expresion.literal;
 
 import TablaDeSimbolos.NodosAST.expresion.operandos.NodoLiteral;
-import TablaDeSimbolos.Tipo;
+import TablaDeSimbolos.Tipos.Tipo;
+import TablaDeSimbolos.Tipos.TipoChar;
 import lexical.Token;
 
 public class NodoChar extends NodoLiteral {
@@ -17,12 +18,7 @@ public class NodoChar extends NodoLiteral {
 
     @Override
     public Tipo chequear() {
-        //Implementar
-        return null;
+        return new TipoChar();
     }
 
-    @Override
-    public void generar() {
-        //Implementar
-    }
 }

@@ -13,10 +13,4 @@ public class NodoReturn extends NodoSentencia{
     public void chequear() {
         // Implementación del chequeo semántico para el nodo return
     }
-
-    @Override
-    public void generar() {
-        // Implementación de la generación de código para el nodo return
-    }
-
 }

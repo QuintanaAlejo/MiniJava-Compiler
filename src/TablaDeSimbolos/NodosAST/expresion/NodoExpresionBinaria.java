@@ -1,9 +1,13 @@
 package TablaDeSimbolos.NodosAST.expresion;
 
-import TablaDeSimbolos.Tipo;
+import TablaDeSimbolos.Tipos.Tipo;
+import TablaDeSimbolos.Tipos.TipoBooleano;
+import TablaDeSimbolos.Tipos.TipoInt;
+import exceptions.SemanticException;
 import lexical.Token;
+import lexical.TokenId;
 
-public class NodoExpresionBinaria extends NodoExpresion{
+public class NodoExpresionBinaria extends NodoExpresionCompuesta{
     private NodoExpresion izquierda;
     private NodoExpresion derecha;
     private Token operador;
@@ -33,14 +37,55 @@ public class NodoExpresionBinaria extends NodoExpresion{
         return operador;
     }
 
-    @Override
-    public Tipo chequear() {
-        // Implementar chequeo semántico para la expresión binaria
-        return null;
+
+    private boolean sonAmbosEnteros(Tipo tipoIzquierda, Tipo tipoDerecha) {
+        return tipoIzquierda.esCompatibleCon(new TipoInt()) && tipoIzquierda.esCompatibleCon(tipoDerecha);
+    }
+
+    private boolean sonAmbosBooleanos(Tipo tipoIzquierda, Tipo tipoDerecha) {
+        return tipoIzquierda.esCompatibleCon(new TipoBooleano()) && tipoIzquierda.esCompatibleCon(tipoDerecha);
     }
 
     @Override
-    public void generar() {
-        // Implementar generación de código para la expresión binaria
+    public Tipo chequear() throws SemanticException {
+        Tipo tipoIzquierda = izquierda.chequear();
+        Tipo tipoDerecha = derecha.chequear();
+
+        switch (operador.getTokenId()) {
+            case op_plus:
+            case op_minus:
+            case op_multiplication:
+            case op_division:
+            case op_module:
+                if (sonAmbosEnteros(tipoIzquierda, tipoDerecha)) {
+                    return new TipoInt();
+                } else {
+                    throw new SemanticException(operador.getLexeme(), "Tipos incompatibles para el operador " + operador.getLexeme(), operador.getLinea());
+                }
+            case op_greater:
+            case op_less:
+            case op_greaterOrEqual:
+            case op_lessOrEqual:
+                if (sonAmbosEnteros(tipoIzquierda, tipoDerecha)) {
+                    return new TipoBooleano();
+                } else {
+                    throw new SemanticException(operador.getLexeme(), "Tipos incompatibles para el operador " + operador.getLexeme(), operador.getLinea());
+                }
+            case op_and:
+            case op_or:
+                if (sonAmbosBooleanos(tipoIzquierda, tipoDerecha)) {
+                    return new TipoBooleano();
+                } else {
+                    throw new SemanticException(operador.getLexeme(), "Tipos incompatibles para el operador " + operador.getLexeme(), operador.getLinea());
+                }
+            case op_equal:
+            case op_notEqual:
+                if (tipoIzquierda.esCompatibleCon(tipoDerecha)) {
+                    return new TipoBooleano();
+                } else {
+                    throw new SemanticException(operador.getLexeme(), "Los tipos " + tipoIzquierda.getNombre() + " y " + tipoDerecha.getNombre() + " no son compatibles para el operador " + operador.getLexeme(), operador.getLinea());
+                }
+        }
+        throw new SemanticException(operador.getLexeme(), "Expresion binaria invalida", operador.getLinea());
     }
 }

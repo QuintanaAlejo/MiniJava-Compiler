@@ -1,5 +1,6 @@
 package TablaDeSimbolos;
 
+import TablaDeSimbolos.NodosAST.sentencia.NodoBloque;
 import lexical.Token;
 import java.util.HashMap;
 import exceptions.SemanticException;
@@ -7,6 +8,7 @@ import exceptions.SemanticException;
 public class Constructor {
     private Token token;
     private HashMap<String, Parametro> parametros;
+    private NodoBloque bloque;
 
     public Constructor (Token token) {
         this.token = token;
@@ -23,12 +25,22 @@ public class Constructor {
         }
     }
 
+    public void chequear() throws SemanticException {
+        if (this.bloque != null) {
+            this.bloque.chequear();
+        }
+    }
+
     public String getNombre() {
         return token.getLexeme();
     }
 
     public Token getToken() {
         return token;
+    }
+
+    public void setBloque(NodoBloque bloque) {
+        this.bloque = bloque;
     }
 
     public void agregarParametro(Parametro parametro) throws SemanticException {

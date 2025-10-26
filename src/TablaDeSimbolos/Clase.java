@@ -223,4 +223,12 @@ public class Clase {
         return false;
     }
 
+    public void chequear() throws SemanticException {
+        if (constructor != null){
+            constructor.chequear();
+        }
+        for (Metodo m : metodos.values()) {
+            m.chequear();
+        }
+    }
 }

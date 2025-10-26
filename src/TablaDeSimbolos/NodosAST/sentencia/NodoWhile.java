@@ -1,6 +1,9 @@
 package TablaDeSimbolos.NodosAST.sentencia;
 
 import TablaDeSimbolos.NodosAST.expresion.NodoExpresion;
+import TablaDeSimbolos.Tipos.Tipo;
+import TablaDeSimbolos.Tipos.TipoBooleano;
+import exceptions.SemanticException;
 import lexical.Token;
 
 public class NodoWhile extends NodoSentencia{
@@ -27,13 +30,12 @@ public class NodoWhile extends NodoSentencia{
     }
 
     @Override
-    public void chequear() {
-        // Implementar chequeo semántico para el nodo while
+    public void chequear() throws SemanticException {
+        Tipo tipoCondicion = condicion.chequear();
+        if (tipoCondicion != null && tipoCondicion.esCompatibleCon(new TipoBooleano())){
+            cuerpo.chequear();
+        } else {
+            throw new SemanticException(tokenWhile.getLexeme(), "La condición del while debe ser de tipo booleano.", tokenWhile.getLinea());
+        }
     }
-
-    @Override
-    public void generar() {
-        // Implementar generación de código para el nodo while
-    }
-
 }

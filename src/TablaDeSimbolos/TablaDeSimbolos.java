@@ -11,6 +11,8 @@ y sienta las bases para etapas posteriores como la verificación de sentencias o
  */
 
 import TablaDeSimbolos.NodosAST.sentencia.NodoBloque;
+import TablaDeSimbolos.Tipos.TipoPrimitivo;
+import TablaDeSimbolos.Tipos.TipoReferencia;
 import exceptions.SemanticException;
 import lexical.Token;
 import lexical.TokenId;
@@ -26,6 +28,7 @@ public class TablaDeSimbolos {
     private Clase claseActual;
     private Metodo metodoActual;
     private Constructor constructorActual;
+    private NodoBloque bloqueActual;
 
     public TablaDeSimbolos() {
         this.clases = new HashMap<String, Clase>();
@@ -122,6 +125,12 @@ public class TablaDeSimbolos {
         }
     }
 
+    public void chequear() throws SemanticException {
+        for (Clase c : clases.values()) {
+            c.chequear();
+        }
+    }
+
     public boolean existeClase(String nombre) {
         for (String c : clases.keySet()) {
             if (c.equals(nombre)) {
@@ -157,6 +166,10 @@ public class TablaDeSimbolos {
         return this.clases.get(nombre);
     }
 
+    public HashMap<String, Clase> getClases() {
+        return clases;
+    }
+
     public void insertarClase(Clase clase) throws SemanticException {
         if (this.clases.containsKey(clase.getNombre())) {
             throw new SemanticException(clase.getNombre(), "Clase repetida: " + clase.getNombre(), clase.getToken().getLinea());
@@ -165,18 +178,11 @@ public class TablaDeSimbolos {
         }
     }
 
-    public void apilarBloque(NodoBloque bloque){
-        pilaDeBloques.addFirst(bloque); // Como un push
+    public void setBloqueActual(NodoBloque bloqueActual) {
+        this.bloqueActual = bloqueActual;
     }
 
-    public void desapilarBloqueActual(){
-        pilaDeBloques.removeFirst(); // Como un pop
-    }
-
-    public NodoBloque getBloqueActual(){
-        if(pilaDeBloques.isEmpty())
-            return null;
-        else
-            return pilaDeBloques.getFirst(); //Retorno el ultimo bloque agregado, funciona como una pila
+    public NodoBloque getBloqueActual() {
+        return bloqueActual;
     }
 }

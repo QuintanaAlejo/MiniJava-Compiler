@@ -2,16 +2,14 @@ package TablaDeSimbolos.NodosAST.expresion.operandos;
 
 import TablaDeSimbolos.NodosAST.encadenado.NodoEncadenado;
 import TablaDeSimbolos.NodosAST.expresion.NodoOperando;
-import TablaDeSimbolos.Tipo;
+import TablaDeSimbolos.Tipos.Tipo;
+import exceptions.SemanticException;
 
 public abstract class NodoAcceso extends NodoOperando {
     private NodoEncadenado encadenado;
 
-    public abstract Tipo chequear();
-    public abstract void generar();
-
+    public abstract Tipo chequear() throws SemanticException;
     public void setEncadenado(NodoEncadenado encadenado){
         this.encadenado = encadenado;
     }
-
 }

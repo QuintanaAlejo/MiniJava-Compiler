@@ -1,10 +1,13 @@
 package TablaDeSimbolos.NodosAST.expresion.acceso;
 
+import Main.Main;
 import TablaDeSimbolos.Clase;
 import TablaDeSimbolos.NodosAST.encadenado.NodoEncadenado;
 import TablaDeSimbolos.NodosAST.expresion.NodoExpresion;
 import TablaDeSimbolos.NodosAST.expresion.operandos.NodoAcceso;
-import TablaDeSimbolos.Tipo;
+import TablaDeSimbolos.Tipos.Tipo;
+import TablaDeSimbolos.Tipos.TipoReferencia;
+import exceptions.SemanticException;
 import lexical.Token;
 
 import java.util.List;
@@ -17,6 +20,7 @@ public class NodoLlamadaConstructor extends NodoAcceso {
 
     public NodoLlamadaConstructor(Token token) {
         this.token = token;
+        this.clase = Main.TS.getClaseActual();
     }
 
     public void setParametros(List<NodoExpresion> parametros) {
@@ -32,13 +36,15 @@ public class NodoLlamadaConstructor extends NodoAcceso {
     }
 
     @Override
-    public void generar() {
-        // Implementar la lógica de generación de código para la llamada al constructor
-    }
+    public Tipo chequear() throws SemanticException {
+        if (!Main.TS.getClases().containsKey(clase.getNombre())){
+            throw new SemanticException(clase.getNombre(), "Clase inexistente", token.getLinea());
+        }
 
-    @Override
-    public Tipo chequear() {
-        // Implementar la lógica de chequeo de tipos para la llamada al constructor
-        return null;
+        if(encadenado==null){
+            return new TipoReferencia(clase.getToken());
+        } else {
+            return encadenado.chequear(new TipoReferencia(clase.getToken()));
+        }
     }
 }

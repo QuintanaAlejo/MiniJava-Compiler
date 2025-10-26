@@ -1,15 +1,13 @@
 package TablaDeSimbolos.NodosAST.expresion;
 
-import TablaDeSimbolos.Tipo;
+import TablaDeSimbolos.Tipos.Tipo;
+import TablaDeSimbolos.Tipos.TipoPrimitivo;
+import lexical.Token;
+import lexical.TokenId;
 
 public class NodoExpresionVacia extends NodoExpresion{
     @Override
     public Tipo chequear() {
-        return null;
-    }
-
-    @Override
-    public void generar() {
-
+        return new TipoPrimitivo(new Token(TokenId.universal, "", 0));
     }
 }

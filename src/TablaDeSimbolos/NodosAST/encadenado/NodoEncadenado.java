@@ -1,13 +1,8 @@
 package TablaDeSimbolos.NodosAST.encadenado;
 
-public class NodoEncadenado {
-    private NodoEncadenado siguiente;
+import TablaDeSimbolos.Tipos.Tipo;
 
-    public NodoEncadenado(){
-
-    }
-
-    public void setSiguiente(NodoEncadenado siguiente){
-        this.siguiente = siguiente;
-    }
+public abstract class NodoEncadenado {
+    public abstract Tipo chequear(Tipo tipoAnterior);
+    public abstract void setSiguiente(NodoEncadenado siguiente);
 }

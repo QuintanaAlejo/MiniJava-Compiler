@@ -1,9 +1,13 @@
 package TablaDeSimbolos.NodosAST.expresion.acceso;
 
+import Main.Main;
 import TablaDeSimbolos.NodosAST.encadenado.NodoEncadenado;
 import TablaDeSimbolos.NodosAST.expresion.operandos.NodoAcceso;
-import TablaDeSimbolos.Tipo;
+import TablaDeSimbolos.Tipos.Tipo;
+import TablaDeSimbolos.Tipos.TipoReferencia;
+import exceptions.SemanticException;
 import lexical.Token;
+import lexical.TokenId;
 
 public class NodoThis extends NodoAcceso {
     private Token token;
@@ -24,13 +28,15 @@ public class NodoThis extends NodoAcceso {
     }
 
     @Override
-    public void generar() {
-        // Implementar la lógica de generación de código para 'this'
-    }
-
-    @Override
-    public Tipo chequear() {
-        // Implementar la lógica de chequeo de tipos para 'this'
-        return null;
+    public Tipo chequear() throws SemanticException {
+        if (Main.TS.getMetodoActual().getModificador().getTokenId() == TokenId.kw_static){
+            throw new SemanticException(token.getLexeme(), "No es posible usar 'this' en un metodo estatico", token.getLinea());
+        }
+        Tipo tipoThis = new TipoReferencia(Main.TS.getClaseActual().getToken());
+        if (encadenadoOpcional == null) {
+            return tipoThis;
+        } else {
+            return encadenadoOpcional.chequear(tipoThis);
+        }
     }
 }

@@ -2,7 +2,7 @@ package TablaDeSimbolos.NodosAST.expresion.acceso;
 
 import TablaDeSimbolos.NodosAST.encadenado.NodoEncadenado;
 import TablaDeSimbolos.NodosAST.expresion.operandos.NodoAcceso;
-import TablaDeSimbolos.Tipo;
+import TablaDeSimbolos.Tipos.Tipo;
 import lexical.Token;
 
 public class NodoString extends NodoAcceso {
@@ -15,11 +15,6 @@ public class NodoString extends NodoAcceso {
 
     public void setEncadenado(NodoEncadenado encadenado) {
         this.encadenado = encadenado;
-    }
-
-    @Override
-    public void generar() {
-        // Lógica para generar código para el nodo String
     }
 
     @Override

@@ -34,6 +34,7 @@ public enum TokenId {
     lit_int,
     lit_char,
     lit_string,
+    lit_boolean,
 
     // Punctuation Tokens
     punt_openParenthesis,
@@ -66,6 +67,9 @@ public enum TokenId {
     assignment,
     increment,
     decrement,
+
+    // Universal para casos especiales
+    universal,
 
     // End of File Token
     EOF,

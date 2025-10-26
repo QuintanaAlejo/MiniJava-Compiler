@@ -3,7 +3,8 @@ package TablaDeSimbolos.NodosAST.expresion.acceso;
 import TablaDeSimbolos.NodosAST.encadenado.NodoEncadenado;
 import TablaDeSimbolos.NodosAST.expresion.NodoExpresion;
 import TablaDeSimbolos.NodosAST.expresion.operandos.NodoAcceso;
-import TablaDeSimbolos.Tipo;
+import TablaDeSimbolos.Tipos.Tipo;
+import exceptions.SemanticException;
 
 public class NodoExpresionParentizada extends NodoAcceso {
     private NodoExpresion expresion;
@@ -18,13 +19,12 @@ public class NodoExpresionParentizada extends NodoAcceso {
     }
 
     @Override
-    public void generar() {
-        // Lógica para generar código para el nodo de expresión parentizada
-    }
-
-    @Override
-    public Tipo chequear() {
-        // Lógica para chequear el tipo del nodo de expresión parentizada
-        return null;
+    public Tipo chequear() throws SemanticException {
+        if (encadenado == null) {
+            return expresion.chequear();
+        } else {
+            Tipo tipoExpresion = expresion.chequear();
+            return encadenado.chequear(tipoExpresion);
+        }
     }
 }

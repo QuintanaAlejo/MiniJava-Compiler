@@ -1,12 +1,13 @@
-package TablaDeSimbolos;
+package TablaDeSimbolos.Tipos;
 
 import exceptions.SemanticException;
 import lexical.Token;
 
 public interface Tipo {
-    Token getToken();
+    Token getTokenPropio();
     String getNombre();
     void estaBienDeclarado() throws SemanticException;
+    public boolean esCompatibleCon(Tipo otroTipo);
     //void setToken(Token token);
     //void setNombre(String nombre);
 }

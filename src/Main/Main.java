@@ -40,6 +40,7 @@ public class Main {
             try {
                 TS.estaBienDeclarada();
                 TS.consolidar();
+                TS.chequear();
             } catch (SemanticException e) {
                 e.printError();
                 error = true;

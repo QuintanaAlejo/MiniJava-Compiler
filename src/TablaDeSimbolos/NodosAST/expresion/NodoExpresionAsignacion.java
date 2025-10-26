@@ -1,10 +1,10 @@
 package TablaDeSimbolos.NodosAST.expresion;
 
-import TablaDeSimbolos.NodosAST.sentencia.NodoAsignacion;
-import TablaDeSimbolos.Tipo;
+import TablaDeSimbolos.Tipos.Tipo;
+import exceptions.SemanticException;
 import lexical.Token;
 
-public class NodoExpresionAsignacion extends NodoExpresion{
+public class NodoExpresionAsignacion extends NodoExpresionCompuesta{
     private NodoExpresion izquierda;
     private NodoExpresion derecha;
     private Token token;
@@ -16,13 +16,16 @@ public class NodoExpresionAsignacion extends NodoExpresion{
     }
 
     @Override
-    public Tipo chequear() {
-        // Implementar la lógica de chequeo de tipos para la asignación
-        return null;
-    }
+    public Tipo chequear() throws SemanticException {
+        Tipo destino = izquierda.chequear();
+        Tipo origen = derecha.chequear();
 
-    @Override
-    public void generar() {
-        // Implementar la lógica de generación de código para la asignación
+        if (destino.esCompatibleCon(origen)) {
+            return destino;
+        } else {
+            throw new SemanticException(token.getLexeme(), "Asignacion invalida: no se puede asignar un valor de tipo " + origen.getNombre() + " a una variable de tipo " + destino.getNombre(), token.getLinea());
+        }
+
+        //TODO: COMO CHEQUEO ENCADENADOS?
     }
 }

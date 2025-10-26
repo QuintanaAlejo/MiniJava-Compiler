@@ -1,7 +1,8 @@
 package TablaDeSimbolos.NodosAST.expresion.literal;
 
 import TablaDeSimbolos.NodosAST.expresion.operandos.NodoLiteral;
-import TablaDeSimbolos.Tipo;
+import TablaDeSimbolos.Tipos.Tipo;
+import TablaDeSimbolos.Tipos.TipoBooleano;
 import lexical.Token;
 
 public class NodoBoolean extends NodoLiteral {
@@ -17,13 +18,7 @@ public class NodoBoolean extends NodoLiteral {
 
     @Override
     public Tipo chequear() {
-        //Implementar
-        return null;
-    }
-
-    @Override
-    public void generar() {
-        //Implementar
+        return new TipoBooleano();
     }
 
 }

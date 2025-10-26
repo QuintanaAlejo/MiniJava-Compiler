@@ -3,7 +3,7 @@ package TablaDeSimbolos.NodosAST.expresion.acceso;
 import TablaDeSimbolos.NodosAST.encadenado.NodoEncadenado;
 import TablaDeSimbolos.NodosAST.expresion.NodoExpresion;
 import TablaDeSimbolos.NodosAST.expresion.operandos.NodoAcceso;
-import TablaDeSimbolos.Tipo;
+import TablaDeSimbolos.Tipos.Tipo;
 import lexical.Token;
 
 import java.util.List;
@@ -25,11 +25,6 @@ public class NodoLlamadaMetodoEstatico extends NodoAcceso {
 
     public void setEncadenado(NodoEncadenado encadenado) {
         this.encadenado = encadenado;
-    }
-
-    @Override
-    public void generar() {
-        // Lógica para generar código para la llamada a metodo estático
     }
 
     @Override

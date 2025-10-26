@@ -1,5 +1,6 @@
 package TablaDeSimbolos;
 
+import TablaDeSimbolos.Tipos.Tipo;
 import lexical.Token;
 import exceptions.SemanticException;
 
@@ -27,9 +28,9 @@ public class Parametro {
     }
 
     public void estaBienDeclarado() throws SemanticException {
-        if (tipo.getToken().getTokenId().toString().equals("id_Class")) {
-            if (!TS.existeClase(tipo.getToken().getLexeme())) {
-                throw new SemanticException(tipo.getToken().getLexeme(), "El parámetro " + nombre.getLexeme() + " es de tipo " + tipo.getToken().getLexeme() + " y la clase " + tipo.getToken().getLexeme() + " no existe.", nombre.getLinea());
+        if (tipo.getTokenPropio().getTokenId().toString().equals("id_Class")) {
+            if (!TS.existeClase(tipo.getTokenPropio().getLexeme())) {
+                throw new SemanticException(tipo.getTokenPropio().getLexeme(), "El parámetro " + nombre.getLexeme() + " es de tipo " + tipo.getTokenPropio().getLexeme() + " y la clase " + tipo.getTokenPropio().getLexeme() + " no existe.", nombre.getLinea());
             }
         }
     }

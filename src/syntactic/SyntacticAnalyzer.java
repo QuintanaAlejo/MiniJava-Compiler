@@ -14,6 +14,9 @@ import TablaDeSimbolos.NodosAST.expresion.literal.NodoNull;
 import TablaDeSimbolos.NodosAST.expresion.operandos.NodoAcceso;
 import TablaDeSimbolos.NodosAST.expresion.operandos.NodoLiteral;
 import TablaDeSimbolos.NodosAST.sentencia.*;
+import TablaDeSimbolos.Tipos.Tipo;
+import TablaDeSimbolos.Tipos.TipoPrimitivo;
+import TablaDeSimbolos.Tipos.TipoReferencia;
 import exceptions.*;
 import lexical.*;
 
@@ -233,7 +236,7 @@ public class SyntacticAnalyzer {
           for (Parametro p : args) {
                Main.TS.getConstructorActual().agregarParametro(p);
           }
-          Bloque();
+          c.setBloque(Bloque());
           Main.TS.getClaseActual().agregarConstructor(c);
      }
      private Tipo TipoMetodo() throws SyntacticException {
@@ -334,7 +337,7 @@ public class SyntacticAnalyzer {
           ArrayList<NodoSentencia> sentencias = new ArrayList<>();
           if(Firsts.isFirst("Sentencia", currentToken)){
                sentencias.add(Sentencia());
-               ListaSentencias();
+               sentencias.addAll(ListaSentencias());
           }
           return sentencias;
      }
@@ -390,13 +393,14 @@ public class SyntacticAnalyzer {
           }
      }
      private NodoIf If() throws SyntacticException {
+          Token tokenIf = currentToken;
           match(TokenId.kw_if);
           match(TokenId.punt_openParenthesis);
           NodoExpresion expresion = Expresion();
           match(TokenId.punt_closeParenthesis);
           NodoSentencia sentencia = Sentencia();
           NodoSentencia senElse = Else();
-          return new NodoIf(expresion, sentencia, senElse);
+          return new NodoIf(tokenIf, expresion, sentencia, senElse);
      }
      private NodoSentencia Else() throws SyntacticException {
           if(currentToken.getTokenId().equals(TokenId.kw_else)){
@@ -460,13 +464,12 @@ public class SyntacticAnalyzer {
           return ExpresionExtra(exp);
      }
      private NodoExpresion ExpresionExtra(NodoExpresion exp) throws SyntacticException {
-          NodoExpresion nodoExpresion = null;
-          if(Firsts.isFirst("OperadorAsignacion", currentToken)){
+         if(Firsts.isFirst("OperadorAsignacion", currentToken)){
                Token asignacion = currentToken;
                OperadorAsignacion();
                return new NodoExpresionAsignacion(exp, ExpresionCompuesta(), asignacion);
-          }
-          return exp;
+         }
+         return exp;
      }
      private void OperadorAsignacion() throws SyntacticException {
           match(TokenId.assignment);
