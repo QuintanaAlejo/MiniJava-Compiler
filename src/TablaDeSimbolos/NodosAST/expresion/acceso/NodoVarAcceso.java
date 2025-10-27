@@ -3,9 +3,11 @@ package TablaDeSimbolos.NodosAST.expresion.acceso;
 import Main.Main;
 import TablaDeSimbolos.NodosAST.encadenado.NodoEncadenado;
 import TablaDeSimbolos.NodosAST.expresion.operandos.NodoAcceso;
+import TablaDeSimbolos.NodosAST.sentencia.NodoBloque;
 import TablaDeSimbolos.Tipos.Tipo;
 import exceptions.SemanticException;
 import lexical.Token;
+import lexical.TokenId;
 
 public class NodoVarAcceso extends NodoAcceso {
     private Token token;
@@ -20,6 +22,19 @@ public class NodoVarAcceso extends NodoAcceso {
         this.encadenado = encadenado;
     }
 
+    public void chequearVariablesDelPadre() throws SemanticException {
+        if (Main.TS.getBloqueActual().getVariablesLocales().get(token.getLexeme()) != null) {
+            tipoVar =  Main.TS.getBloqueActual().getVariablesLocales().get(token.getLexeme()).getTipo();
+        }
+        NodoBloque bloquePadre = Main.TS.getBloqueActual().getBloquePadre();
+        while (bloquePadre != null) {
+            if (bloquePadre.getVariablesLocales().containsKey(token.getLexeme())) {
+                tipoVar = bloquePadre.getVariablesLocales().get(token.getLexeme()).getTipo();
+            }
+            bloquePadre = bloquePadre.getBloquePadre();
+        }
+    }
+
     @Override
     public Tipo chequear() throws SemanticException {
         if(Main.TS.getMetodoActual().getBloque().getVariablesLocales().get(token.getLexeme()) != null){
@@ -30,13 +45,29 @@ public class NodoVarAcceso extends NodoAcceso {
             tipoVar = Main.TS.getMetodoActual().getParametros().get(token.getLexeme()).getTipo();
         }
 
+        if (Main.TS.getClaseActual().getAtributos().get(token.getLexeme()) != null){
+            Token modificadorMetodoActual = Main.TS.getMetodoActual().getModificador();
+            if (modificadorMetodoActual != null){
+                if(!modificadorMetodoActual.getTokenId().equals(TokenId.kw_static)) {
+                    tipoVar = Main.TS.getClaseActual().getAtributos().get(token.getLexeme()).getTipo();
+                } else {
+                    throw new SemanticException(token.getLexeme(), "No se puede acceder a un atributo de instancia desde un método estático", token.getLinea());
+                }
+            } else {
+                tipoVar = Main.TS.getClaseActual().getAtributos().get(token.getLexeme()).getTipo();
+            }
+        }
+
+        chequearVariablesDelPadre();
+
         if (tipoVar == null){
             throw new SemanticException(token.getLexeme(), "La variable " + token.getLexeme() + " no fue inicializada", token.getLinea());
         }
 
         if (encadenado != null){
-            encadenado.chequear(tipoVar);
+            return encadenado.chequear(tipoVar);
         }
+
         return tipoVar;
     }
 }

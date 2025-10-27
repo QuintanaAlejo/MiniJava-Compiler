@@ -1,32 +1,81 @@
 package TablaDeSimbolos.NodosAST.encadenado;
 
+import Main.Main;
+import TablaDeSimbolos.Clase;
+import TablaDeSimbolos.Metodo;
 import TablaDeSimbolos.NodosAST.expresion.NodoExpresion;
-import TablaDeSimbolos.Parametro;
 import TablaDeSimbolos.Tipos.Tipo;
+import TablaDeSimbolos.Tipos.TipoPrimitivo;
+import exceptions.SemanticException;
 import lexical.Token;
+import lexical.TokenId;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class NodoMetodoLlamadaEncadenada extends NodoEncadenado{
     private NodoEncadenado siguiente;
-    private List<NodoExpresion> parametros;
+    private List<NodoExpresion> argumentos;
     private Token id;
 
     public NodoMetodoLlamadaEncadenada(Token id){
         this.id = id;
     }
 
-    public void setParametros(List<NodoExpresion> parametros){
-        this.parametros = parametros;
+    public void setArgumentos(List<NodoExpresion> argumentos){
+        this.argumentos = argumentos;
     }
 
     public void setSiguiente(NodoEncadenado siguiente){
         this.siguiente = siguiente;
     }
 
-    public Tipo chequear(Tipo tipoAnterior){
-        //Implementar
-        return null;
+    public void chequearParametros() throws SemanticException {
+        var metodo = Main.TS.getClaseActual().getMetodos().get(id.getLexeme());
+        var parametrosFormales = metodo.getParametros();
+        var iteradorParametrosFormales = parametrosFormales.values().iterator();
+
+        if (argumentos != null){
+            if (argumentos.size() != parametrosFormales.size()) {
+                throw new SemanticException(id.getLexeme(), "Cantidad de argumentos incorrecta en la llamada al metodo " + id.getLexeme(), id.getLinea());
+            }
+
+            for (NodoExpresion p: argumentos) {
+                Tipo tipoArgumento = p.chequear();
+                Tipo tipoParametroFormal = iteradorParametrosFormales.next().getTipo();
+
+                if (!tipoArgumento.esCompatibleCon(tipoParametroFormal)) {
+                    throw new SemanticException(id.getLexeme(), "Tipo de argumento incompatible en la posicion  para el metodo " + id.getLexeme(), id.getLinea());
+                }
+            }
+        }
+    }
+
+    public Tipo chequear(Tipo tipoAnterior) throws SemanticException {
+        if(tipoAnterior instanceof TipoPrimitivo){
+            throw new SemanticException(id.getLexeme(), "No se puede encadenar a un tipo primitivo", id.getLinea());
+        }
+
+        Clase anterior = Main.TS.getClase(tipoAnterior.getNombre());
+        if (anterior == null) {
+            throw new SemanticException(id.getLexeme(), "La clase " + tipoAnterior.getNombre() + " no existe", id.getLinea());
+        }
+
+        Metodo metodo = anterior.getMetodos().get(id.getLexeme());
+        if (metodo == null) {
+            throw new SemanticException(id.getLexeme(), "El metodo " + id.getLexeme() + " no existe en la clase " + anterior.getNombre(), id.getLinea());
+        } else {
+            if (metodo.getModificador() != null && metodo.getModificador().getTokenId().equals(TokenId.kw_static)){
+                throw new SemanticException(id.getLexeme(), "No se puede llamar a un metodo estatico de forma encadenada", id.getLinea());
+            }
+        }
+
+        chequearParametros();
+
+        Tipo tipoActual = metodo.getTipoRetorno();
+        if (siguiente != null) {
+            return siguiente.chequear(tipoActual);
+        } else {
+            return tipoActual;
+        }
     }
 }

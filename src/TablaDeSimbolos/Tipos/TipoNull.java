@@ -9,6 +9,6 @@ public class TipoNull extends TipoPrimitivo{
 
     @Override
     public boolean esCompatibleCon(Tipo otroTipo) {
-        return true; // El tipo null es compatible con cualquier otro tipo
+        return otroTipo instanceof TipoNull; // El tipo null es compatible con cualquier otro tipo
     }
 }

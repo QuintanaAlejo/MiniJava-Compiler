@@ -3,7 +3,9 @@ package TablaDeSimbolos.NodosAST.expresion.acceso;
 import TablaDeSimbolos.NodosAST.encadenado.NodoEncadenado;
 import TablaDeSimbolos.NodosAST.expresion.operandos.NodoAcceso;
 import TablaDeSimbolos.Tipos.Tipo;
+import TablaDeSimbolos.Tipos.TipoReferencia;
 import lexical.Token;
+import lexical.TokenId;
 
 public class NodoString extends NodoAcceso {
     private Token token;
@@ -19,7 +21,6 @@ public class NodoString extends NodoAcceso {
 
     @Override
     public Tipo chequear() {
-        // Lógica para chequear el tipo del nodo String
-        return null;
+        return new TipoReferencia(new Token(TokenId.lit_string, "String", token.getLinea()) );
     }
 }

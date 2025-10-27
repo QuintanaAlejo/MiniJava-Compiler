@@ -29,7 +29,8 @@ public class NodoThis extends NodoAcceso {
 
     @Override
     public Tipo chequear() throws SemanticException {
-        if (Main.TS.getMetodoActual().getModificador().getTokenId() == TokenId.kw_static){
+        Token modificadorMetodoActual = Main.TS.getMetodoActual().getModificador();
+        if (modificadorMetodoActual != null && modificadorMetodoActual.getTokenId() == TokenId.kw_static){
             throw new SemanticException(token.getLexeme(), "No es posible usar 'this' en un metodo estatico", token.getLinea());
         }
         Tipo tipoThis = new TipoReferencia(Main.TS.getClaseActual().getToken());
@@ -38,5 +39,10 @@ public class NodoThis extends NodoAcceso {
         } else {
             return encadenadoOpcional.chequear(tipoThis);
         }
+    }
+
+    @Override
+    public void setEncadenado(NodoEncadenado encadenado) {
+        encadenadoOpcional = encadenado;
     }
 }

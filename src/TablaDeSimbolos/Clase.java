@@ -1,5 +1,6 @@
 package TablaDeSimbolos;
 
+import Main.Main;
 import exceptions.SemanticException;
 import lexical.Token;
 
@@ -228,6 +229,7 @@ public class Clase {
             constructor.chequear();
         }
         for (Metodo m : metodos.values()) {
+            Main.TS.setMetodoActual(m);
             m.chequear();
         }
     }

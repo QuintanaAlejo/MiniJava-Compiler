@@ -1,7 +1,6 @@
 package TablaDeSimbolos.NodosAST.sentencia;
 
 import TablaDeSimbolos.NodosAST.expresion.NodoExpresion;
-import TablaDeSimbolos.NodosAST.expresion.operandos.NodoAcceso;
 import exceptions.SemanticException;
 import lexical.Token;
 
@@ -16,6 +15,6 @@ public class NodoAsignacion extends NodoSentencia{
 
     @Override
     public void chequear() throws SemanticException {
-       expresion.chequear();
+        expresion.chequear();
     }
 }

@@ -10,7 +10,15 @@ public class TipoPrimitivo implements Tipo {
     }
 
     public boolean esCompatibleCon(Tipo otroTipo) {
-        return otroTipo instanceof TipoPrimitivo;
+        if (otroTipo instanceof TipoNull){
+            return false;
+        } else {
+            return otroTipo instanceof TipoPrimitivo;
+        }
+    }
+
+    public boolean esPrimitivo() {
+        return true;
     }
 
     @Override

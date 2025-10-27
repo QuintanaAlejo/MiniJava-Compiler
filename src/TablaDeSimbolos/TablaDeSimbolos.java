@@ -10,6 +10,7 @@ y cada metodo o constructor mantiene la información de sus parámetros. De este
 y sienta las bases para etapas posteriores como la verificación de sentencias o la generación de código.
  */
 
+import Main.Main;
 import TablaDeSimbolos.NodosAST.sentencia.NodoBloque;
 import TablaDeSimbolos.Tipos.TipoPrimitivo;
 import TablaDeSimbolos.Tipos.TipoReferencia;
@@ -127,6 +128,7 @@ public class TablaDeSimbolos {
 
     public void chequear() throws SemanticException {
         for (Clase c : clases.values()) {
+            Main.TS.setClaseActual(c);
             c.chequear();
         }
     }

@@ -35,10 +35,14 @@ public class NodoExpresionUnaria extends NodoExpresionCompuesta{
             case decrement:
                 if (tipoOperando.esCompatibleCon(new TipoInt())){
                     return new TipoInt();
+                } else{
+                    throw new SemanticException(operador.getLexeme(), "Operador unario incompatible con el tipo del operando.", operador.getLinea());
                 }
             case op_not:
                 if (tipoOperando.esCompatibleCon(new TipoBooleano())){
                     return new TipoBooleano();
+                } else{
+                    throw new SemanticException(operador.getLexeme(), "Operador unario incompatible con el tipo del operando.", operador.getLinea());
                 }
         }
 

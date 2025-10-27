@@ -25,7 +25,5 @@ public class NodoExpresionAsignacion extends NodoExpresionCompuesta{
         } else {
             throw new SemanticException(token.getLexeme(), "Asignacion invalida: no se puede asignar un valor de tipo " + origen.getNombre() + " a una variable de tipo " + destino.getNombre(), token.getLinea());
         }
-
-        //TODO: COMO CHEQUEO ENCADENADOS?
     }
 }

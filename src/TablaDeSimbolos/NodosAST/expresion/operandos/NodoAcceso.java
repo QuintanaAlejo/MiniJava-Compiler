@@ -6,10 +6,6 @@ import TablaDeSimbolos.Tipos.Tipo;
 import exceptions.SemanticException;
 
 public abstract class NodoAcceso extends NodoOperando {
-    private NodoEncadenado encadenado;
-
     public abstract Tipo chequear() throws SemanticException;
-    public void setEncadenado(NodoEncadenado encadenado){
-        this.encadenado = encadenado;
-    }
+    public abstract void setEncadenado(NodoEncadenado encadenado);
 }

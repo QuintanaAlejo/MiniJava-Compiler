@@ -9,6 +9,11 @@ public class TipoBooleano extends TipoPrimitivo{
     }
 
     public boolean esCompatibleCon(Tipo otroTipo) {
-        return otroTipo instanceof TipoBooleano;
+        if (otroTipo instanceof TipoBooleano) {
+            return true;
+        } else {
+            return otroTipo.getTokenPropio().getTokenId().equals(TokenId.kw_boolean) ||
+                    otroTipo.getTokenPropio().getTokenId().equals(TokenId.lit_boolean);
+        }
     }
 }

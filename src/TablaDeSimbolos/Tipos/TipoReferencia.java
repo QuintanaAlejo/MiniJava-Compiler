@@ -31,6 +31,11 @@ public class TipoReferencia implements Tipo {
     }
 
     @Override
+    public boolean esPrimitivo() {
+        return false;
+    }
+
+    @Override
     public String getNombre() {
         return tokenPropio.getLexeme();
     }

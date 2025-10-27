@@ -354,7 +354,7 @@ public class SyntacticAnalyzer {
                match(TokenId.punt_semicolon);
                return nodo;
           } else if(Firsts.isFirst("Return", currentToken)){
-               NodoReturn nodo = Return();
+               NodoReturn nodo = Return(currentToken);
                match(TokenId.punt_semicolon);
                return nodo;
           } else if(Firsts.isFirst("If", currentToken)){
@@ -381,9 +381,15 @@ public class SyntacticAnalyzer {
           NodoExpresion exp = ExpresionCompuesta(); //Aca tengo que guardar la expresion en el nodo
           return new NodoVarLocal(tokenVar, exp);
      }
-     private NodoReturn Return() throws SyntacticException {
+     private NodoReturn Return(Token token) throws SyntacticException {
           match(TokenId.kw_return);
-          return new NodoReturn(ExpresionOpcional());
+          NodoReturn nodo = new NodoReturn(token, ExpresionOpcional());
+          if (Main.TS.getMetodoActual().getTipoRetorno() == null){
+               nodo.setTipoDeRet(new TipoPrimitivo(new Token(TokenId.kw_void, "void", lexicalAnalyzer.getLineNumber())));
+          } else {
+               nodo.setTipoDeRet(Main.TS.getMetodoActual().getTipoRetorno());
+          }
+          return nodo;
      }
      private NodoExpresion ExpresionOpcional() throws SyntacticException {
           if(Firsts.isFirst("Expresion", currentToken)){
@@ -712,7 +718,7 @@ public class SyntacticAnalyzer {
           Token metodo = currentToken;
           match(TokenId.id_MetVar);
           NodoLlamadaMetodoEstatico llamada = new NodoLlamadaMetodoEstatico(clase, metodo);
-          llamada.setParametros(ArgsActuales());
+          llamada.setArgumentos(ArgsActuales());
           return llamada;
      }
      private List<NodoExpresion> ArgsActuales() throws SyntacticException {
