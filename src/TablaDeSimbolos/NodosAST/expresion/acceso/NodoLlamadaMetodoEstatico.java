@@ -31,8 +31,11 @@ public class NodoLlamadaMetodoEstatico extends NodoAcceso {
         this.encadenado = encadenado;
     }
 
-    public void chequearParametros() throws SemanticException {
-        var metodo = Main.TS.getClaseActual().getMetodos().get(id.getLexeme());
+    public void chequearParametros(Clase c) throws SemanticException {
+        var metodo = c.getMetodos().get(id.getLexeme());
+        if (metodo == null) {
+            throw new SemanticException(id.getLexeme(), "El metodo " + id.getLexeme() + " no existe en la clase " + Main.TS.getClaseActual().getNombre(), id.getLinea());
+        }
         var parametrosFormales = metodo.getParametros();
         var iteradorParametrosFormales = parametrosFormales.values().iterator();
 
@@ -45,9 +48,19 @@ public class NodoLlamadaMetodoEstatico extends NodoAcceso {
             Tipo tipoParametroFormal = iteradorParametrosFormales.next().getTipo();
 
             if (!tipoArgumento.esCompatibleCon(tipoParametroFormal)) {
-                throw new SemanticException(id.getLexeme(), "Tipo de argumento incompatible en la posicion  para el metodo " + id.getLexeme(), id.getLinea());
+                throw new SemanticException(id.getLexeme(), "Tipo de argumento incompatible para el metodo " + id.getLexeme(), id.getLinea());
             }
         }
+    }
+
+    @Override
+    public NodoEncadenado getEncadenado(){
+        return encadenado;
+    }
+
+    @Override
+    public boolean tieneEncadenado() {
+        return encadenado != null;
     }
 
     @Override
@@ -62,11 +75,12 @@ public class NodoLlamadaMetodoEstatico extends NodoAcceso {
             throw new SemanticException(id.getLexeme(), "El metodo no existe en la clase " + clase.getLexeme(), id.getLinea());
         }
 
-        if (!m.getModificador().getTokenId().equals(lexical.TokenId.kw_static)) {
+        Token modificadorMetodo = m.getModificador();
+        if (modificadorMetodo != null && !modificadorMetodo.getTokenId().equals(lexical.TokenId.kw_static)) {
             throw new SemanticException(id.getLexeme(), "El metodo " + id.getLexeme() + " no es estatico en la clase " + clase.getLexeme(), id.getLinea());
         }
 
-        chequearParametros();
+        chequearParametros(c);
 
         if (encadenado != null) {
             return encadenado.chequear(m.getTipoRetorno());

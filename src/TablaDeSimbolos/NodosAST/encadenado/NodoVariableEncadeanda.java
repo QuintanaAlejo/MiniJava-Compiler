@@ -20,9 +20,18 @@ public class NodoVariableEncadeanda extends NodoEncadenado{
         return token;
     }
 
+    @Override
+    public boolean terminaEnVariable(){
+        return siguiente == null;
+    }
+
     public Tipo chequear(Tipo tipoAnterior) throws SemanticException {
         if(tipoAnterior instanceof TipoPrimitivo){
             throw new SemanticException(token.getLexeme(), "No se puede encadenar a un tipo primitivo", token.getLinea());
+        }
+
+        if(tipoAnterior == null){
+            throw new SemanticException(token.getLexeme(), "El metodo no tiene atributos.", token.getLinea());
         }
 
         Clase anterior = Main.TS.getClase(tipoAnterior.getNombre());

@@ -20,6 +20,16 @@ public class NodoString extends NodoAcceso {
     }
 
     @Override
+    public NodoEncadenado getEncadenado(){
+        return encadenado;
+    }
+
+    @Override
+    public boolean tieneEncadenado() {
+        return encadenado != null;
+    }
+
+    @Override
     public Tipo chequear() {
         return new TipoReferencia(new Token(TokenId.lit_string, "String", token.getLinea()) );
     }

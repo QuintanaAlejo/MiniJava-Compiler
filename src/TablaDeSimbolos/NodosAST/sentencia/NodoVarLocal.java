@@ -27,6 +27,10 @@ public class NodoVarLocal extends NodoSentencia{
         return this.tipo = tipo;
     }
 
+    public Token getIdentificador() {
+        return identificador;
+    }
+
     public void chequearVariablesDelPadre() throws SemanticException {
         NodoBloque bloquePadre = Main.TS.getBloqueActual().getBloquePadre();
         while (bloquePadre != null) {
@@ -50,7 +54,7 @@ public class NodoVarLocal extends NodoSentencia{
         if (Main.TS.getBloqueActual().getVariablesLocales().containsKey(identificador.getLexeme())) {
             throw new SemanticException(identificador.getLexeme(), "La variable local ya ha sido declarada en este bloque.", identificador.getLinea());
         }
-        if (tipo != null && tipo.esCompatibleCon(new TipoNull()) ) {
+        if (tipo == null || tipo instanceof TipoNull) {
             throw new SemanticException(identificador.getLexeme(), "La inicialización de una variable local con 'null' no está permitida.", identificador.getLinea());
         }
 

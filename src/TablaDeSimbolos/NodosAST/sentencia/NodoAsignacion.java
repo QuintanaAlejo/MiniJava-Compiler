@@ -1,6 +1,10 @@
 package TablaDeSimbolos.NodosAST.sentencia;
 
+import TablaDeSimbolos.NodosAST.encadenado.NodoMetodoLlamadaEncadenada;
 import TablaDeSimbolos.NodosAST.expresion.NodoExpresion;
+import TablaDeSimbolos.NodosAST.expresion.NodoExpresionAsignacion;
+import TablaDeSimbolos.NodosAST.expresion.acceso.NodoLlamadaMetodo;
+import TablaDeSimbolos.NodosAST.expresion.acceso.NodoLlamadaMetodoEstatico;
 import exceptions.SemanticException;
 import lexical.Token;
 
@@ -16,5 +20,14 @@ public class NodoAsignacion extends NodoSentencia{
     @Override
     public void chequear() throws SemanticException {
         expresion.chequear();
+        if (!esValida() && !expresion.tieneEncadenado()) {
+            throw new SemanticException(token.getLexeme(), "Expresión suelta como sentencia.", token.getLinea());
+        }
+    }
+
+    private boolean esValida() {
+        return (expresion instanceof NodoExpresionAsignacion ||
+                expresion instanceof NodoLlamadaMetodo ||
+                expresion instanceof NodoLlamadaMetodoEstatico );
     }
 }

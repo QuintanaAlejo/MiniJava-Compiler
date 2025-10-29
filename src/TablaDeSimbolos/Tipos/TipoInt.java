@@ -11,7 +11,7 @@ public class TipoInt extends TipoPrimitivo{
     public boolean esCompatibleCon(Tipo otroTipo) {
         if (otroTipo instanceof TipoInt) {
             return true;
-        } else {
+        } else{
             return otroTipo.getTokenPropio().getTokenId().equals(TokenId.kw_int) ||
                     otroTipo.getTokenPropio().getTokenId().equals(TokenId.lit_int);
         }

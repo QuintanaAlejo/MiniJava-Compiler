@@ -82,6 +82,7 @@ public class TablaDeSimbolos {
         printS.setTieneBloque(true);
         system.getMetodos().put(printS.getNombre(), printS);
         Parametro s = new Parametro(new Token(TokenId.id_MetVar, "s", 0), new TipoReferencia(new Token(TokenId.id_Class, "String", 0)));
+        printS.getParametros().put(s.getNombre(), s);
         //Metodo static void println()
         Metodo println = new Metodo(new Token(TokenId.id_MetVar, "println", 0), null, new Token(TokenId.kw_static, "static", 0));
         println.setTieneBloque(true);

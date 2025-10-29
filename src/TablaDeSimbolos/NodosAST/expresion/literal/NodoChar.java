@@ -17,6 +17,11 @@ public class NodoChar extends NodoLiteral {
     }
 
     @Override
+    public boolean tieneEncadenado() {
+        return false;
+    }
+
+    @Override
     public Tipo chequear() {
         return new TipoChar();
     }

@@ -10,4 +10,9 @@ public class NodoExpresionVacia extends NodoExpresion{
     public Tipo chequear() {
         return new TipoPrimitivo(new Token(TokenId.universal, "", 0));
     }
+
+    @Override
+    public boolean tieneEncadenado() {
+        return false;
+    }
 }

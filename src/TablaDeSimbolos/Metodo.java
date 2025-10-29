@@ -4,7 +4,11 @@ import TablaDeSimbolos.NodosAST.sentencia.NodoBloque;
 import TablaDeSimbolos.Tipos.Tipo;
 import lexical.Token;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+
 import exceptions.SemanticException;
 
 public class Metodo {
@@ -19,7 +23,7 @@ public class Metodo {
         this.modificador = modificador;
         this.nombre = nombre;
         this.tipoRetorno = tipoRetorno;
-        this.parametros = new HashMap<>();
+        this.parametros = new LinkedHashMap<>();
     }
 
     public String getNombre() {
@@ -65,7 +69,7 @@ public class Metodo {
 
     public void chequear() throws SemanticException{
         //Chequear el bloque si tiene
-        if (tieneBloque && bloque != null){
+        if (tieneBloque && bloque != null && !bloque.isChequeado()){
             bloque.chequear();
         }
     }

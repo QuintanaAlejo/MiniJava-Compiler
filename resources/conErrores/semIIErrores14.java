@@ -1,4 +1,4 @@
-//[Error:getB|13]
+//[Error:noExiste|13]
 // Error: llamada encadenada inválida, método inexistente en tipo retornado.
 class A {
     B getB() {

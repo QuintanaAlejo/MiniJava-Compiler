@@ -36,6 +36,16 @@ public class NodoVarAcceso extends NodoAcceso {
     }
 
     @Override
+    public NodoEncadenado getEncadenado(){
+        return encadenado;
+    }
+
+    @Override
+    public boolean tieneEncadenado() {
+        return encadenado != null;
+    }
+
+    @Override
     public Tipo chequear() throws SemanticException {
         if(Main.TS.getMetodoActual().getBloque().getVariablesLocales().get(token.getLexeme()) != null){
             tipoVar = Main.TS.getMetodoActual().getBloque().getVariablesLocales().get(token.getLexeme()).getTipo();
@@ -43,6 +53,10 @@ public class NodoVarAcceso extends NodoAcceso {
 
         if(Main.TS.getMetodoActual().getParametros().get(token.getLexeme()) != null){
             tipoVar = Main.TS.getMetodoActual().getParametros().get(token.getLexeme()).getTipo();
+        }
+
+        if(Main.TS.getConstructorActual() != null && Main.TS.getConstructorActual().getParametros().get(token.getLexeme()) != null)
+            tipoVar = Main.TS.getConstructorActual().getParametros().get(token.getLexeme()).getTipo();{
         }
 
         if (Main.TS.getClaseActual().getAtributos().get(token.getLexeme()) != null){

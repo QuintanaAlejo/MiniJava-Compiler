@@ -9,6 +9,4 @@ public interface Tipo {
     void estaBienDeclarado() throws SemanticException;
     public boolean esCompatibleCon(Tipo otroTipo);
     public boolean esPrimitivo();
-    //void setToken(Token token);
-    //void setNombre(String nombre);
 }

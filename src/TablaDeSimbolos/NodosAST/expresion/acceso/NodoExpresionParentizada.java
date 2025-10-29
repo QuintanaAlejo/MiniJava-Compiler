@@ -2,6 +2,7 @@ package TablaDeSimbolos.NodosAST.expresion.acceso;
 
 import TablaDeSimbolos.NodosAST.encadenado.NodoEncadenado;
 import TablaDeSimbolos.NodosAST.expresion.NodoExpresion;
+import TablaDeSimbolos.NodosAST.expresion.NodoExpresionAsignacion;
 import TablaDeSimbolos.NodosAST.expresion.operandos.NodoAcceso;
 import TablaDeSimbolos.Tipos.Tipo;
 import exceptions.SemanticException;
@@ -16,6 +17,20 @@ public class NodoExpresionParentizada extends NodoAcceso {
 
     public void setEncadenado(NodoEncadenado encadenado) {
         this.encadenado = encadenado;
+    }
+
+    public NodoExpresion getExpresion() {
+        return expresion;
+    }
+
+    @Override
+    public NodoEncadenado getEncadenado(){
+        return encadenado;
+    }
+
+    @Override
+    public boolean tieneEncadenado() {
+        return encadenado != null;
     }
 
     @Override

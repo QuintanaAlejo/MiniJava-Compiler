@@ -45,33 +45,44 @@ public class TipoReferencia implements Tipo {
         Token otroToken = otroTipo.getTokenPropio();
         HashMap<String, Clase> clases = Main.TS.getClases();
 
+        if (sonMismoTipo(otroToken) || esNull(otroToken)) {
+            return true;
+        }
+        if (esNull(this.tokenPropio)) {
+            return (otroTipo instanceof TipoReferencia);
+        }
+
         if (!clases.containsKey(this.getNombre()) || !clases.containsKey(otroToken.getLexeme())) {
             return false;
         }
 
-        if (sonMismoTipo(otroToken) || esNull(otroToken)) {
+        if (esSubtipo(otroToken.getLexeme(), this.getNombre(), clases)) {
             return true;
         }
 
-        Set<String> visitados = new HashSet<>();
-        Clase claseActual = clases.get(otroToken.getLexeme());
+        if (esSubtipo(this.getNombre(), otroToken.getLexeme(), clases)) {
+            return true;
+        }
 
-        while (claseActual != null && !(visitados.contains(claseActual.getNombre()))){
-            visitados.add(claseActual.getNombre());
-            Token tokenPadre = claseActual.getPadre();
+        return false;
+    }
 
-            if (tokenPadre == null) {
-                break;
-            }
+    private boolean esSubtipo(String nombreHijo, String nombrePadre, HashMap<String, Clase> clases) {
+        if (nombreHijo.equals(nombrePadre)) return true;
 
-            if (sonMismoTipo(tokenPadre)) {
-                return true;
-            }
+        java.util.Set<String> visitados = new java.util.HashSet<>();
+        Clase actual = clases.get(nombreHijo);
 
-            claseActual = clases.get(tokenPadre.getLexeme());
+        while (actual != null && !visitados.contains(actual.getNombre())) {
+            visitados.add(actual.getNombre());
+            Token tokPadre = actual.getPadre();
+            if (tokPadre == null) break;
+            if (tokPadre.getLexeme().equals(nombrePadre)) return true;
+            actual = clases.get(tokPadre.getLexeme());
         }
         return false;
     }
+
 
     private boolean esNull(Token token) {
         return token.getTokenId() == TokenId.kw_null;

@@ -14,21 +14,15 @@ import java.util.List;
 
 public class NodoLlamadaConstructor extends NodoAcceso {
     private Token token;
-    private Clase clase;
     private List<NodoExpresion> parametros;
     private NodoEncadenado encadenado;
 
     public NodoLlamadaConstructor(Token token) {
         this.token = token;
-        this.clase = Main.TS.getClaseActual();
     }
 
     public void setParametros(List<NodoExpresion> parametros) {
         this.parametros = parametros;
-    }
-
-    public void setClase(Clase clase) {
-        this.clase = clase;
     }
 
     public void setEncadenado(NodoEncadenado encadenado) {
@@ -36,15 +30,25 @@ public class NodoLlamadaConstructor extends NodoAcceso {
     }
 
     @Override
+    public NodoEncadenado getEncadenado(){
+        return encadenado;
+    }
+
+    @Override
+    public boolean tieneEncadenado() {
+        return encadenado != null;
+    }
+
+    @Override
     public Tipo chequear() throws SemanticException {
-        if (!Main.TS.getClases().containsKey(clase.getNombre())){
-            throw new SemanticException(clase.getNombre(), "Clase inexistente", token.getLinea());
+        if (!Main.TS.getClases().containsKey(token.getLexeme())) {
+            throw new SemanticException(token.getLexeme(), "Clase inexistente", token.getLinea());
         }
 
         if(encadenado==null){
-            return new TipoReferencia(clase.getToken());
+            return new TipoReferencia(token);
         } else {
-            return encadenado.chequear(new TipoReferencia(clase.getToken()));
+            return encadenado.chequear(new TipoReferencia(token));
         }
     }
 }

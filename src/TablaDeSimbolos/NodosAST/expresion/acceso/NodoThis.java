@@ -28,6 +28,16 @@ public class NodoThis extends NodoAcceso {
     }
 
     @Override
+    public NodoEncadenado getEncadenado(){
+        return encadenadoOpcional;
+    }
+
+    @Override
+    public boolean tieneEncadenado() {
+        return encadenadoOpcional != null;
+    }
+
+    @Override
     public Tipo chequear() throws SemanticException {
         Token modificadorMetodoActual = Main.TS.getMetodoActual().getModificador();
         if (modificadorMetodoActual != null && modificadorMetodoActual.getTokenId() == TokenId.kw_static){

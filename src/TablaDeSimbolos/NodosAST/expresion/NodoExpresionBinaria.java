@@ -39,11 +39,23 @@ public class NodoExpresionBinaria extends NodoExpresionCompuesta{
 
 
     private boolean sonAmbosEnteros(Tipo tipoIzquierda, Tipo tipoDerecha) {
+        // Chequear si ambos son distintos a null
+        if (tipoIzquierda == null || tipoDerecha == null) {
+            return false;
+        }
         return tipoIzquierda.esCompatibleCon(new TipoInt()) && tipoIzquierda.esCompatibleCon(tipoDerecha);
     }
 
     private boolean sonAmbosBooleanos(Tipo tipoIzquierda, Tipo tipoDerecha) {
+        if (tipoIzquierda == null || tipoDerecha == null) {
+            return false;
+        }
         return tipoIzquierda.esCompatibleCon(new TipoBooleano()) && tipoIzquierda.esCompatibleCon(tipoDerecha);
+    }
+
+    @Override
+    public boolean tieneEncadenado() {
+        return false;
     }
 
     @Override
@@ -80,10 +92,10 @@ public class NodoExpresionBinaria extends NodoExpresionCompuesta{
                 }
             case op_equal:
             case op_notEqual:
-                if (tipoIzquierda.esCompatibleCon(tipoDerecha)) {
+                if ((tipoIzquierda != null && (tipoIzquierda.esCompatibleCon(tipoDerecha) || tipoDerecha.esCompatibleCon(tipoIzquierda)))) {
                     return new TipoBooleano();
                 } else {
-                    throw new SemanticException(operador.getLexeme(), "Los tipos " + tipoIzquierda.getNombre() + " y " + tipoDerecha.getNombre() + " no son compatibles para el operador " + operador.getLexeme(), operador.getLinea());
+                    throw new SemanticException(operador.getLexeme(), "Los tipos no son compatibles para el operador " + operador.getLexeme(), operador.getLinea());
                 }
         }
         throw new SemanticException(operador.getLexeme(), "Expresion binaria invalida", operador.getLinea());

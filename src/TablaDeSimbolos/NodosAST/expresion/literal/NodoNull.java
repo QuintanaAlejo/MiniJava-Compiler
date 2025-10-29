@@ -17,6 +17,11 @@ public class NodoNull extends NodoLiteral {
     }
 
     @Override
+    public boolean tieneEncadenado() {
+        return false;
+    }
+
+    @Override
     public Tipo chequear() {
         return new TipoNull();
     }

@@ -25,6 +25,11 @@ public class NodoExpresionUnaria extends NodoExpresionCompuesta{
     }
 
     @Override
+    public boolean tieneEncadenado() {
+        return false;
+    }
+
+    @Override
     public Tipo chequear() throws SemanticException {
         Tipo tipoOperando = operando.chequear();
 

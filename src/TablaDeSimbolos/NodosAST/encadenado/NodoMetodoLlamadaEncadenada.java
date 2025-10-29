@@ -29,8 +29,16 @@ public class NodoMetodoLlamadaEncadenada extends NodoEncadenado{
         this.siguiente = siguiente;
     }
 
-    public void chequearParametros() throws SemanticException {
-        var metodo = Main.TS.getClaseActual().getMetodos().get(id.getLexeme());
+    @Override
+    public boolean terminaEnVariable() {
+        return (this.siguiente != null) && this.siguiente.terminaEnVariable();
+    }
+
+    public void chequearParametros(Clase claseAnterior) throws SemanticException {
+        var metodo = claseAnterior.getMetodos().get(id.getLexeme());
+        if (metodo == null) {
+            throw new SemanticException(id.getLexeme(), "El metodo " + id.getLexeme() + " no existe en la clase " + Main.TS.getClaseActual().getNombre(), id.getLinea());
+        }
         var parametrosFormales = metodo.getParametros();
         var iteradorParametrosFormales = parametrosFormales.values().iterator();
 
@@ -44,7 +52,7 @@ public class NodoMetodoLlamadaEncadenada extends NodoEncadenado{
                 Tipo tipoParametroFormal = iteradorParametrosFormales.next().getTipo();
 
                 if (!tipoArgumento.esCompatibleCon(tipoParametroFormal)) {
-                    throw new SemanticException(id.getLexeme(), "Tipo de argumento incompatible en la posicion  para el metodo " + id.getLexeme(), id.getLinea());
+                    throw new SemanticException(id.getLexeme(), "Tipo de argumento incompatible para el metodo " + id.getLexeme(), id.getLinea());
                 }
             }
         }
@@ -53,6 +61,10 @@ public class NodoMetodoLlamadaEncadenada extends NodoEncadenado{
     public Tipo chequear(Tipo tipoAnterior) throws SemanticException {
         if(tipoAnterior instanceof TipoPrimitivo){
             throw new SemanticException(id.getLexeme(), "No se puede encadenar a un tipo primitivo", id.getLinea());
+        }
+
+        if(tipoAnterior == null){
+            throw new SemanticException(id.getLexeme(), "El metodo no tiene atributos.", id.getLinea());
         }
 
         Clase anterior = Main.TS.getClase(tipoAnterior.getNombre());
@@ -69,7 +81,7 @@ public class NodoMetodoLlamadaEncadenada extends NodoEncadenado{
             }
         }
 
-        chequearParametros();
+        chequearParametros(anterior);
 
         Tipo tipoActual = metodo.getTipoRetorno();
         if (siguiente != null) {

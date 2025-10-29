@@ -731,8 +731,8 @@ public class SyntacticAnalyzer {
           List<NodoExpresion> parametros = new ArrayList<>();
           if(Firsts.isFirst("Expresion", currentToken)){
                NodoExpresion exp = Expresion();
-               parametros = ListaExps();
                parametros.add(exp);
+               parametros.addAll(ListaExps());
           }
           return parametros;
      }
@@ -741,8 +741,8 @@ public class SyntacticAnalyzer {
           if(currentToken.getTokenId().equals(TokenId.punt_coma)){
                match(TokenId.punt_coma);
                NodoExpresion exp = Expresion();
-               parametros = ListaExps();
                parametros.add(exp);
+               parametros.addAll(ListaExps());
           }
           return parametros;
      }

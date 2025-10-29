@@ -1,6 +1,7 @@
 package TablaDeSimbolos.Tipos;
 
 import lexical.Token;
+import lexical.TokenId;
 
 public class TipoPrimitivo implements Tipo {
     private Token token;
@@ -13,8 +14,23 @@ public class TipoPrimitivo implements Tipo {
         if (otroTipo instanceof TipoNull){
             return false;
         } else {
-            return otroTipo instanceof TipoPrimitivo;
+            if (token.getTokenId() == TokenId.kw_int) {
+                return otroTipo.getTokenPropio().getTokenId().equals(TokenId.kw_int) ||
+                        otroTipo.getTokenPropio().getTokenId().equals(TokenId.lit_int);
+            }
+
+            if (token.getTokenId() == TokenId.kw_char){
+                return otroTipo.getTokenPropio().getTokenId().equals(TokenId.kw_char) ||
+                        otroTipo.getTokenPropio().getTokenId().equals(TokenId.lit_char);
+            }
+
+            if (token.getTokenId() == TokenId.kw_boolean){
+                return otroTipo.getTokenPropio().getTokenId().equals(TokenId.kw_boolean) ||
+                        otroTipo.getTokenPropio().getTokenId().equals(TokenId.lit_boolean);
+            }
         }
+
+        return otroTipo instanceof TipoPrimitivo;
     }
 
     public boolean esPrimitivo() {
