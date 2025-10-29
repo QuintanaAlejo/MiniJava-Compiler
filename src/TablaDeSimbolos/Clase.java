@@ -3,6 +3,7 @@ package TablaDeSimbolos;
 import Main.Main;
 import exceptions.SemanticException;
 import lexical.Token;
+import lexical.TokenId;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -131,7 +132,9 @@ public class Clase {
                     if (mHijo == null) {
                         // Si el padre tiene un metodo asbtracto, la clase actual si o si lo debe implementar
                         if (mPadre.getModificador() != null && mPadre.getModificador().getLexeme().equals("abstract")){
-                            throw new SemanticException(mPadre.getNombre(), "El método " + mPadre.getNombre() + " debe ser implementado en la clase hija. " + padre.getLexeme() + ".", mPadre.getToken().getLinea());
+                            if (this.modificador == null || !this.modificador.getLexeme().equals("abstract")) {
+                                throw new SemanticException(mPadre.getNombre(), "El método abstracto " + mPadre.getNombre() + " de la clase " + clasePadre.getNombre() + " debe ser implementado en la clase concreta " + this.nombre.getLexeme() + ".", this.nombre.getLinea());
+                            }
                         }
                         this.metodos.put(mPadre.getNombre(), mPadre);
 
@@ -144,6 +147,13 @@ public class Clase {
                                 );
                             }
                         }
+
+                        boolean padreEsStatic = mPadre.getModificador() != null && mPadre.getModificador().getTokenId().equals(TokenId.kw_static);
+                        boolean hijoEsStatic  = mHijo.getModificador()  != null && mHijo.getModificador().getTokenId().equals(TokenId.kw_static);
+                        if (padreEsStatic != hijoEsStatic) {
+                            throw new SemanticException(mHijo.getNombre(), "El método " + mHijo.getNombre() + " no puede cambiar su naturaleza (static/no-static) respecto al padre.", mHijo.getToken().getLinea());
+                        }
+
                         // Comparar tipo de retorno
                         String tipoPadre = mPadre.getTipoRetorno() != null ? mPadre.getTipoRetorno().getNombre() : "void";
                         String tipoHijo = mHijo.getTipoRetorno() != null ? mHijo.getTipoRetorno().getNombre() : "void";

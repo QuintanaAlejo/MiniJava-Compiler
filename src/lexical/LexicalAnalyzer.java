@@ -333,6 +333,7 @@ public class LexicalAnalyzer {
     public Token multiLineCommentState_2() throws LexicalException{
         updateActualChar();
         if (actualChar == '/') {
+            updateActualChar();
             return initialState();
         } else {
             return multiLineCommentState_1();
