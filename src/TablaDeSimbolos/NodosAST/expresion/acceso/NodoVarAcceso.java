@@ -35,6 +35,10 @@ public class NodoVarAcceso extends NodoAcceso {
         }
     }
 
+    public Token getToken(){
+        return token;
+    }
+
     @Override
     public NodoEncadenado getEncadenado(){
         return encadenado;

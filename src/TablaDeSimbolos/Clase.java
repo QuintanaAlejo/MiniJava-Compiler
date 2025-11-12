@@ -111,8 +111,7 @@ public class Clase {
     public void consolidar() throws SemanticException {
         if (consolidado) return;
 
-        // Consolidar el padre primero (si existe y no es Object)
-        if (padre != null && !getPadre().getLexeme().equals("Object")) {
+        if (padre != null) {
             Clase clasePadre = TS.getClase(padre.getLexeme());
             if (clasePadre != null) {
                 clasePadre.consolidar();

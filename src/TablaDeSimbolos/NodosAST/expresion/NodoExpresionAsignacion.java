@@ -31,6 +31,22 @@ public class NodoExpresionAsignacion extends NodoExpresionCompuesta{
         Tipo destino = izquierda.chequear();
         Tipo origen  = derecha.chequear();
 
+        // Parámetro o variable local tapa atributo
+        if (izquierda instanceof NodoVarAcceso varAcceso && !izquierda.tieneEncadenado()) {
+            String nombre = varAcceso.getToken().getLexeme();
+
+            // Si existe un parámetro con ese nombre, usar su tipo
+            var metodoActual = Main.TS.getMetodoActual();
+            if (metodoActual.getParametros().containsKey(nombre)) {
+                destino = metodoActual.getParametros().get(nombre).getTipo();
+            }
+            // Si existe una variable local con ese nombre, usar su tipo
+            else if (Main.TS.getBloqueActual() != null &&
+                    Main.TS.getBloqueActual().getVariablesLocales().containsKey(nombre)) {
+                destino = Main.TS.getBloqueActual().getVariablesLocales().get(nombre).getTipo();
+            }
+        }
+
         if (!(izquierda instanceof NodoVarAcceso) && !izquierda.tieneEncadenado()) {
             throw new SemanticException(token.getLexeme(), "El lado izquierdo de una asignacion debe ser una variable.", token.getLinea());
         }

@@ -75,10 +75,6 @@ public class NodoMetodoLlamadaEncadenada extends NodoEncadenado{
         Metodo metodo = anterior.getMetodos().get(id.getLexeme());
         if (metodo == null) {
             throw new SemanticException(id.getLexeme(), "El metodo " + id.getLexeme() + " no existe en la clase " + anterior.getNombre(), id.getLinea());
-        } else {
-            if (metodo.getModificador() != null && metodo.getModificador().getTokenId().equals(TokenId.kw_static)){
-                throw new SemanticException(id.getLexeme(), "No se puede llamar a un metodo estatico de forma encadenada", id.getLinea());
-            }
         }
 
         chequearParametros(anterior);

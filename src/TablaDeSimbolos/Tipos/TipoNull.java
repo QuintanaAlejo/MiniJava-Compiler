@@ -2,13 +2,13 @@ package TablaDeSimbolos.Tipos;
 
 import lexical.TokenId;
 
-public class TipoNull extends TipoPrimitivo{
+public class TipoNull extends TipoReferencia{
     public TipoNull(){
         super(new lexical.Token(TokenId.kw_null, "null", 0));
     }
 
     @Override
     public boolean esCompatibleCon(Tipo otroTipo) {
-        return otroTipo instanceof TipoNull; // El tipo null es compatible con cualquier otro tipo
+        return otroTipo instanceof TipoReferencia;
     }
 }

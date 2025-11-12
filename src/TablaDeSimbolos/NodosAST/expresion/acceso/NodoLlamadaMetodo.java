@@ -6,6 +6,7 @@ import TablaDeSimbolos.Metodo;
 import TablaDeSimbolos.NodosAST.encadenado.NodoEncadenado;
 import TablaDeSimbolos.NodosAST.expresion.NodoExpresion;
 import TablaDeSimbolos.NodosAST.expresion.operandos.NodoAcceso;
+import TablaDeSimbolos.Tipos.TipoNull;
 import exceptions.SemanticException;
 import lexical.Token;
 import TablaDeSimbolos.Tipos.Tipo;
@@ -70,18 +71,29 @@ public class NodoLlamadaMetodo extends NodoAcceso {
             throw new SemanticException(id.getLexeme(), "Cantidad de argumentos incorrecta en la llamada al metodo " + id.getLexeme(), id.getLinea());
         }
 
-        for (NodoExpresion p: argumentos) {
+        for (NodoExpresion p : argumentos) {
             Tipo tipoArgumento = p.chequear();
             Tipo tipoParametroFormal = iteradorParametrosFormales.next().getTipo();
 
-            if (!esSubtipo(tipoArgumento.getTokenPropio().getLexeme(), tipoParametroFormal.getTokenPropio().getLexeme(), clases)) {
-                throw new SemanticException(id.getLexeme(), "Tipo de argumento incompatible para el metodo " + id.getLexeme(), id.getLinea());
+            // 🔹 Si el argumento es null, solo usamos esCompatibleCon
+            if (tipoArgumento instanceof TipoNull) {
+                if (!tipoArgumento.esCompatibleCon(tipoParametroFormal)) {
+                    throw new SemanticException(id.getLexeme(),
+                            "Tipo de argumento incompatible para el metodo " + id.getLexeme(), id.getLinea());
+                }
+                continue;
             }
 
-            if (!tipoArgumento.esCompatibleCon(tipoParametroFormal)) {
-                throw new SemanticException(id.getLexeme(), "Tipo de argumento incompatible para el metodo " + id.getLexeme(), id.getLinea());
+            // 🔹 Para el resto de tipos, primero verificamos subtipo, luego compatibilidad
+            if (!esSubtipo(tipoArgumento.getTokenPropio().getLexeme(),
+                    tipoParametroFormal.getTokenPropio().getLexeme(),
+                    clases)
+                    && !tipoArgumento.esCompatibleCon(tipoParametroFormal)) {
+                throw new SemanticException(id.getLexeme(),
+                        "Tipo de argumento incompatible para el metodo " + id.getLexeme(), id.getLinea());
             }
         }
+
     }
 
     private boolean esSubtipo(String nombreHijo, String nombrePadre, HashMap<String, Clase> clases) {

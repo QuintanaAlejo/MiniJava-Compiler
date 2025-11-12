@@ -48,9 +48,9 @@ public class NodoVarLocal extends NodoSentencia{
         if (Main.TS.getMetodoActual().getParametros().containsKey(identificador.getLexeme())) {
             throw new SemanticException(identificador.getLexeme(), "La variable local no puede tener el mismo nombre que un parámetro del método.", identificador.getLinea());
         }
-        if (Main.TS.getClaseActual().getAtributos().containsKey(identificador.getLexeme())) {
-            throw new SemanticException(identificador.getLexeme(), "La variable local no puede tener el mismo nombre que un atributo de la clase.", identificador.getLinea());
-        }
+        //if (Main.TS.getClaseActual().getAtributos().containsKey(identificador.getLexeme())) {
+        //    throw new SemanticException(identificador.getLexeme(), "La variable local no puede tener el mismo nombre que un atributo de la clase.", identificador.getLinea());
+        //}
         if (Main.TS.getBloqueActual().getVariablesLocales().containsKey(identificador.getLexeme())) {
             throw new SemanticException(identificador.getLexeme(), "La variable local ya ha sido declarada en este bloque.", identificador.getLinea());
         }
