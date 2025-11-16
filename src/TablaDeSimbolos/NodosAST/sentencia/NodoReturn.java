@@ -72,4 +72,9 @@ public class NodoReturn extends NodoSentencia{
         }
         return false;
     }
+
+    @Override
+    public void generar(){
+
+    }
 }

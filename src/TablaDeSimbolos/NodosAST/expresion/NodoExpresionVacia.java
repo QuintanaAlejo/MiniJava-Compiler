@@ -15,4 +15,9 @@ public class NodoExpresionVacia extends NodoExpresion{
     public boolean tieneEncadenado() {
         return false;
     }
+
+    @Override
+    public void generar(){
+
+    }
 }

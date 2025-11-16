@@ -5,4 +5,5 @@ import exceptions.SemanticException;
 
 public abstract class NodoExpresionCompuesta extends NodoExpresion{
     public abstract Tipo chequear() throws SemanticException;
+    public abstract void generar();
 }

@@ -101,4 +101,9 @@ public class NodoExpresionAsignacion extends NodoExpresionCompuesta{
         return false;
     }
 
+    @Override
+    public void generar(){
+
+    }
+
 }

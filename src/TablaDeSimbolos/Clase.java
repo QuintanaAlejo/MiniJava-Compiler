@@ -1,12 +1,16 @@
 package TablaDeSimbolos;
 
 import Main.Main;
+import TablaDeSimbolos.NodosAST.sentencia.NodoBloque;
+import TablaDeSimbolos.NodosAST.sentencia.NodoVarLocal;
 import exceptions.SemanticException;
 import lexical.Token;
 import lexical.TokenId;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 import static Main.Main.TS;
 
@@ -18,6 +22,8 @@ public class Clase {
     private Constructor constructor;
     private HashMap<String, Metodo> metodos;
     private boolean consolidado = false;
+    private int offset;
+    private String label;
 
     public Clase (Token nombre, Token mod, Token padre) {
         this.nombre = nombre;
@@ -240,6 +246,66 @@ public class Clase {
         for (Metodo m : metodos.values()) {
             Main.TS.setMetodoActual(m);
             m.chequear();
+        }
+    }
+
+    public void generar(){
+        generarVTable();
+        Main.TS.getInstructionList().add(".CODE");
+        if (constructor != null){
+            constructor.generar();
+        }
+        for (Metodo m : metodos.values()){
+            // Ver tema metodos heredados
+            m.generar();
+        }
+    }
+
+    public void generarVTable(){
+        List<Metodo> metodosValidos = new ArrayList<>();
+        for(Metodo m : metodos.values()){
+            if (m.getModificador() != null && !m.getModificador().getTokenId().equals(TokenId.kw_static)){
+                metodosValidos.add(m);
+            }
+        }
+        if (metodosValidos.isEmpty()){
+            return;
+        }
+        TS.getInstructionList().add(".DATA");
+        TS.getInstructionList().add("VT_" + getNombre() + ":");
+    }
+
+    public void setOffsets(){
+        setOffsetsAtributos();
+        setOffsetsMetodos();
+        for(Metodo m : metodos.values()){
+            if(m.getBloque() !=null){
+                setOffsetsBloques(m.getBloque());
+            }
+        }
+    }
+
+    private void setOffsetsBloques(NodoBloque b) {
+        int offset = 0;
+        for(NodoVarLocal varLocal : b.getVariablesLocales().values()){
+            varLocal.setOffset(offset);
+            offset--;
+        }
+    }
+
+    private void setOffsetsAtributos(){
+        int offset = 0;
+        for(Atributo a : atributos.values()){
+            a.setOffset(offset);
+            offset += 1;
+        }
+    }
+
+    private void setOffsetsMetodos() {
+        int offset = 0;
+        for (Metodo m : metodos.values()) {
+            m.setOffset(offset);
+            offset += 1;
         }
     }
 }

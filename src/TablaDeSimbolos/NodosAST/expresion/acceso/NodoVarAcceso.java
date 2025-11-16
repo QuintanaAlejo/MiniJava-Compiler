@@ -88,4 +88,9 @@ public class NodoVarAcceso extends NodoAcceso {
 
         return tipoVar;
     }
+
+    @Override
+    public void generar(){
+
+    }
 }

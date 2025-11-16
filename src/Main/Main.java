@@ -7,7 +7,9 @@ import lexical.LexicalAnalyzer;
 import sourcemanager.SourceManager;
 import sourcemanager.SourceManagerImpl;
 import syntactic.SyntacticAnalyzer;
-import java.io.IOException;
+
+import java.io.*;
+import java.util.Objects;
 
 public class Main {
     public static TablaDeSimbolos TS;
@@ -17,10 +19,12 @@ public class Main {
         LexicalAnalyzer lexicalAnalyzer;
         SyntacticAnalyzer syntacticAnalyzer;
         TS = new TablaDeSimbolos();
+        String path;
 
         try {
             sourceManager.open(args[0]);
             lexicalAnalyzer = new LexicalAnalyzer(sourceManager);
+            path = args[1];
         } catch (IOException e){
             throw new RuntimeException(e);
         }
@@ -41,6 +45,7 @@ public class Main {
                 TS.estaBienDeclarada();
                 TS.consolidar();
                 TS.chequear();
+                generar(path);
             } catch (SemanticException e) {
                 e.printError();
                 error = true;
@@ -51,6 +56,29 @@ public class Main {
             System.out.println("Compilacion exitosa");
             System.out.println();
             System.out.println("[SinErrores]");
+        }
+    }
+
+    private static void generar(String path){
+        File output;
+        FileWriter writer;
+        BufferedWriter bufferedWriter;
+        TS.generar();
+
+        try {
+            output = new File(Objects.requireNonNullElse(path, "output.txt"));
+            writer = new FileWriter(output);
+            bufferedWriter = new BufferedWriter(writer);
+
+            for(String instruccion : TS.getInstructionList()){
+                writer.write(instruccion);
+                writer.write("\n");
+            }
+
+            writer.close();
+            bufferedWriter.close();
+        } catch (IOException e){
+            throw new RuntimeException(e);
         }
     }
 }

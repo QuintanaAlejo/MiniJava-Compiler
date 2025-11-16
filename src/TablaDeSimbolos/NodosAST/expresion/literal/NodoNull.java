@@ -25,4 +25,9 @@ public class NodoNull extends NodoLiteral {
     public Tipo chequear() {
         return new TipoNull();
     }
+
+    @Override
+    public void generar(){
+
+    }
 }

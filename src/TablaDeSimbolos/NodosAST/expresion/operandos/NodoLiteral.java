@@ -5,4 +5,5 @@ import TablaDeSimbolos.Tipos.Tipo;
 
 public abstract class NodoLiteral extends NodoOperando {
     public abstract Tipo chequear();
+    public abstract void generar();
 }

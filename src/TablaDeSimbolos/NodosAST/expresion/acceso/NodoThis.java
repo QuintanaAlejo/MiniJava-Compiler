@@ -55,4 +55,9 @@ public class NodoThis extends NodoAcceso {
     public void setEncadenado(NodoEncadenado encadenado) {
         encadenadoOpcional = encadenado;
     }
+
+    @Override
+    public void generar(){
+
+    }
 }

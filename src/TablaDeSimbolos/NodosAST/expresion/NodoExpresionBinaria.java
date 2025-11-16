@@ -100,4 +100,9 @@ public class NodoExpresionBinaria extends NodoExpresionCompuesta{
         }
         throw new SemanticException(operador.getLexeme(), "Expresion binaria invalida", operador.getLinea());
     }
+
+    @Override
+    public void generar(){
+
+    }
 }

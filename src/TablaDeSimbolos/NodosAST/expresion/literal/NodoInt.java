@@ -25,4 +25,9 @@ public class NodoInt extends NodoLiteral {
     public Tipo chequear() {
         return new TipoInt();
     }
+
+    @Override
+    public void generar(){
+
+    }
 }

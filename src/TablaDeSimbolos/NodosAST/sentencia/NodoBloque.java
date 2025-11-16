@@ -14,12 +14,14 @@ public class NodoBloque extends NodoSentencia{
     private NodoBloque bloquePadre;
     private Clase clase;
     private boolean chequeado;
+    private boolean generado;
 
     public NodoBloque() {
         this.sentencias = new ArrayList<>();
         this.variablesLocales = new HashMap<>();
         this.clase = Main.TS.getClaseActual();
         this.chequeado = false;
+        this.generado = false;
     }
 
     public void agregarSentencia(NodoSentencia sentencia) {
@@ -67,4 +69,17 @@ public class NodoBloque extends NodoSentencia{
     private NodoSentencia getUltimaSentencia(){
         return sentencias.getLast();
     }
+
+    public void generar(){
+        if (!generado){
+            bloquePadre = Main.TS.getBloqueActual();
+            Main.TS.setBloqueActual(this);
+            for (NodoSentencia s : sentencias){
+                //s.generar();
+            }
+            Main.TS.setBloqueActual(bloquePadre);
+        }
+        generado = true;
+    }
+
 }

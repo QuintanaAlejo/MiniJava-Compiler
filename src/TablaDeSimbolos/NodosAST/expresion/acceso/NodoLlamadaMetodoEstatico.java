@@ -88,4 +88,9 @@ public class NodoLlamadaMetodoEstatico extends NodoAcceso {
         return m.getTipoRetorno();
     }
 
+    @Override
+    public void generar(){
+
+    }
+
 }

@@ -9,6 +9,7 @@ import static Main.Main.TS;
 public class Atributo {
     private Token nombre;
     private Tipo tipo;
+    private int offset;
 
     public Atributo(Token nombre, Tipo tipo) {
         this.nombre = nombre;
@@ -33,5 +34,12 @@ public class Atributo {
                 throw new SemanticException(tipo.getTokenPropio().getLexeme(), "El atributo " + nombre.getLexeme() + " es de tipo " + tipo.getTokenPropio().getLexeme() + " y la clase " + tipo.getTokenPropio().getLexeme() + " no existe.", tipo.getTokenPropio().getLinea());
             }
         }
+    }
+
+    public int getOffset() {
+        return offset;
+    }
+    public void setOffset(int offset) {
+        this.offset = offset;
     }
 }

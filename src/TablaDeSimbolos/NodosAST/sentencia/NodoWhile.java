@@ -38,4 +38,9 @@ public class NodoWhile extends NodoSentencia{
             throw new SemanticException(tokenWhile.getLexeme(), "La condición del while debe ser de tipo booleano.", tokenWhile.getLinea());
         }
     }
+
+    @Override
+    public void generar(){
+
+    }
 }

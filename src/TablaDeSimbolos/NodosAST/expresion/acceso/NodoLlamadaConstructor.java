@@ -51,4 +51,9 @@ public class NodoLlamadaConstructor extends NodoAcceso {
             return encadenado.chequear(new TipoReferencia(token));
         }
     }
+
+    @Override
+    public void generar(){
+
+    }
 }

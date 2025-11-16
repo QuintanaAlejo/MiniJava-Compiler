@@ -33,4 +33,9 @@ public class NodoString extends NodoAcceso {
     public Tipo chequear() {
         return new TipoReferencia(new Token(TokenId.lit_string, "String", token.getLinea()) );
     }
+
+    @Override
+    public void generar(){
+
+    }
 }

@@ -9,4 +9,5 @@ public abstract class NodoAcceso extends NodoOperando {
     public abstract Tipo chequear() throws SemanticException;
     public abstract void setEncadenado(NodoEncadenado encadenado);
     public abstract NodoEncadenado getEncadenado();
+    public abstract void generar();
 }

@@ -41,4 +41,9 @@ public class NodoIf extends NodoSentencia {
         sentenciaThen.chequear();
         sentenciaElse.chequear();
     }
+
+    @Override
+    public void generar(){
+
+    }
 }

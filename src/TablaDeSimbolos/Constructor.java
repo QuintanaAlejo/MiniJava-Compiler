@@ -1,5 +1,6 @@
 package TablaDeSimbolos;
 
+import Main.Main;
 import TablaDeSimbolos.NodosAST.sentencia.NodoBloque;
 import lexical.Token;
 import java.util.HashMap;
@@ -48,5 +49,25 @@ public class Constructor {
             throw new SemanticException(parametro.getNombre(), "Parámetro repetido", parametro.getToken().getLinea()); //Ver
         }
         this.parametros.put(parametro.getNombre(), parametro);
+    }
+
+    public String getLabel() {
+        return "ctor_"+getNombre();
+    }
+
+    public void generar(){
+        Main.TS.getInstructionList().add(".CODE");
+        Main.TS.getInstructionList().add(getLabel() + ":");
+        Main.TS.getInstructionList().add("LOADFP");
+        Main.TS.getInstructionList().add("LOADSP");
+        Main.TS.getInstructionList().add("STOREFP");
+
+        if(bloque != null){
+            bloque.generar();
+        }
+
+        int cantMemoria = parametros.size() + 1;
+        Main.TS.getInstructionList().add("STOREFP");
+        Main.TS.getInstructionList().add("RET " + cantMemoria);
     }
 }

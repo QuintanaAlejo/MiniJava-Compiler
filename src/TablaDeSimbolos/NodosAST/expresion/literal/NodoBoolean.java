@@ -26,4 +26,9 @@ public class NodoBoolean extends NodoLiteral {
         return new TipoBooleano();
     }
 
+    @Override
+    public void generar(){
+
+    }
+
 }

@@ -111,4 +111,9 @@ public class NodoLlamadaMetodo extends NodoAcceso {
         }
         return false;
     }
+
+    @Override
+    public void generar(){
+
+    }
 }

@@ -13,6 +13,7 @@ public class NodoVarLocal extends NodoSentencia{
     private Token identificador;
     private NodoExpresion expresion;
     private Tipo tipo;
+    private int offset;
 
     public NodoVarLocal(Token identificador, NodoExpresion expresion) {
         this.identificador = identificador;
@@ -48,9 +49,6 @@ public class NodoVarLocal extends NodoSentencia{
         if (Main.TS.getMetodoActual().getParametros().containsKey(identificador.getLexeme())) {
             throw new SemanticException(identificador.getLexeme(), "La variable local no puede tener el mismo nombre que un parámetro del método.", identificador.getLinea());
         }
-        //if (Main.TS.getClaseActual().getAtributos().containsKey(identificador.getLexeme())) {
-        //    throw new SemanticException(identificador.getLexeme(), "La variable local no puede tener el mismo nombre que un atributo de la clase.", identificador.getLinea());
-        //}
         if (Main.TS.getBloqueActual().getVariablesLocales().containsKey(identificador.getLexeme())) {
             throw new SemanticException(identificador.getLexeme(), "La variable local ya ha sido declarada en este bloque.", identificador.getLinea());
         }
@@ -61,5 +59,21 @@ public class NodoVarLocal extends NodoSentencia{
         chequearVariablesDelPadre();
 
         Main.TS.getBloqueActual().agregarVariableLocal(identificador.getLexeme(), this);
+    }
+
+    public int getOffset() {
+        return offset;
+    }
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
+
+    @Override
+    public void generar(){
+        Main.TS.getInstructionList().add("RMEM 1 ; Reserva memoria para la variable local " + identificador.getLexeme());
+        if (expresion != null){
+            expresion.generar();
+            Main.TS.getInstructionList().add("STORE "+offset+" ; Almacena el valor de la expresion");
+        }
     }
 }

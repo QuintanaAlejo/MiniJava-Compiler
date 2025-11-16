@@ -26,4 +26,9 @@ public class NodoChar extends NodoLiteral {
         return new TipoChar();
     }
 
+    @Override
+    public void generar(){
+
+    }
+
 }

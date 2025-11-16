@@ -34,4 +34,9 @@ public class NodoAsignacion extends NodoSentencia{
                 expresion instanceof NodoLlamadaMetodo ||
                 expresion instanceof NodoLlamadaMetodoEstatico );
     }
+
+    @Override
+    public void generar(){
+
+    }
 }

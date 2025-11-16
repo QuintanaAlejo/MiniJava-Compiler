@@ -42,4 +42,9 @@ public class NodoExpresionParentizada extends NodoAcceso {
             return encadenado.chequear(tipoExpresion);
         }
     }
+
+    @Override
+    public void generar(){
+
+    }
 }

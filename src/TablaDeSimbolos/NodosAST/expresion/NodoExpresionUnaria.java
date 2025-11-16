@@ -53,4 +53,9 @@ public class NodoExpresionUnaria extends NodoExpresionCompuesta{
 
         throw new SemanticException(operador.getLexeme(), "Operador unario incompatible con el tipo del operando.", operador.getLinea());
     }
+
+    @Override
+    public void generar(){
+
+    }
 }

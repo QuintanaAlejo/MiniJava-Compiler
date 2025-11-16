@@ -157,6 +157,7 @@ public class SyntacticAnalyzer {
                Token nombre = currentToken;
                match(TokenId.id_MetVar);
                Metodo m = new Metodo(nombre, t, mod);
+               m.setClase(Main.TS.getClaseActual().getNombre());
                Main.TS.setMetodoActual(m);
                List<Parametro> args = ArgsFormales();
                for(Parametro p : args){

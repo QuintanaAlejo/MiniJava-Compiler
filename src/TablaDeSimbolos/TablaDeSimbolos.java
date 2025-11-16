@@ -1,15 +1,5 @@
 package TablaDeSimbolos;
 
-/*
-Una tabla de símbolos es una estructura central del compilador que actúa como un gran diccionario donde se va guardando toda la información de las entidades declaradas en el programa,
-como clases, atributos, métodos, parámetros o constructores. Su construcción comienza durante el análisis sintáctico, a medida que se reconocen las distintas declaraciones,
-y sirve como base para el análisis semántico, ya que permite verificar que cada nombre usado en el programa corresponde efectivamente a una entidad válida, que no existan repeticiones
-indebidas, que los tipos declarados estén definidos, que no haya herencia circular y que las sobreescrituras de métodos respeten la signatura original.
-En lenguajes como MiniJava, la tabla de símbolos suele tener una estructura jerárquica: en el nivel global se almacenan las clases, cada clase contiene sus propios atributos y métodos,
-y cada metodo o constructor mantiene la información de sus parámetros. De este modo, la tabla refleja el ambiente de declaración del programa, facilita la detección de errores semánticos
-y sienta las bases para etapas posteriores como la verificación de sentencias o la generación de código.
- */
-
 import Main.Main;
 import TablaDeSimbolos.NodosAST.sentencia.NodoBloque;
 import TablaDeSimbolos.Tipos.TipoPrimitivo;
@@ -31,6 +21,8 @@ public class TablaDeSimbolos {
     private Constructor constructorActual;
     private NodoBloque bloqueActual;
 
+    private ArrayList<String> instructionList;
+
     public TablaDeSimbolos() {
         this.clases = new HashMap<String, Clase>();
         this.interfaces = new HashMap<String, Interfaz>();
@@ -38,6 +30,7 @@ public class TablaDeSimbolos {
         this.claseActual = null;
         this.metodoActual = null;
         this.constructorActual = null;
+        this.instructionList = new ArrayList<>();
         //Clase Object
         Clase object = new Clase(new Token(TokenId.id_Class, "Object", 0), null, null);
         //Metodo static void debugPrint(int i) - Ver si el retorno es null o void
@@ -141,6 +134,179 @@ public class TablaDeSimbolos {
             }
         }
         return false;
+    }
+
+    public ArrayList<String> getInstructionList(){
+        return instructionList;
+    }
+
+    public void generar(){
+        setearOffsets();
+        generarInicial();
+        generarHeap();
+        generarClases();
+
+        for(Clase c : clases.values()){
+            c.generar();
+        }
+    }
+
+    public void generarInicial(){
+        instructionList.add(".CODE");
+        instructionList.add("PUSH simple_heap_init");
+        instructionList.add("CALL");
+        instructionList.add("PUSH main");
+        instructionList.add("CALL");
+        instructionList.add("HALT");
+    }
+
+    public void generarHeap(){
+        instructionList.add("simple_heap_init:");
+        instructionList.add("RET 0");
+
+        instructionList.add("simple_malloc:");
+        instructionList.add("LOADFP");
+        instructionList.add("LOADSP");
+        instructionList.add("STOREFP");
+        instructionList.add("LOADHL");
+        instructionList.add("DUP");
+        instructionList.add("PUSH 1");
+        instructionList.add("ADD");
+        instructionList.add("STORE 4");
+        instructionList.add("LOAD 3");
+        instructionList.add("ADD");
+        instructionList.add("STOREHL");
+        instructionList.add("STOREFP");
+        instructionList.add("RET 1");
+    }
+
+    public void generarClases(){
+        //Object class
+        //static void debugPrint(int i)
+        instructionList.add("; Clase Object");
+        instructionList.add("Object_debugPrint:");
+        instructionList.add("LOADFP");
+        instructionList.add("LOADSP");
+        instructionList.add("STOREFP");
+        instructionList.add("LOAD 3");
+        instructionList.add("IPRINT");
+        instructionList.add("STOREFP");
+        instructionList.add("RET 1");
+
+        //System class
+        //static int read()
+        instructionList.add("; Clase System");
+        instructionList.add("System_read:");
+        instructionList.add("LOADFP");
+        instructionList.add("LOADSP");
+        instructionList.add("STOREFP");
+        instructionList.add("READ");
+        instructionList.add("STORE 3");
+        instructionList.add("STOREFP");
+        instructionList.add("RET 0");
+
+        //static void printB(boolean b)
+        instructionList.add("System_printB:");
+        instructionList.add("LOADFP");
+        instructionList.add("LOADSP");
+        instructionList.add("STOREFP");
+        instructionList.add("LOAD 3");
+        instructionList.add("BPRINT");
+        instructionList.add("STOREFP");
+        instructionList.add("RET 1");
+
+        //static void printC(char c)
+        instructionList.add("System_printC:");
+        instructionList.add("LOADFP");
+        instructionList.add("LOADSP");
+        instructionList.add("STOREFP");
+        instructionList.add("LOAD 3");
+        instructionList.add("CPRINT");
+        instructionList.add("STOREFP");
+        instructionList.add("RET 1");
+
+        //static void printI(int i)
+        instructionList.add("System_printI:");
+        instructionList.add("LOADFP");
+        instructionList.add("LOADSP");
+        instructionList.add("STOREFP");
+        instructionList.add("LOAD 3");
+        instructionList.add("IPRINT");
+        instructionList.add("STOREFP");
+        instructionList.add("RET 1");
+
+        //static void printS(String s)
+        instructionList.add("System_printS:");
+        instructionList.add("LOADFP");
+        instructionList.add("LOADSP");
+        instructionList.add("STOREFP");
+        instructionList.add("LOAD 3");
+        instructionList.add("SPRINT");
+        instructionList.add("STOREFP");
+        instructionList.add("RET 1");
+
+        //static void println()
+        instructionList.add("System_println:");
+        instructionList.add("LOADFP");
+        instructionList.add("LOADSP");
+        instructionList.add("STOREFP");
+        instructionList.add("PRNLN");
+        instructionList.add("STOREFP");
+        instructionList.add("RET 0");
+
+        //static void printBln(boolean b)
+        instructionList.add("System_printBln:");
+        instructionList.add("LOADFP");
+        instructionList.add("LOADSP");
+        instructionList.add("STOREFP");
+        instructionList.add("LOAD 3");
+        instructionList.add("BPRINT");
+        instructionList.add("PRNLN");
+        instructionList.add("STOREFP");
+        instructionList.add("RET 1");
+
+        //static void printCln(char c)
+        instructionList.add("System_printCln:");
+        instructionList.add("LOADFP");
+        instructionList.add("LOADSP");
+        instructionList.add("STOREFP");
+        instructionList.add("LOAD 3");
+        instructionList.add("CPRINT");
+        instructionList.add("PRNLN");
+        instructionList.add("STOREFP");
+        instructionList.add("RET 1");
+
+        //static void printIln(int i)
+        instructionList.add("System_printIln:");
+        instructionList.add("LOADFP");
+        instructionList.add("LOADSP");
+        instructionList.add("STOREFP");
+        instructionList.add("LOAD 3");
+        instructionList.add("IPRINT");
+        instructionList.add("PRNLN");
+        instructionList.add("STOREFP");
+        instructionList.add("RET 1");
+
+        //static void printSln(String s)
+        instructionList.add("System_printSln:");
+        instructionList.add("LOADFP");
+        instructionList.add("LOADSP");
+        instructionList.add("STOREFP");
+        instructionList.add("LOAD 3");
+        instructionList.add("SPRINT");
+        instructionList.add("PRNLN");
+        instructionList.add("STOREFP");
+        instructionList.add("RET 1");
+    }
+
+    public void setearOffsets(){
+        for(Clase c : clases.values()){
+            c.setOffsets();
+        }
+    }
+
+    public void agregarInstruccion(String inst){
+        instructionList.add(inst);
     }
 
     //Getters y Setters de los actuales
