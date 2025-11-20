@@ -1,13 +1,13 @@
 .CODE
 PUSH simple_heap_init
 CALL
-PUSH main
+PUSH Init_main
 CALL
 HALT
-simple_heap_init:
-RET 0
-simple_malloc:
-LOADFP
+simple_heap_init: RET 0 ; Retorna inmediatamente
+
+simple_malloc: LOADFP
+
 LOADSP
 STOREFP
 LOADHL
@@ -113,68 +113,27 @@ SPRINT
 PRNLN
 STOREFP
 RET 1
+.DATA
+VT_Init: NOP ; Clase sin metodos dinamicos
+
 .CODE
 .CODE
+CONSTRUCTOR_Init:
 LOADFP
 LOADSP
 STOREFP
-.CODE
-main:
-LOADFP
-LOADSP
 STOREFP
+RET 1
+
 .CODE
-.CODE
-LOADFP
-LOADSP
-STOREFP
-.CODE
-.CODE
-LOADFP
-LOADSP
-STOREFP
-.CODE
-.CODE
-LOADFP
-LOADSP
-STOREFP
-.CODE
-LOADFP
-LOADSP
-STOREFP
-.CODE
-LOADFP
-LOADSP
-STOREFP
-.CODE
-LOADFP
-LOADSP
-STOREFP
-.CODE
-LOADFP
-LOADSP
-STOREFP
-.CODE
-LOADFP
-LOADSP
-STOREFP
-.CODE
-LOADFP
-LOADSP
-STOREFP
-.CODE
-LOADFP
-LOADSP
-STOREFP
-.CODE
-LOADFP
-LOADSP
-STOREFP
-.CODE
-LOADFP
-LOADSP
-STOREFP
-.CODE
-LOADFP
-LOADSP
-STOREFP
+Init_main: NOP ; Inicio método main
+LOADFP    ; Cargo FP actual
+LOADSP    ; Cargo SP actual
+STOREFP   ; Actualizo FP para nuevo RA
+PUSH 1234
+PUSH Object_debugPrint   ; Apilo el metodo
+CALL   ; Llamo al metodo
+STOREFP   ; Restaura FP anterior
+RET 0
+; Fin del metodomain
+

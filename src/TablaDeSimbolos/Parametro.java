@@ -9,6 +9,7 @@ import static Main.Main.TS;
 public class Parametro {
     public Token nombre;
     public Tipo tipo;
+    private int offset;
 
     public Parametro(Token nombre, Tipo tipo) {
         this.nombre = nombre;
@@ -25,6 +26,14 @@ public class Parametro {
 
     public Tipo getTipo() {
         return tipo;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
+
+    public int getOffset() {
+        return offset;
     }
 
     public void estaBienDeclarado() throws SemanticException {

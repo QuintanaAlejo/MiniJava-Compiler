@@ -52,10 +52,11 @@ public class Constructor {
     }
 
     public String getLabel() {
-        return "ctor_"+getNombre();
+        return "CONSTRUCTOR_"+getNombre();
     }
 
     public void generar(){
+        int par = parametros.size() + 1;
         Main.TS.getInstructionList().add(".CODE");
         Main.TS.getInstructionList().add(getLabel() + ":");
         Main.TS.getInstructionList().add("LOADFP");
@@ -66,8 +67,8 @@ public class Constructor {
             bloque.generar();
         }
 
-        int cantMemoria = parametros.size() + 1;
         Main.TS.getInstructionList().add("STOREFP");
-        Main.TS.getInstructionList().add("RET " + cantMemoria);
+        Main.TS.getInstructionList().add("RET " + par);
+        Main.TS.getInstructionList().add("");
     }
 }

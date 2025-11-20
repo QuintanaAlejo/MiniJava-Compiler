@@ -2,6 +2,7 @@ package TablaDeSimbolos.NodosAST.sentencia;
 
 import Main.Main;
 import TablaDeSimbolos.Clase;
+import TablaDeSimbolos.Metodo;
 import TablaDeSimbolos.NodosAST.expresion.NodoExpresion;
 import TablaDeSimbolos.NodosAST.expresion.NodoExpresionVacia;
 import TablaDeSimbolos.Tipos.Tipo;
@@ -75,6 +76,10 @@ public class NodoReturn extends NodoSentencia{
 
     @Override
     public void generar(){
-
+        Metodo actual = Main.TS.getMetodoActual();
+        if (expresion != null){
+            expresion.generar();
+            // Completar
+        }
     }
 }

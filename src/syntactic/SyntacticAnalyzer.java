@@ -175,6 +175,7 @@ public class SyntacticAnalyzer {
                Token nombre = currentToken;
                match(TokenId.id_MetVar);
                Metodo m = new Metodo(nombre, null, null);
+               m.setClase(Main.TS.getClaseActual().getNombre());
                Main.TS.setMetodoActual(m);
                List<Parametro> args = ArgsFormales();
                for(Parametro p : args){
@@ -212,6 +213,7 @@ public class SyntacticAnalyzer {
      private void Metodo(Tipo t, Token nombre) throws SyntacticException, SemanticException {
           if (Firsts.isFirst("ArgsFormales", currentToken)) {
                Metodo m = new Metodo(nombre, t, null);
+               m.setClase(Main.TS.getClaseActual().getNombre());
                Main.TS.setMetodoActual(m);
                List<Parametro> args = ArgsFormales();
                for (Parametro p : args) {

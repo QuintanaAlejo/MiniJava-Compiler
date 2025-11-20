@@ -37,6 +37,6 @@ public class NodoAsignacion extends NodoSentencia{
 
     @Override
     public void generar(){
-
+        expresion.generar();
     }
 }

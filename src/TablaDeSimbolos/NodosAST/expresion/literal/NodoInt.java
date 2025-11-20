@@ -1,5 +1,6 @@
 package TablaDeSimbolos.NodosAST.expresion.literal;
 
+import Main.Main;
 import TablaDeSimbolos.NodosAST.expresion.operandos.NodoLiteral;
 import TablaDeSimbolos.Tipos.Tipo;
 import TablaDeSimbolos.Tipos.TipoInt;
@@ -28,6 +29,6 @@ public class NodoInt extends NodoLiteral {
 
     @Override
     public void generar(){
-
+        Main.TS.getInstructionList().add("PUSH " + token.getLexeme());
     }
 }

@@ -2,6 +2,7 @@ package TablaDeSimbolos;
 
 import Main.Main;
 import TablaDeSimbolos.NodosAST.sentencia.NodoBloque;
+import TablaDeSimbolos.NodosAST.sentencia.NodoBloqueVacio;
 import TablaDeSimbolos.NodosAST.sentencia.NodoVarLocal;
 import exceptions.SemanticException;
 import lexical.Token;
@@ -24,6 +25,10 @@ public class Clase {
     private boolean consolidado = false;
     private int offset;
     private String label;
+    private int lastMethodOffset;
+    private int lastAttributeOffset;
+    private boolean methodsOffseted = false;
+    private boolean attributesOffseted = false;
 
     public Clase (Token nombre, Token mod, Token padre) {
         this.nombre = nombre;
@@ -186,6 +191,12 @@ public class Clase {
             }
         }
 
+        if (constructor == null){
+            Constructor c = new Constructor(this.nombre);
+            c.setBloque(new NodoBloqueVacio());
+            this.constructor = c;
+        }
+
         consolidado = true;
     }
     public void agregarConstructor(Constructor constructor) throws SemanticException {
@@ -250,14 +261,20 @@ public class Clase {
     }
 
     public void generar(){
+        TS.setClaseActual(this);
+        setOffsets();
         generarVTable();
         Main.TS.getInstructionList().add(".CODE");
+
         if (constructor != null){
             constructor.generar();
         }
-        for (Metodo m : metodos.values()){
-            // Ver tema metodos heredados
-            m.generar();
+
+        for (Metodo m : metodos.values()) {
+            if (m.getClase() != null && m.getClase().equals(this.getNombre())){
+                m.generar();
+                TS.getInstructionList().add("");
+            }
         }
     }
 
@@ -268,11 +285,27 @@ public class Clase {
                 metodosValidos.add(m);
             }
         }
-        if (metodosValidos.isEmpty()){
-            return;
+        if (!metodosValidos.isEmpty()){
+            TS.getInstructionList().add(".DATA");
+            StringBuilder labelMet = new StringBuilder();
+            for (int i = 0; i < lastMethodOffset; i++) {
+                if (metodosValidos.get(i) != null) {
+                    labelMet.append(nombre.getLexeme()).append("_");
+                    labelMet.append(metodosValidos.get(i));
+                }
+                else {
+                    labelMet.append("0");
+                }
+                if (i != lastMethodOffset-1) {
+                    labelMet.append(",");
+                }
+            }
+            Main.TS.getInstructionList().add("VT_"+getNombre()+": DW "+labelMet+" ; Etiquetas de metodo de " + getNombre());
+        } else {
+            Main.TS.getInstructionList().add(".DATA");
+            Main.TS.getInstructionList().add("VT_"+getNombre()+": NOP ; Clase sin metodos dinamicos");
         }
-        TS.getInstructionList().add(".DATA");
-        TS.getInstructionList().add("VT_" + getNombre() + ":");
+        Main.TS.getInstructionList().add("");
     }
 
     public void setOffsets(){
@@ -293,19 +326,101 @@ public class Clase {
         }
     }
 
-    private void setOffsetsAtributos(){
-        int offset = 0;
-        for(Atributo a : atributos.values()){
-            a.setOffset(offset);
-            offset += 1;
+    private void setOffsetsMetodos() {
+        int offset = 1;
+        if (methodsOffseted){
+            return;
         }
+        if (padre != null && !padre.getLexeme().equals("Object")){
+            Clase clasePadre = TS.getClase(padre.getLexeme());
+            if (clasePadre != null) {
+                clasePadre.setOffsetsMetodos();
+                offset += clasePadre.getLastMethodOffset();
+            }
+        }
+        for (Metodo m : metodos.values()) {
+            int offsetAux = methodIsInherited(m);
+            if (offsetAux != 0) {
+                m.setOffset(offsetAux);
+            } else {
+                m.setOffset(offset);
+                offset++;
+            }
+        }
+        lastMethodOffset = offset;
+        methodsOffseted = true;
     }
 
-    private void setOffsetsMetodos() {
-        int offset = 0;
-        for (Metodo m : metodos.values()) {
-            m.setOffset(offset);
-            offset += 1;
+    private void setOffsetsAtributos(){
+        int offset = 1;
+        if (attributesOffseted){
+            return;
         }
+        if (padre != null && !padre.getLexeme().equals("Object")){
+            Clase clasePadre = TS.getClase(padre.getLexeme());
+            if (clasePadre != null) {
+                clasePadre.setOffsetsAtributos();
+                offset += clasePadre.getLastAttributeOffset();
+            }
+        }
+        for(Atributo a : atributos.values()){
+            int offsetAux = attributeIsInherited(a);
+            if (offsetAux != 0) {
+                a.setOffset(offsetAux);
+            } else {
+                a.setOffset(offset);
+                offset++;
+            }
+        }
+        lastAttributeOffset = offset;
+        attributesOffseted = true;
+    }
+
+    public String getVTable(){
+        return "VT_"+getNombre();
+    }
+
+    private int methodIsInherited(Metodo m) {
+        int toReturn = 0;
+        if(padre != null) {
+            if (!padre.getLexeme().equals("Object")) {
+                Clase aux = Main.TS.getClase(padre.getLexeme());
+                if(aux != null) {
+                    for (Metodo m2 : aux.getMetodos().values()) {
+                        if (m.getToken().getLexeme().equals(m2.getToken().getLexeme())) {
+                            toReturn = m2.getOffset();
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return toReturn;
+    }
+
+    private int attributeIsInherited(Atributo m) {
+        int toReturn = 0;
+        if(padre != null) {
+            if (!padre.getLexeme().equals("Object")) {
+                Clase aux = Main.TS.getClase(padre.getLexeme());
+                if(aux != null) {
+                    for (Atributo m2 : aux.getAtributos().values()) {
+                        if (m.getToken().getLexeme().equals(m2.getToken().getLexeme())) {
+                            toReturn = m2.getOffset();
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return toReturn;
+    }
+
+    public int getLastMethodOffset() {
+        return lastMethodOffset;
+    }
+
+    public int getLastAttributeOffset() {
+        return lastAttributeOffset;
     }
 }

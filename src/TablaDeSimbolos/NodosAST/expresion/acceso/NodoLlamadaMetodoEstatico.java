@@ -90,7 +90,19 @@ public class NodoLlamadaMetodoEstatico extends NodoAcceso {
 
     @Override
     public void generar(){
+        String label = clase.getLexeme() + "_" + id.getLexeme();
+        if (argumentos != null) {
+            for (NodoExpresion arg : argumentos) {
+                arg.generar();
+            }
+        }
 
+        Main.TS.getInstructionList().add("PUSH " + label + "   ; Apilo el metodo");
+        Main.TS.getInstructionList().add("CALL   ; Llamo al metodo");
+
+        if (encadenado != null) {
+            encadenado.generar();
+        }
     }
 
 }

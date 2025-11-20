@@ -1,5 +1,6 @@
 package TablaDeSimbolos.NodosAST.expresion;
 
+import Main.Main;
 import TablaDeSimbolos.Tipos.Tipo;
 import TablaDeSimbolos.Tipos.TipoBooleano;
 import TablaDeSimbolos.Tipos.TipoInt;
@@ -103,6 +104,48 @@ public class NodoExpresionBinaria extends NodoExpresionCompuesta{
 
     @Override
     public void generar(){
-
+        izquierda.generar();
+        derecha.generar();
+        switch (operador.getLexeme()){
+            case "+":
+                Main.TS.getInstructionList().add("ADD");
+                break;
+            case "-":
+                Main.TS.getInstructionList().add("SUB");
+                break;
+            case "*":
+                Main.TS.getInstructionList().add("MUL");
+                break;
+            case "/":
+                Main.TS.getInstructionList().add("DIV");
+                break;
+            case "%":
+                Main.TS.getInstructionList().add("MOD");
+                break;
+            case "<":
+                Main.TS.getInstructionList().add("LT");
+                break;
+            case "<=":
+                Main.TS.getInstructionList().add("LE");
+                break;
+            case ">":
+                Main.TS.getInstructionList().add("GT");
+                break;
+            case ">=":
+                Main.TS.getInstructionList().add("GE");;
+                break;
+            case "==":
+                Main.TS.getInstructionList().add("EQ");
+                break;
+            case "!=":
+                Main.TS.getInstructionList().add("NE");
+                break;
+            case "&&":
+                Main.TS.getInstructionList().add("AND");
+                break;
+            case "||":
+                Main.TS.getInstructionList().add("OR");
+                break;
+        }
     }
 }

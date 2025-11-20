@@ -1,5 +1,6 @@
 package TablaDeSimbolos.NodosAST.expresion.acceso;
 
+import Main.Main;
 import TablaDeSimbolos.NodosAST.encadenado.NodoEncadenado;
 import TablaDeSimbolos.NodosAST.expresion.operandos.NodoAcceso;
 import TablaDeSimbolos.Tipos.Tipo;
@@ -35,7 +36,17 @@ public class NodoString extends NodoAcceso {
     }
 
     @Override
-    public void generar(){
+    public void generar() {
+        String lex = token.getLexeme();
+        if (lex != null && lex.length() >= 2) {
+            if ((lex.startsWith("\"") && lex.endsWith("\"")) || (lex.startsWith("'") && lex.endsWith("'"))) {
+                lex = lex.substring(1, lex.length() - 1);
+            }
+        } else {
+            lex = "";
+        }
 
+        // Ver si el string contiene caracteres especiales y escaparlos
+        Main.TS.getInstructionList().add("PUSH " + lex + " ; Cargo el string");
     }
 }

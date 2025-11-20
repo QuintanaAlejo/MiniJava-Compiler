@@ -58,6 +58,9 @@ public class NodoThis extends NodoAcceso {
 
     @Override
     public void generar(){
-
+        Main.TS.getInstructionList().add("LOAD 3 ; this");
+        if (encadenadoOpcional != null){
+            encadenadoOpcional.generar();
+        }
     }
 }

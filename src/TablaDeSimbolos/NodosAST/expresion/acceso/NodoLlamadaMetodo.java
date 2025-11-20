@@ -114,6 +114,22 @@ public class NodoLlamadaMetodo extends NodoAcceso {
 
     @Override
     public void generar(){
+        Metodo metodo = Main.TS.getClaseActual().getMetodos().get(id.getLexeme());
+        if (argumentos != null){
+            for (NodoExpresion arg : argumentos){
+                arg.generar();
+            }
+        }
 
+        Main.TS.getInstructionList().add("LOAD 3");
+        int offsetMetodo = metodo.getOffset();
+        Main.TS.getInstructionList().add("LOAD 3");
+        Main.TS.getInstructionList().add("LOADREF 0");
+        Main.TS.getInstructionList().add("LOADREF " + offsetMetodo);
+        Main.TS.getInstructionList().add("CALL");
+
+        if (siguiente != null){
+            siguiente.generar();
+        }
     }
 }

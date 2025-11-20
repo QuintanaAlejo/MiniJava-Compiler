@@ -72,14 +72,40 @@ public class NodoBloque extends NodoSentencia{
 
     public void generar(){
         if (!generado){
+            setLocalVarsOffset();
             bloquePadre = Main.TS.getBloqueActual();
             Main.TS.setBloqueActual(this);
             for (NodoSentencia s : sentencias){
-                //s.generar();
+                s.generar();
             }
             Main.TS.setBloqueActual(bloquePadre);
         }
         generado = true;
+    }
+
+    public void setLocalVarsOffset() {
+        int offset = -1;
+        if(bloquePadre != null) {
+            offset = bloquePadre.getLastLocalVarOffset() - 1;
+        }
+        for(NodoVarLocal localVar : variablesLocales.values()) {
+            if(offset != 0) {
+                localVar.setOffset(offset);
+                offset--;
+            }
+        }
+    }
+
+    public int getLastLocalVarOffset(){
+        int ret = 0;
+        if(!variablesLocales.isEmpty()) {
+            for(NodoVarLocal localVarNode : variablesLocales.values()) {
+                if(localVarNode.getOffset() < ret) {
+                    ret =  localVarNode.getOffset();
+                }
+            }
+        }
+        return ret;
     }
 
 }

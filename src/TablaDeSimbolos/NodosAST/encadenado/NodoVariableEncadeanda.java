@@ -56,4 +56,11 @@ public class NodoVariableEncadeanda extends NodoEncadenado{
         this.siguiente = siguiente;
     }
 
+    @Override
+    public void generar(){
+        if (siguiente != null){
+            siguiente.generar();
+        }
+    }
+
 }

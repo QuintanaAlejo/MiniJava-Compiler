@@ -86,4 +86,11 @@ public class NodoMetodoLlamadaEncadenada extends NodoEncadenado{
             return tipoActual;
         }
     }
+
+    @Override
+    public void generar(){
+        if (siguiente != null){
+            siguiente.generar();
+        }
+    }
 }

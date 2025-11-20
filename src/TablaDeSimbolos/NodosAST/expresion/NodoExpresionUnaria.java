@@ -1,5 +1,6 @@
 package TablaDeSimbolos.NodosAST.expresion;
 
+import Main.Main;
 import TablaDeSimbolos.Tipos.Tipo;
 import TablaDeSimbolos.Tipos.TipoBooleano;
 import TablaDeSimbolos.Tipos.TipoInt;
@@ -56,6 +57,25 @@ public class NodoExpresionUnaria extends NodoExpresionCompuesta{
 
     @Override
     public void generar(){
-
+        operando.generar();
+        switch (operador.getLexeme()){
+            case "++":
+                Main.TS.getInstructionList().add("PUSH 1");
+                Main.TS.getInstructionList().add("ADD");
+                break;
+            case "--":
+                Main.TS.getInstructionList().add("PUSH 1");
+                Main.TS.getInstructionList().add("SUB");
+                break;
+            case "+":
+                // No hace nada
+                break;
+            case "-":
+                Main.TS.getInstructionList().add("NEG");
+                break;
+            case "!":
+                Main.TS.getInstructionList().add("NOT");
+                break;
+        }
     }
 }

@@ -107,17 +107,22 @@ public class Metodo {
         this.bloque = bloque;
     }
 
-    /* Necesito meterle a los metodos la clase que los contiene
-    public String getLabel() {
-        if(label == null && ownerClass != null) {
-            label = ownerClass.getName() + "_" + idToken.getLexeme();
-        }
-        return label;
+    public void setOffset(int a) {
+        offset = a;
+        setParametersOffset();
     }
-     */
 
-    public void setOffset(int offset) {
-        this.offset = offset;
+    public void setParametersOffset(){
+        int paramOffsets = 1;
+        if(modificador != null && esEstatico()){
+            paramOffsets = 3;
+        } else {
+            paramOffsets = 4;
+        }
+        for(Parametro p: parametros.values()){
+            p.setOffset(paramOffsets);
+            paramOffsets++;
+        }
     }
 
     public int getOffset() {
@@ -125,35 +130,21 @@ public class Metodo {
     }
 
     public void generar(){
+        String metodoLabel = clase + "_" + getNombre();
         Main.TS.getInstructionList().add(".CODE");
-        if(getNombre().equals("main") && esEstatico()){
-            Main.TS.getInstructionList().add("main:");
-        } else if (clase != null){
-            Main.TS.getInstructionList().add(clase + "_" + getNombre() + ":");
-        }
-        Main.TS.getInstructionList().add("LOADFP");
-        Main.TS.getInstructionList().add("LOADSP");
-        Main.TS.getInstructionList().add("STOREFP");
+        Main.TS.getInstructionList().add(metodoLabel + ": NOP ; Inicio método " + getNombre());
 
-        if (bloque != null){
+        Main.TS.getInstructionList().add("LOADFP    ; Cargo FP actual");
+        Main.TS.getInstructionList().add("LOADSP    ; Cargo SP actual");
+        Main.TS.getInstructionList().add("STOREFP   ; Actualizo FP para nuevo RA");
+
+        if (bloque != null) {
             bloque.generar();
         }
 
-        if (tipoRetorno != null && tipoRetorno.getTokenPropio().getTokenId().equals(TokenId.kw_void)){
-            int cantVarsLocales = 0;
-            int memoriaNecesaria = esEstatico() ? parametros.size() : parametros.size() + 1;
-
-            if (bloque != null && bloque.getVariablesLocales() != null){
-                cantVarsLocales = bloque.getVariablesLocales().size();
-            }
-
-            if (cantVarsLocales > 0){
-                Main.TS.getInstructionList().add("FMEM " + cantVarsLocales);
-            }
-
-            Main.TS.getInstructionList().add("STOREFP");
-            Main.TS.getInstructionList().add("RET " + memoriaNecesaria);
-        }
+        Main.TS.getInstructionList().add("STOREFP   ; Restaura FP anterior");
+        Main.TS.getInstructionList().add("RET "+parametros.size());;
+        Main.TS.getInstructionList().add("; Fin del metodo" + getNombre());
     }
 
     private boolean esEstatico(){

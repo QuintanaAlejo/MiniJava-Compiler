@@ -1,13 +1,13 @@
 .CODE
 PUSH simple_heap_init
 CALL
-PUSH main
+PUSH Init_main
 CALL
 HALT
-simple_heap_init:
-RET 0
-simple_malloc:
-LOADFP
+simple_heap_init: RET 0 ; Retorna inmediatamente
+
+simple_malloc: LOADFP
+
 LOADSP
 STOREFP
 LOADHL
@@ -113,81 +113,77 @@ SPRINT
 PRNLN
 STOREFP
 RET 1
+.DATA
+VT_A: NOP ; Clase sin metodos dinamicos
+
 .CODE
 .CODE
+CONSTRUCTOR_A:
 LOADFP
 LOADSP
 STOREFP
+STOREFP
+RET 1
+
 .CODE
+A_m1: NOP ; Inicio método m1
+LOADFP    ; Cargo FP actual
+LOADSP    ; Cargo SP actual
+STOREFP   ; Actualizo FP para nuevo RA
+LOAD 3
+LOAD 3
+LOADREF 0
+LOADREF 3
+CALL
+STOREFP   ; Restaura FP anterior
+RET 1
+; Fin del metodom1
+
+.CODE
+A_m2: NOP ; Inicio método m2
+LOADFP    ; Cargo FP actual
+LOADSP    ; Cargo SP actual
+STOREFP   ; Actualizo FP para nuevo RA
+PUSH 33
+STOREFP   ; Restaura FP anterior
+RET 0
+; Fin del metodom2
+
+.DATA
+VT_Init: NOP ; Clase sin metodos dinamicos
+
+.CODE
+.CODE
+CONSTRUCTOR_Init:
 LOADFP
 LOADSP
 STOREFP
-.CODE
-LOADFP
-LOADSP
 STOREFP
+RET 1
+
 .CODE
-.CODE
-LOADFP
-LOADSP
-STOREFP
-.CODE
-main:
-LOADFP
-LOADSP
-STOREFP
-.CODE
-.CODE
-LOADFP
-LOADSP
-STOREFP
-.CODE
-.CODE
-LOADFP
-LOADSP
-STOREFP
-.CODE
-.CODE
-LOADFP
-LOADSP
-STOREFP
-.CODE
-LOADFP
-LOADSP
-STOREFP
-.CODE
-LOADFP
-LOADSP
-STOREFP
-.CODE
-LOADFP
-LOADSP
-STOREFP
-.CODE
-LOADFP
-LOADSP
-STOREFP
-.CODE
-LOADFP
-LOADSP
-STOREFP
-.CODE
-LOADFP
-LOADSP
-STOREFP
-.CODE
-LOADFP
-LOADSP
-STOREFP
-.CODE
-LOADFP
-LOADSP
-STOREFP
-.CODE
-LOADFP
-LOADSP
-STOREFP
-.CODE
-LOADFP
-LOADSP
-STOREFP
+Init_main: NOP ; Inicio método main
+LOADFP    ; Cargo FP actual
+LOADSP    ; Cargo SP actual
+STOREFP   ; Actualizo FP para nuevo RA
+RMEM 1 ; Reserva memoria para la variable local x
+RMEM 1 ; Reservo espacio
+PUSH 2
+PUSH simple_malloc
+CALL
+DUP
+PUSH VT_Init ; Cargo la vtable de la clase
+STOREREF 0 ; Almaceno la vtable en la instancia
+DUP
+PUSH CONSTRUCTOR_A ; Direccion del constructor
+CALL 
+STORE -1 ; Almacena el valor de la expresion
+LOAD 3
+LOAD 3
+LOADREF 0
+LOADREF 1
+CALL
+STOREFP   ; Restaura FP anterior
+RET 0
+; Fin del metodomain
+

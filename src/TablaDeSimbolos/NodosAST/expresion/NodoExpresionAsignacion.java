@@ -103,7 +103,8 @@ public class NodoExpresionAsignacion extends NodoExpresionCompuesta{
 
     @Override
     public void generar(){
-
+        derecha.generar();
+        izquierda.generar();
     }
 
 }
