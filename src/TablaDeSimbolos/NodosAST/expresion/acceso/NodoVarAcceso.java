@@ -60,10 +60,6 @@ public class NodoVarAcceso extends NodoAcceso {
 
     @Override
     public Tipo chequear() throws SemanticException {
-        esVariable();
-        esParametro();
-        esAtributo();
-
         if(Main.TS.getMetodoActual().getBloque() != null && Main.TS.getMetodoActual().getBloque().getVariablesLocales().get(token.getLexeme()) != null){
             tipoVar = Main.TS.getMetodoActual().getBloque().getVariablesLocales().get(token.getLexeme()).getTipo();
         }
@@ -76,12 +72,20 @@ public class NodoVarAcceso extends NodoAcceso {
             tipoVar = Main.TS.getConstructorActual().getParametros().get(token.getLexeme()).getTipo();{
         }
 
-        if (Main.TS.getClaseActual().getAtributos().get(token.getLexeme()) != null){
-            Token modificadorMetodoActual = Main.TS.getMetodoActual().getModificador();
-            if (modificadorMetodoActual != null){
-                tipoVar = Main.TS.getClaseActual().getAtributos().get(token.getLexeme()).getTipo();
+        Atributo atr = Main.TS.getClaseActual().getAtributos().get(token.getLexeme());
+
+        if (atr != null) {
+            boolean esStatic = false;
+            if (Main.TS.getMetodoActual() != null) {
+                Token mod = Main.TS.getMetodoActual().getModificador();
+                esStatic = (mod != null && mod.getTokenId().equals(TokenId.kw_static));
+            }
+            if (!esStatic) {
+                atributo = atr;
+                tipoVar = atr.getTipo();
             }
         }
+
 
         chequearVariablesDelPadre();
 
@@ -102,6 +106,7 @@ public class NodoVarAcceso extends NodoAcceso {
             bloque = Main.TS.getBloqueActual();
         }
         Atributo atr = Main.TS.getClases().get(bloque.getClase().getNombre()).getAtributos().get(token.getLexeme());
+
         if (atr != null && bloque.getVariablesLocales().get(token.getLexeme()) == null && bloque.getMetodo() != null && bloque.getMetodo().getParametros().get(token.getLexeme()) == null){
             Main.TS.getInstructionList().add("LOAD 3; Accedo atributo");
             if (!ladoIzquierdo || encadenado != null){
@@ -125,43 +130,6 @@ public class NodoVarAcceso extends NodoAcceso {
         }
         if (encadenado != null){
             encadenado.generar();
-        }
-    }
-
-    public void esVariable(){
-        if (Main.TS.getBloqueActual().getVariablesLocales().get(token.getLexeme()) != null){
-            tipoVar = Main.TS.getBloqueActual().getVariablesLocales().get(token.getLexeme()).getTipo();
-            varLocal = Main.TS.getBloqueActual().getVariablesLocales().get(token.getLexeme());
-        }
-        NodoBloque padre = Main.TS.getBloqueActual().getBloquePadre();
-        while (padre != null) {
-            if (padre.getVariablesLocales().get(token.getLexeme()) != null) {
-                tipoVar = padre.getVariablesLocales().get(token.getLexeme()).getTipo();
-                varLocal = padre.getVariablesLocales().get(token.getLexeme());
-            }
-            padre = padre.getBloquePadre();
-        }
-    }
-
-    public void esParametro(){
-        if (Main.TS.getMetodoActual().getParametros().get(token.getLexeme()) != null){
-            tipoVar = Main.TS.getMetodoActual().getParametros().get(token.getLexeme()).getTipo();
-            parametro = Main.TS.getMetodoActual().getParametros().get(token.getLexeme());
-        }
-    }
-
-    public void esAtributo(){
-        if (Main.TS.getClaseActual().getAtributos().get(token.getLexeme()) != null){
-            Token modificadorMetodoActual = Main.TS.getMetodoActual().getModificador();
-            if (modificadorMetodoActual != null){
-                if(!modificadorMetodoActual.getTokenId().equals(TokenId.kw_static)) {
-                    tipoVar = Main.TS.getClaseActual().getAtributos().get(token.getLexeme()).getTipo();
-                    atributo = Main.TS.getClaseActual().getAtributos().get(token.getLexeme());
-                }
-            } else {
-                tipoVar = Main.TS.getClaseActual().getAtributos().get(token.getLexeme()).getTipo();
-                atributo = Main.TS.getClaseActual().getAtributos().get(token.getLexeme());
-            }
         }
     }
 }

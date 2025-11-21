@@ -2,6 +2,7 @@ package TablaDeSimbolos.NodosAST.sentencia;
 
 import Main.Main;
 import TablaDeSimbolos.Clase;
+import TablaDeSimbolos.Constructor;
 import TablaDeSimbolos.Metodo;
 import exceptions.SemanticException;
 
@@ -16,6 +17,8 @@ public class NodoBloque extends NodoSentencia{
     private Clase clase;
     private boolean chequeado;
     private Metodo metodo;
+    private boolean esConstructor;
+    private Constructor constructor;
 
     public NodoBloque() {
         this.sentencias = new ArrayList<>();
@@ -33,8 +36,28 @@ public class NodoBloque extends NodoSentencia{
         return this.clase;
     }
 
+    public void setEsConstructor(boolean esConstructor) {
+        this.esConstructor = esConstructor;
+    }
+
+    public boolean esConstructor(){
+        return this.esConstructor;
+    }
+
+    public void setConstructor(Constructor constructor) {
+        this.constructor = constructor;
+    }
+
+    public Constructor getConstructor() {
+        return this.constructor;
+    }
+
     public Metodo getMetodo() {
-        return this.metodo;
+        if (this.esConstructor) {
+            return constructor;
+        } else {
+            return this.metodo;
+        }
     }
 
     public void setSentencias  (ArrayList<NodoSentencia> sentencias) {

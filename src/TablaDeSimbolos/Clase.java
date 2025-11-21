@@ -8,10 +8,7 @@ import exceptions.SemanticException;
 import lexical.Token;
 import lexical.TokenId;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 import static Main.Main.TS;
 
@@ -19,7 +16,7 @@ public class Clase {
     private Token nombre;
     private Token padre;
     private Token modificador;
-    private HashMap<String, Atributo> atributos;
+    private LinkedHashMap<String, Atributo> atributos;
     private Constructor constructor;
     private HashMap<String, Metodo> metodos;
     private boolean consolidado = false;
@@ -35,7 +32,7 @@ public class Clase {
         this.nombre = nombre;
         this.modificador = mod;
         this.padre = padre;
-        this.atributos = new HashMap<>();
+        this.atributos = new LinkedHashMap<>();
         this.constructor = null;
         this.metodos = new HashMap<>();
         lastMethodOffset = 0;
@@ -54,7 +51,7 @@ public class Clase {
     public Token getModificador() {
         return modificador;
     }
-    public HashMap<String, Atributo> getAtributos() {
+    public LinkedHashMap<String, Atributo> getAtributos() {
         return atributos;
     }
     public Constructor getConstructor() {
@@ -358,6 +355,8 @@ public class Clase {
                 Clase clasePadre = TS.getClase(padre.getLexeme());
                 clasePadre.setOffsetsAtributos();
                 lastAttributeOffset = clasePadre.getLastAttributeOffset();
+            } else {
+                lastAttributeOffset = 1;
             }
             for (Atributo a : atributos.values()) {
                 if (TS.getClase(padre.getLexeme()).getAtributos().get(a.getNombre()) == null){

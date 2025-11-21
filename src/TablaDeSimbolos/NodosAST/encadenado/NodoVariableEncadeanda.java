@@ -74,7 +74,7 @@ public class NodoVariableEncadeanda extends NodoEncadenado{
     public void generar(){
         Atributo atr = anterior.getAtributos().get(token.getLexeme());
         if (!ladoIzquierdo){
-            Main.TS.getInstructionList().add("STOREREF "+atr.getOffset()+"    ; Cargo direc atributo ");
+            Main.TS.getInstructionList().add("LOADREF "+atr.getOffset()+"    ; Cargo direc atributo ");
         } else {
             Main.TS.getInstructionList().add("SWAP");
             Main.TS.getInstructionList().add("STOREREF "+atr.getOffset()+"    ; Guardo en la direc del atributo ");

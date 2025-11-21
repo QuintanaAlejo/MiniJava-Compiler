@@ -4,16 +4,19 @@ import Main.Main;
 import TablaDeSimbolos.NodosAST.sentencia.NodoBloque;
 import lexical.Token;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+
 import exceptions.SemanticException;
 
-public class Constructor {
+public class Constructor extends Metodo {
     private Token token;
-    private HashMap<String, Parametro> parametros;
+    private LinkedHashMap<String, Parametro> parametros;
     private NodoBloque bloque;
 
     public Constructor (Token token) {
+        super(token, null, null);
         this.token = token;
-        this.parametros = new HashMap<>();
+        this.parametros = new LinkedHashMap<>();
     }
 
     public HashMap<String, Parametro> getParametros() {
@@ -68,8 +71,10 @@ public class Constructor {
         Main.TS.getInstructionList().add("STOREFP");
 
         if(bloque != null){
+            bloque.setEsConstructor(true);
+            bloque.setConstructor(this);
             bloque.generar();
-            //Main.TS.getInstructionList().add("FMEM " + bloque.getVariablesLocales().size()+"; Constructor");
+            Main.TS.getInstructionList().add("FMEM " + bloque.getVariablesLocales().size()+"; Constructor");
         }
 
         Main.TS.getInstructionList().add("STOREFP");
