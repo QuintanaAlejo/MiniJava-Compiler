@@ -55,7 +55,7 @@ public class NodoLlamadaConstructor extends NodoAcceso {
     @Override
     public void generar(){
         Main.TS.getInstructionList().add("RMEM 1 ; Reservo espacio");
-        Main.TS.getInstructionList().add("PUSH " + (Main.TS.getClase(token.getLexeme()).getLastAttributeOffset()+1)+"; NodoLlamadaConstructor");
+        Main.TS.getInstructionList().add("PUSH " + (Main.TS.getClase(token.getLexeme()).getLastAttributeOffset())+"; NodoLlamadaConstructor");
         Main.TS.getInstructionList().add("PUSH simple_malloc");
         Main.TS.getInstructionList().add("CALL");
         Main.TS.getInstructionList().add("DUP");

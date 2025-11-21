@@ -1,5 +1,6 @@
 package TablaDeSimbolos.NodosAST.sentencia;
 
+import Main.Main;
 import TablaDeSimbolos.NodosAST.expresion.NodoExpresion;
 import TablaDeSimbolos.Tipos.Tipo;
 import TablaDeSimbolos.Tipos.TipoBooleano;
@@ -41,6 +42,12 @@ public class NodoWhile extends NodoSentencia{
 
     @Override
     public void generar(){
-
+        int whileInicio = Main.TS.getConditionalCounter();
+        Main.TS.getInstructionList().add("WHILE_START_" + whileInicio + ": NOP");
+        condicion.generar();
+        Main.TS.getInstructionList().add("BF WHILE_END_" + whileInicio);
+        cuerpo.generar();
+        Main.TS.getInstructionList().add("JUMP WHILE_START_" + whileInicio + "; Vuelta al inicio del while");
+        Main.TS.getInstructionList().add("WHILE_END_" + whileInicio + ": NOP");
     }
 }

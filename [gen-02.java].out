@@ -121,7 +121,6 @@ CONSTRUCTOR_A:
 LOADFP
 LOADSP
 STOREFP
-FMEM 0
 STOREFP
 RET 1
 
@@ -134,11 +133,11 @@ PUSH 1234
 PUSH Object_debugPrint
 CALL 
 PUSH 33
-LOAD 3; Nodo var
+LOAD 3; Accedo atributo
 SWAP
 STOREREF 1
-LOAD 3; Nodo var
-LOADREF 1; NodoVarAcceso
+LOAD 3; Accedo atributo
+LOADREF 1
 PUSH Object_debugPrint
 CALL 
 FMEM 0
@@ -154,7 +153,6 @@ CONSTRUCTOR_Init:
 LOADFP
 LOADSP
 STOREFP
-FMEM 0
 STOREFP
 RET 1
 
@@ -165,7 +163,7 @@ LOADSP    ; Cargo SP actual
 STOREFP   ; Actualizo FP para nuevo RA
 RMEM 1 ; Reserva memoria para la variable local a
 RMEM 1 ; Reservo espacio
-PUSH 3; NodoLlamadaConstructor
+PUSH 2; NodoLlamadaConstructor
 PUSH simple_malloc
 CALL
 DUP
@@ -175,7 +173,7 @@ DUP
 PUSH CONSTRUCTOR_A ; Direccion del constructor
 CALL 
 STORE 0 ; Almacena el valor de la expresion
-LOAD 0
+LOAD 0; Accedo variable local o parametro
 DUP
 LOADREF 0; Cargo VT
 LOADREF 0; Cargo el metodo mc

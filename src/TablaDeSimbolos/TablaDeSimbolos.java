@@ -163,7 +163,15 @@ public class TablaDeSimbolos {
         return instructionList;
     }
 
+    public void setOffsets(){
+        for (Clase c : clases.values()) {
+            c.setOffsets();
+        }
+    }
+
+
     public void generar(){
+        setOffsets();
         generarInicial();
         generarHeap();
         generarClasesPred();

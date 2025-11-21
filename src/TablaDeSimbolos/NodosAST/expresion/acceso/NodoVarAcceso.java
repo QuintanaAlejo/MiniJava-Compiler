@@ -16,13 +16,15 @@ public class NodoVarAcceso extends NodoAcceso {
     private Token token;
     private NodoEncadenado encadenado;
     private Tipo tipoVar;
+    private NodoBloque bloque;
 
     private Atributo atributo;
     private Parametro parametro;
     private NodoVarLocal varLocal;
 
-    public NodoVarAcceso(Token token) {
+    public NodoVarAcceso(Token token, NodoBloque bloqueActual) {
         this.token = token;
+        this.bloque = bloqueActual;
     }
 
     public void setEncadenado(NodoEncadenado encadenado) {
@@ -77,12 +79,6 @@ public class NodoVarAcceso extends NodoAcceso {
         if (Main.TS.getClaseActual().getAtributos().get(token.getLexeme()) != null){
             Token modificadorMetodoActual = Main.TS.getMetodoActual().getModificador();
             if (modificadorMetodoActual != null){
-                if(!modificadorMetodoActual.getTokenId().equals(TokenId.kw_static)) {
-                    tipoVar = Main.TS.getClaseActual().getAtributos().get(token.getLexeme()).getTipo();
-                } else {
-                    throw new SemanticException(token.getLexeme(), "No se puede acceder a un atributo de instancia desde un método estático", token.getLinea());
-                }
-            } else {
                 tipoVar = Main.TS.getClaseActual().getAtributos().get(token.getLexeme()).getTipo();
             }
         }
@@ -102,31 +98,32 @@ public class NodoVarAcceso extends NodoAcceso {
 
     @Override
     public void generar(){
-        if (varLocal != null){
-            if (!ladoIzquierdo || (encadenado != null)) {
-                Main.TS.getInstructionList().add("LOAD " + varLocal.getOffset());
-            } else {
-                Main.TS.getInstructionList().add("STORE " + varLocal.getOffset());
-            }
-        } else if (parametro != null){
-            if (!ladoIzquierdo || (encadenado != null)) {
-                Main.TS.getInstructionList().add("LOAD " + parametro.getOffset());
-            } else {
-                Main.TS.getInstructionList().add("STORE " + parametro.getOffset()+"; NodoVarAcceso" );
-            }
-        } else if (atributo != null){
-            Main.TS.getInstructionList().add("LOAD 3; Nodo var");
-            if (!ladoIzquierdo || (encadenado != null)) {
-                Main.TS.getInstructionList().add("LOADREF " + atributo.getOffset()+"; NodoVarAcceso");
+        if (bloque == null){
+            bloque = Main.TS.getBloqueActual();
+        }
+        Atributo atr = Main.TS.getClases().get(bloque.getClase().getNombre()).getAtributos().get(token.getLexeme());
+        if (atr != null && bloque.getVariablesLocales().get(token.getLexeme()) == null && bloque.getMetodo() != null && bloque.getMetodo().getParametros().get(token.getLexeme()) == null){
+            Main.TS.getInstructionList().add("LOAD 3; Accedo atributo");
+            if (!ladoIzquierdo || encadenado != null){
+                Main.TS.getInstructionList().add("LOADREF "+atr.getOffset() );
             } else {
                 Main.TS.getInstructionList().add("SWAP");
-                Main.TS.getInstructionList().add("STOREREF " + atributo.getOffset());
+                Main.TS.getInstructionList().add("STOREREF "+atr.getOffset());
+            }
+        } else {
+            var offset = 0;
+            if (bloque.getVariablesLocales().get(token.getLexeme()) != null){
+                offset = bloque.getVariablesLocales().get(token.getLexeme()).getOffset();
+            } else if (bloque.getMetodo() != null && bloque.getMetodo().getParametros().get(token.getLexeme()) != null){
+                offset = bloque.getMetodo().getParametros().get(token.getLexeme()).getOffset();
+            }
+            if (!ladoIzquierdo || encadenado != null){
+                Main.TS.getInstructionList().add("LOAD "+offset+"; Accedo variable local o parametro");
+            } else {
+                Main.TS.getInstructionList().add("STORE "+offset+"; Accedo variable local o parametro");
             }
         }
         if (encadenado != null){
-            if (ladoIzquierdo) {
-                encadenado.setEsLadoIzquierdo(true);
-            }
             encadenado.generar();
         }
     }
@@ -150,11 +147,6 @@ public class NodoVarAcceso extends NodoAcceso {
         if (Main.TS.getMetodoActual().getParametros().get(token.getLexeme()) != null){
             tipoVar = Main.TS.getMetodoActual().getParametros().get(token.getLexeme()).getTipo();
             parametro = Main.TS.getMetodoActual().getParametros().get(token.getLexeme());
-        }
-
-        if (Main.TS.getConstructorActual() != null && Main.TS.getConstructorActual().getParametros().get(token.getLexeme()) != null){
-            tipoVar = Main.TS.getConstructorActual().getParametros().get(token.getLexeme()).getTipo();
-            parametro = Main.TS.getConstructorActual().getParametros().get(token.getLexeme());
         }
     }
 

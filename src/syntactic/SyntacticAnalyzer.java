@@ -330,9 +330,11 @@ public class SyntacticAnalyzer {
      private NodoBloque Bloque() throws SyntacticException {
           match(TokenId.punt_openKey);
           NodoBloque bloque = new NodoBloque();
+          Main.TS.setBloqueActual(bloque);
           ArrayList<NodoSentencia> sentencias = ListaSentencias();
           match(TokenId.punt_closeKey);
           bloque.setSentencias(sentencias);
+          Main.TS.setBloqueActual(bloque.getBloquePadre());
           return bloque;
      }
 
@@ -698,7 +700,7 @@ public class SyntacticAnalyzer {
                List<NodoExpresion> parametros = ArgsActuales();
                return new NodoLlamadaMetodo(token, parametros);
           } else{
-               return new NodoVarAcceso(token);
+               return new NodoVarAcceso(token, Main.TS.getBloqueActual());
           }
      }
      private NodoAcceso LlamadaConstructor(Token token) throws SyntacticException {

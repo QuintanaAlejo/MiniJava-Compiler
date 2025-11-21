@@ -121,7 +121,6 @@ CONSTRUCTOR_A:
 LOADFP
 LOADSP
 STOREFP
-FMEM 0
 STOREFP
 RET 1
 
@@ -130,16 +129,16 @@ A_m1:
 LOADFP    ; Cargo FP actual
 LOADSP    ; Cargo SP actual
 STOREFP   ; Actualizo FP para nuevo RA
-LOAD 3; Nodo var
-LOADREF 1; NodoVarAcceso
+LOAD 3; Accedo atributo
+LOADREF 1
 PUSH Object_debugPrint
 CALL 
-LOAD 3; Nodo var
-LOADREF 2; NodoVarAcceso
+LOAD 3; Accedo atributo
+LOADREF 2
 PUSH Object_debugPrint
 CALL 
-LOAD 3; Nodo var
-LOADREF 3; NodoVarAcceso
+LOAD 3; Accedo atributo
+LOADREF 3
 PUSH System_printSln   ; Apilo el metodo
 CALL   ; Llamo al metodo
 FMEM 0
@@ -152,22 +151,22 @@ A_setall:
 LOADFP    ; Cargo FP actual
 LOADSP    ; Cargo SP actual
 STOREFP   ; Actualizo FP para nuevo RA
-LOAD 4
-LOAD 3; Nodo var
+LOAD 4; Accedo variable local o parametro
+LOAD 3; Accedo atributo
 SWAP
 STOREREF 1
-LOAD 3; Nodo var
-LOADREF 1; NodoVarAcceso
+LOAD 3; Accedo atributo
+LOADREF 1
 PUSH 2
 MUL
-LOAD 3; Nodo var
+LOAD 3; Accedo atributo
 SWAP
 STOREREF 2
 .DATA
 str_0: DW "hola", 0
 .CODE
 PUSH str_0
-LOAD 3; Nodo var
+LOAD 3; Accedo atributo
 SWAP
 STOREREF 3
 FMEM 0
@@ -183,7 +182,6 @@ CONSTRUCTOR_B:
 LOADFP
 LOADSP
 STOREFP
-FMEM 0
 STOREFP
 RET 1
 
@@ -193,11 +191,11 @@ LOADFP    ; Cargo FP actual
 LOADSP    ; Cargo SP actual
 STOREFP   ; Actualizo FP para nuevo RA
 PUSH 4000
-LOAD 3; Nodo var
+LOAD 3; Accedo atributo
 SWAP
 STOREREF 4
 PUSH 55
-LOAD 3; Nodo var
+LOAD 3; Accedo atributo
 SWAP
 STOREREF 5
 FMEM 0
@@ -210,12 +208,12 @@ B_m2:
 LOADFP    ; Cargo FP actual
 LOADSP    ; Cargo SP actual
 STOREFP   ; Actualizo FP para nuevo RA
-LOAD 3; Nodo var
-LOADREF 4; NodoVarAcceso
+LOAD 3; Accedo atributo
+LOADREF 4
 PUSH Object_debugPrint
 CALL 
-LOAD 3; Nodo var
-LOADREF 5; NodoVarAcceso
+LOAD 3; Accedo atributo
+LOADREF 5
 PUSH Object_debugPrint
 CALL 
 FMEM 0
@@ -231,7 +229,6 @@ CONSTRUCTOR_Init:
 LOADFP
 LOADSP
 STOREFP
-FMEM 0
 STOREFP
 RET 1
 
@@ -242,7 +239,7 @@ LOADSP    ; Cargo SP actual
 STOREFP   ; Actualizo FP para nuevo RA
 RMEM 1 ; Reserva memoria para la variable local x
 RMEM 1 ; Reservo espacio
-PUSH 7; NodoLlamadaConstructor
+PUSH 6; NodoLlamadaConstructor
 PUSH simple_malloc
 CALL
 DUP
@@ -252,24 +249,24 @@ DUP
 PUSH CONSTRUCTOR_B ; Direccion del constructor
 CALL 
 STORE 0 ; Almacena el valor de la expresion
-LOAD 0
+LOAD 0; Accedo variable local o parametro
 DUP
 LOADREF 0; Cargo VT
 LOADREF 2; Cargo el metodo seta4
 CALL
-LOAD 0
+LOAD 0; Accedo variable local o parametro
 PUSH 1234
 SWAP
 DUP
 LOADREF 0; Cargo VT
 LOADREF 1; Cargo el metodo setall
 CALL
-LOAD 0
+LOAD 0; Accedo variable local o parametro
 DUP
 LOADREF 0; Cargo VT
 LOADREF 0; Cargo el metodo m1
 CALL
-LOAD 0
+LOAD 0; Accedo variable local o parametro
 DUP
 LOADREF 0; Cargo VT
 LOADREF 3; Cargo el metodo m2

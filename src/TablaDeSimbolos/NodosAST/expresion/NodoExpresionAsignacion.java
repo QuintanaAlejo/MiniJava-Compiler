@@ -3,6 +3,7 @@ package TablaDeSimbolos.NodosAST.expresion;
 import TablaDeSimbolos.NodosAST.encadenado.NodoEncadenado;
 import TablaDeSimbolos.NodosAST.expresion.acceso.NodoExpresionParentizada;
 import TablaDeSimbolos.NodosAST.expresion.acceso.NodoVarAcceso;
+import TablaDeSimbolos.NodosAST.expresion.operandos.NodoAcceso;
 import TablaDeSimbolos.Tipos.Tipo;
 import TablaDeSimbolos.Tipos.TipoReferencia;
 import exceptions.SemanticException;
@@ -103,7 +104,9 @@ public class NodoExpresionAsignacion extends NodoExpresionCompuesta{
 
     @Override
     public void generar(){
-        izquierda.setEsLadoIzquierdo(true);
+        if(izquierda instanceof NodoAcceso){
+            izquierda.setEsLadoIzquierdo(true);
+        }
         derecha.generar();
         izquierda.generar();
     }

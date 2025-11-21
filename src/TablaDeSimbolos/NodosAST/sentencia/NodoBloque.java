@@ -2,6 +2,7 @@ package TablaDeSimbolos.NodosAST.sentencia;
 
 import Main.Main;
 import TablaDeSimbolos.Clase;
+import TablaDeSimbolos.Metodo;
 import exceptions.SemanticException;
 
 import java.util.ArrayList;
@@ -14,16 +15,26 @@ public class NodoBloque extends NodoSentencia{
     private NodoBloque bloquePadre;
     private Clase clase;
     private boolean chequeado;
+    private Metodo metodo;
 
     public NodoBloque() {
         this.sentencias = new ArrayList<>();
         this.variablesLocales = new HashMap<>();
         this.clase = Main.TS.getClaseActual();
+        this.metodo = Main.TS.getMetodoActual();
         this.chequeado = false;
     }
 
     public void agregarSentencia(NodoSentencia sentencia) {
         this.sentencias.add(sentencia);
+    }
+
+    public Clase getClase() {
+        return this.clase;
+    }
+
+    public Metodo getMetodo() {
+        return this.metodo;
     }
 
     public void setSentencias  (ArrayList<NodoSentencia> sentencias) {

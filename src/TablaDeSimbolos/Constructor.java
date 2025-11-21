@@ -40,6 +40,10 @@ public class Constructor {
         return token;
     }
 
+    public NodoBloque getBloque() {
+        return bloque;
+    }
+
     public void setBloque(NodoBloque bloque) {
         this.bloque = bloque;
     }
@@ -65,11 +69,20 @@ public class Constructor {
 
         if(bloque != null){
             bloque.generar();
-            Main.TS.getInstructionList().add("FMEM " + bloque.getVariablesLocales().size());
+            //Main.TS.getInstructionList().add("FMEM " + bloque.getVariablesLocales().size()+"; Constructor");
         }
 
         Main.TS.getInstructionList().add("STOREFP");
         Main.TS.getInstructionList().add("RET " + par);
         Main.TS.getInstructionList().add("");
+    }
+
+    public void setParamsOffsets(){
+        int initialOffset = 4;
+        int valuePos = 1;
+        for(Parametro p : parametros.values()){
+            p.setOffset(initialOffset + parametros.size() - valuePos);
+            valuePos++;
+        }
     }
 }

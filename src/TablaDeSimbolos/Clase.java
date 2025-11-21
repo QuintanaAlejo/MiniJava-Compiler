@@ -265,9 +265,7 @@ public class Clase {
 
     public void generar(){
         TS.setClaseActual(this);
-        setOffsets();
         generarVTable();
-        //Main.TS.getInstructionList().add(".CODE");
 
         if (constructor != null){
             constructor.generar();
@@ -312,6 +310,9 @@ public class Clase {
 
     public void setOffsets(){
         setOffsetsAtributos();
+        if (constructor != null){
+            constructor.setParamsOffsets();
+        }
         setOffsetsMetodos();
         for(Metodo m : metodos.values()){
             if(m.getBloque() !=null){
@@ -330,13 +331,11 @@ public class Clase {
 
     private void setOffsetsMetodos() {
         if (!methodsOffseted){
-            Clase clasePadre = TS.getClase(padre.getLexeme());
-            if (!padre.getLexeme().equals("Object")){
-                if (clasePadre != null) {
-                    clasePadre.setOffsetsMetodos();
-                }
+            if (padre != null && !padre.getLexeme().equals("Object")){
+                Clase clasePadre = TS.getClase(padre.getLexeme());
+                clasePadre.setOffsetsMetodos();
+                lastMethodOffset = clasePadre.getLastMethodOffset();
             }
-            lastMethodOffset = clasePadre.getLastMethodOffset();
             for (Metodo m : metodos.values()) {
                 m.setParametersOffset();
                 if (m.getModificador() == null || !m.getModificador().getTokenId().equals(TokenId.kw_static)){
@@ -355,13 +354,11 @@ public class Clase {
 
     private void setOffsetsAtributos(){
         if (!attributesOffseted){
-            Clase clasePadre = TS.getClase(padre.getLexeme());
-            if (!padre.getLexeme().equals("Object")){
-                if (clasePadre != null) {
-                    clasePadre.setOffsetsAtributos();
-                }
+            if (padre != null && !padre.getLexeme().equals("Object")){
+                Clase clasePadre = TS.getClase(padre.getLexeme());
+                clasePadre.setOffsetsAtributos();
+                lastAttributeOffset = clasePadre.getLastAttributeOffset();
             }
-            lastAttributeOffset = clasePadre.getLastAttributeOffset();
             for (Atributo a : atributos.values()) {
                 if (TS.getClase(padre.getLexeme()).getAtributos().get(a.getNombre()) == null){
                     a.setOffset(lastAttributeOffset++);
