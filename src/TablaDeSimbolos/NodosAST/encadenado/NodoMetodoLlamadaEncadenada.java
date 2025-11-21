@@ -16,11 +16,14 @@ public class NodoMetodoLlamadaEncadenada extends NodoEncadenado{
     private NodoEncadenado siguiente;
     private List<NodoExpresion> argumentos;
     private Token id;
+    private boolean ladoIzquierdo = false;
+    private Clase anterior;
 
     public NodoMetodoLlamadaEncadenada(Token id){
         this.id = id;
     }
 
+    @Override
     public void setArgumentos(List<NodoExpresion> argumentos){
         this.argumentos = argumentos;
     }
@@ -67,7 +70,7 @@ public class NodoMetodoLlamadaEncadenada extends NodoEncadenado{
             throw new SemanticException(id.getLexeme(), "El metodo no tiene atributos.", id.getLinea());
         }
 
-        Clase anterior = Main.TS.getClase(tipoAnterior.getNombre());
+        anterior = Main.TS.getClase(tipoAnterior.getNombre());
         if (anterior == null) {
             throw new SemanticException(id.getLexeme(), "La clase " + tipoAnterior.getNombre() + " no existe", id.getLinea());
         }
@@ -88,8 +91,32 @@ public class NodoMetodoLlamadaEncadenada extends NodoEncadenado{
     }
 
     @Override
+    public void setEsLadoIzquierdo(boolean ladoIzquierdo){
+        this.ladoIzquierdo = ladoIzquierdo;
+    }
+
+    @Override
     public void generar(){
+        Metodo m = anterior.getMetodos().get(id.getLexeme());
+
+        if (m != null){
+            if (m.getTipoRetorno() != null && !m.getTipoRetorno().getTokenPropio().getTokenId().equals(TokenId.kw_void)){
+                Main.TS.getInstructionList().add("RMEM 1");
+                Main.TS.getInstructionList().add("SWAP");
+            }
+            for (NodoExpresion exp : argumentos){
+                exp.generar();
+                Main.TS.getInstructionList().add("SWAP");
+            }
+            Main.TS.getInstructionList().add("DUP");
+            Main.TS.getInstructionList().add("LOADREF 0");
+            Main.TS.getInstructionList().add("LOADREF "+m.getOffset()+"; NodoMetodoLlamadaEncadenada");
+            Main.TS.getInstructionList().add("CALL");
+        }
         if (siguiente != null){
+            if (ladoIzquierdo){
+                siguiente.setEsLadoIzquierdo(true);
+            }
             siguiente.generar();
         }
     }

@@ -656,6 +656,7 @@ public class SyntacticAnalyzer {
                if(parametros != null){
                     nodoEncadenado = new NodoMetodoLlamadaEncadenada(idToken);
                     nodoEncadenado.setSiguiente(ReferenciaEncadenada());
+                    nodoEncadenado.setArgumentos(parametros);
                } else {
                     nodoEncadenado = new NodoVariableEncadeanda(idToken);
                     nodoEncadenado.setSiguiente(ReferenciaEncadenada());

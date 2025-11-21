@@ -85,6 +85,12 @@ public class Metodo {
         if (tieneBloque && bloque != null && !bloque.isChequeado()){
             bloque.chequear();
         }
+
+        label = clase + "_" + getNombre();
+    }
+
+    public String getLabel() {
+        return label;
     }
 
     public boolean tieneBloque() {
@@ -113,15 +119,16 @@ public class Metodo {
     }
 
     public void setParametersOffset(){
-        int paramOffsets = 1;
+        int paramOffsets;
+        int index = 1;
         if(modificador != null && esEstatico()){
             paramOffsets = 3;
         } else {
             paramOffsets = 4;
         }
         for(Parametro p: parametros.values()){
-            p.setOffset(paramOffsets);
-            paramOffsets++;
+            p.setOffset(parametros.size() + paramOffsets - index);
+            index++;
         }
     }
 
@@ -130,20 +137,23 @@ public class Metodo {
     }
 
     public void generar(){
-        String metodoLabel = clase + "_" + getNombre();
         Main.TS.getInstructionList().add(".CODE");
-        Main.TS.getInstructionList().add(metodoLabel + ": NOP ; Inicio método " + getNombre());
-
+        Main.TS.getInstructionList().add(label+":");
         Main.TS.getInstructionList().add("LOADFP    ; Cargo FP actual");
         Main.TS.getInstructionList().add("LOADSP    ; Cargo SP actual");
         Main.TS.getInstructionList().add("STOREFP   ; Actualizo FP para nuevo RA");
 
         if (bloque != null) {
             bloque.generar();
+            Main.TS.getInstructionList().add("FMEM "+bloque.getVariablesLocales().size());
         }
 
         Main.TS.getInstructionList().add("STOREFP   ; Restaura FP anterior");
-        Main.TS.getInstructionList().add("RET "+parametros.size());;
+        if (modificador != null && esEstatico()){
+            Main.TS.getInstructionList().add("RET " + (parametros.size()));
+        } else {
+            Main.TS.getInstructionList().add("RET " + (parametros.size() + 1));
+        }
         Main.TS.getInstructionList().add("; Fin del metodo" + getNombre());
     }
 

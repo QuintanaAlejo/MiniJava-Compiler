@@ -16,6 +16,8 @@ public class NodoReturn extends NodoSentencia{
     private NodoExpresion expresion;
     private Token token;
     private Tipo tipoDeRet;
+    private int cantVarLocales;
+    private Metodo metodoContenedor;
 
     public NodoReturn(Token token, NodoExpresion expresion) {
         this.token = token;
@@ -56,6 +58,9 @@ public class NodoReturn extends NodoSentencia{
                 throw new SemanticException(token.getLexeme(), "Tipo de retorno incompatible. Se esperaba: " + tipoDeRet.getNombre() + ", se obtuvo: " + tipoExpresion.getNombre(), token.getLinea());
             }
         }
+
+        metodoContenedor = Main.TS.getMetodoActual();
+        cantVarLocales = Main.TS.getBloqueActual().getVariablesLocales().size();
     }
 
     private boolean esSubtipo(String nombreHijo, String nombrePadre, HashMap<String, Clase> clases) {
@@ -76,10 +81,24 @@ public class NodoReturn extends NodoSentencia{
 
     @Override
     public void generar(){
-        Metodo actual = Main.TS.getMetodoActual();
-        if (expresion != null){
+        if (tipoDeRet != null && !(tipoDeRet.getTokenPropio().getTokenId().equals(TokenId.kw_void))){
             expresion.generar();
-            // Completar
+            int offsetRet = metodoContenedor.getParametros().size() + 3;
+            if ((metodoContenedor.getModificador() == null || !metodoContenedor.getModificador().getTokenId().equals(TokenId.kw_static))){
+                offsetRet++;
+            }
+            Main.TS.getInstructionList().add("STORE " + offsetRet+"; NodoReturn");
         }
+
+        if (cantVarLocales > 0){
+            Main.TS.getInstructionList().add("FMEM " + cantVarLocales);
+        }
+        Main.TS.getInstructionList().add("STOREFP");
+
+        int paramCount = metodoContenedor.getParametros().size();
+        if (metodoContenedor.getModificador() == null || metodoContenedor.getModificador().getTokenId().equals(TokenId.kw_static)){
+            paramCount++;
+        }
+        Main.TS.getInstructionList().add("RET " + paramCount);
     }
 }

@@ -114,25 +114,26 @@ PRNLN
 STOREFP
 RET 1
 .DATA
-VT_Init: NOP ; Clase sin metodos dinamicos
+VT_Init: NOP 
 
-.CODE
 .CODE
 CONSTRUCTOR_Init:
 LOADFP
 LOADSP
 STOREFP
+FMEM 0
 STOREFP
 RET 1
 
 .CODE
-Init_main: NOP ; Inicio método main
+Init_main:
 LOADFP    ; Cargo FP actual
 LOADSP    ; Cargo SP actual
 STOREFP   ; Actualizo FP para nuevo RA
 PUSH 1234
-PUSH Object_debugPrint   ; Apilo el metodo
-CALL   ; Llamo al metodo
+PUSH Object_debugPrint
+CALL 
+FMEM 0
 STOREFP   ; Restaura FP anterior
 RET 0
 ; Fin del metodomain

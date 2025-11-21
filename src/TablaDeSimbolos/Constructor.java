@@ -65,6 +65,7 @@ public class Constructor {
 
         if(bloque != null){
             bloque.generar();
+            Main.TS.getInstructionList().add("FMEM " + bloque.getVariablesLocales().size());
         }
 
         Main.TS.getInstructionList().add("STOREFP");

@@ -22,6 +22,8 @@ public class TablaDeSimbolos {
     private NodoBloque bloqueActual;
 
     private ArrayList<String> instructionList;
+    private int stringCounter;
+    private int conditionalCounter;
 
     public TablaDeSimbolos() {
         this.clases = new HashMap<String, Clase>();
@@ -31,6 +33,8 @@ public class TablaDeSimbolos {
         this.metodoActual = null;
         this.constructorActual = null;
         this.instructionList = new ArrayList<>();
+        stringCounter = 0;
+        conditionalCounter = 0;
         //Clase Object
         Clase object = new Clase(new Token(TokenId.id_Class, "Object", 0), null, null);
         //Metodo static void debugPrint(int i) - Ver si el retorno es null o void
@@ -136,6 +140,14 @@ public class TablaDeSimbolos {
             Main.TS.setClaseActual(c);
             c.chequear();
         }
+    }
+
+    public int getStringCounter(){
+        return stringCounter++;
+    }
+
+    public int getConditionalCounter(){
+        return conditionalCounter++;
     }
 
     public boolean existeClase(String nombre) {

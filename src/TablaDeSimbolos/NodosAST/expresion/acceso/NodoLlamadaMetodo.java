@@ -115,18 +115,43 @@ public class NodoLlamadaMetodo extends NodoAcceso {
     @Override
     public void generar(){
         Metodo metodo = Main.TS.getClaseActual().getMetodos().get(id.getLexeme());
-        if (argumentos != null){
+//        if (argumentos != null){
+//            for (NodoExpresion arg : argumentos){
+//                arg.generar();
+//            }
+//        }
+//
+//        Main.TS.getInstructionList().add("LOAD 3");
+//        int offsetMetodo = metodo.getOffset();
+//        Main.TS.getInstructionList().add("LOAD 3");
+//        Main.TS.getInstructionList().add("LOADREF 0");
+//        Main.TS.getInstructionList().add("LOADREF " + offsetMetodo);
+//        Main.TS.getInstructionList().add("CALL");
+
+        if (metodo.getModificador() != null && metodo.getModificador().getTokenId().equals(TokenId.kw_static)){
+            if (metodo.getTipoRetorno() != null && metodo.getTipoRetorno().getTokenPropio().getTokenId().equals(TokenId.kw_void)){
+                Main.TS.getInstructionList().add("RMEM 1");
+            }
             for (NodoExpresion arg : argumentos){
                 arg.generar();
             }
+            Main.TS.getInstructionList().add("PUSH "+metodo.getLabel());
+            Main.TS.getInstructionList().add("CALL ");
+        } else {
+            Main.TS.getInstructionList().add("LOAD 3; Llamada metodo");
+            if (metodo.getTipoRetorno() != null && metodo.getTipoRetorno().getTokenPropio().getTokenId().equals(TokenId.kw_void)){
+                Main.TS.getInstructionList().add("RMEM 1");
+                Main.TS.getInstructionList().add("SWAP");
+            }
+            for (NodoExpresion arg : argumentos){
+                arg.generar();
+                Main.TS.getInstructionList().add("SWAP");
+            }
+            Main.TS.getInstructionList().add("DUP");
+            Main.TS.getInstructionList().add("LOADREF 0");
+            Main.TS.getInstructionList().add("LOADREF "+metodo.getOffset()+"; NodoLlamadaMetodo");
+            Main.TS.getInstructionList().add("CALL ");
         }
-
-        Main.TS.getInstructionList().add("LOAD 3");
-        int offsetMetodo = metodo.getOffset();
-        Main.TS.getInstructionList().add("LOAD 3");
-        Main.TS.getInstructionList().add("LOADREF 0");
-        Main.TS.getInstructionList().add("LOADREF " + offsetMetodo);
-        Main.TS.getInstructionList().add("CALL");
 
         if (siguiente != null){
             siguiente.generar();

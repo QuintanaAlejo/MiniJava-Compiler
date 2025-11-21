@@ -37,16 +37,10 @@ public class NodoString extends NodoAcceso {
 
     @Override
     public void generar() {
-        String lex = token.getLexeme();
-        if (lex != null && lex.length() >= 2) {
-            if ((lex.startsWith("\"") && lex.endsWith("\"")) || (lex.startsWith("'") && lex.endsWith("'"))) {
-                lex = lex.substring(1, lex.length() - 1);
-            }
-        } else {
-            lex = "";
-        }
-
-        // Ver si el string contiene caracteres especiales y escaparlos
-        Main.TS.getInstructionList().add("PUSH " + lex + " ; Cargo el string");
+        int index = Main.TS.getStringCounter();
+        Main.TS.getInstructionList().add(".DATA");
+        Main.TS.getInstructionList().add("str_" + index + ": DW " + token.getLexeme()+", 0");
+        Main.TS.getInstructionList().add(".CODE");
+        Main.TS.getInstructionList().add("PUSH "+"str_" + index);
     }
 }

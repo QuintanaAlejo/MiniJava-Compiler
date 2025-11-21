@@ -9,6 +9,7 @@ import TablaDeSimbolos.NodosAST.expresion.operandos.NodoAcceso;
 import TablaDeSimbolos.Tipos.Tipo;
 import exceptions.SemanticException;
 import lexical.Token;
+import lexical.TokenId;
 
 import java.util.List;
 
@@ -91,6 +92,10 @@ public class NodoLlamadaMetodoEstatico extends NodoAcceso {
     @Override
     public void generar(){
         String label = clase.getLexeme() + "_" + id.getLexeme();
+        Metodo m = Main.TS.getClases().get(clase.getLexeme()).getMetodos().get(id.getLexeme());
+        if (m.getTipoRetorno() != null && !m.getTipoRetorno().getTokenPropio().getTokenId().equals(TokenId.kw_void)) {
+            Main.TS.getInstructionList().add("RMEM 1   ; Reservo espacio para el valor de retorno");
+        }
         if (argumentos != null) {
             for (NodoExpresion arg : argumentos) {
                 arg.generar();

@@ -1,17 +1,21 @@
 package TablaDeSimbolos.NodosAST.sentencia;
 
+import Main.Main;
 import TablaDeSimbolos.NodosAST.encadenado.NodoMetodoLlamadaEncadenada;
 import TablaDeSimbolos.NodosAST.expresion.NodoExpresion;
 import TablaDeSimbolos.NodosAST.expresion.NodoExpresionAsignacion;
 import TablaDeSimbolos.NodosAST.expresion.acceso.NodoLlamadaConstructor;
 import TablaDeSimbolos.NodosAST.expresion.acceso.NodoLlamadaMetodo;
 import TablaDeSimbolos.NodosAST.expresion.acceso.NodoLlamadaMetodoEstatico;
+import TablaDeSimbolos.Tipos.Tipo;
 import exceptions.SemanticException;
 import lexical.Token;
+import lexical.TokenId;
 
 public class NodoAsignacion extends NodoSentencia{
     private Token token;
     private NodoExpresion expresion;
+    private Tipo tipoExpresion;
 
     public NodoAsignacion(Token token, NodoExpresion expresion) {
         this.token = token;
@@ -20,7 +24,7 @@ public class NodoAsignacion extends NodoSentencia{
 
     @Override
     public void chequear() throws SemanticException {
-        expresion.chequear();
+        tipoExpresion = expresion.chequear();
         if (expresion instanceof NodoLlamadaConstructor){
             return;
         }
@@ -38,5 +42,10 @@ public class NodoAsignacion extends NodoSentencia{
     @Override
     public void generar(){
         expresion.generar();
+        if (tipoExpresion != null && !(tipoExpresion.getTokenPropio().getTokenId().equals(TokenId.kw_void))){
+            if (!(expresion instanceof NodoExpresionAsignacion)) {
+                Main.TS.getInstructionList().add("POP");
+            }
+        }
     }
 }

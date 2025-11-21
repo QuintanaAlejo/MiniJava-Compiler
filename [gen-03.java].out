@@ -114,75 +114,91 @@ PRNLN
 STOREFP
 RET 1
 .DATA
-VT_A: NOP ; Clase sin metodos dinamicos
+VT_A: DW A_m1,A_m2 ; Etiquetas de metodo de A
 
-.CODE
 .CODE
 CONSTRUCTOR_A:
 LOADFP
 LOADSP
 STOREFP
+FMEM 0
 STOREFP
 RET 1
 
 .CODE
-A_m1: NOP ; Inicio método m1
+A_m1:
 LOADFP    ; Cargo FP actual
 LOADSP    ; Cargo SP actual
 STOREFP   ; Actualizo FP para nuevo RA
-LOAD 3
-LOAD 3
-LOADREF 0
-LOADREF 3
-CALL
+LOAD 4
+PUSH Object_debugPrint
+CALL 
+FMEM 0
 STOREFP   ; Restaura FP anterior
-RET 1
+RET 2
 ; Fin del metodom1
 
 .CODE
-A_m2: NOP ; Inicio método m2
+A_m2:
 LOADFP    ; Cargo FP actual
 LOADSP    ; Cargo SP actual
 STOREFP   ; Actualizo FP para nuevo RA
 PUSH 33
+STORE 4; NodoReturn
+STOREFP
+RET 1
+FMEM 0
 STOREFP   ; Restaura FP anterior
-RET 0
+RET 1
 ; Fin del metodom2
 
 .DATA
-VT_Init: NOP ; Clase sin metodos dinamicos
+VT_Init: NOP 
 
-.CODE
 .CODE
 CONSTRUCTOR_Init:
 LOADFP
 LOADSP
 STOREFP
+FMEM 0
 STOREFP
 RET 1
 
 .CODE
-Init_main: NOP ; Inicio método main
+Init_main:
 LOADFP    ; Cargo FP actual
 LOADSP    ; Cargo SP actual
 STOREFP   ; Actualizo FP para nuevo RA
 RMEM 1 ; Reserva memoria para la variable local x
 RMEM 1 ; Reservo espacio
-PUSH 2
+PUSH 1; NodoLlamadaConstructor
 PUSH simple_malloc
 CALL
 DUP
-PUSH VT_Init ; Cargo la vtable de la clase
+PUSH VT_A ; Cargo la vtable de la clase
 STOREREF 0 ; Almaceno la vtable en la instancia
 DUP
 PUSH CONSTRUCTOR_A ; Direccion del constructor
 CALL 
-STORE -1 ; Almacena el valor de la expresion
-LOAD 3
-LOAD 3
+STORE 0 ; Almacena el valor de la expresion
+LOAD 0
+RMEM 1
+SWAP
+DUP
 LOADREF 0
-LOADREF 1
+LOADREF 1; NodoMetodoLlamadaEncadenada
 CALL
+POP
+LOAD 0
+RMEM 1
+SWAP
+DUP
+LOADREF 0
+LOADREF 1; NodoMetodoLlamadaEncadenada
+CALL
+PUSH Object_debugPrint
+CALL 
+FMEM 1
 STOREFP   ; Restaura FP anterior
 RET 0
 ; Fin del metodomain

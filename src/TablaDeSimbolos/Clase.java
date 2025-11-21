@@ -24,6 +24,7 @@ public class Clase {
     private HashMap<String, Metodo> metodos;
     private boolean consolidado = false;
     private int offset;
+    private int offsetMet;
     private String label;
     private int lastMethodOffset;
     private int lastAttributeOffset;
@@ -37,6 +38,8 @@ public class Clase {
         this.atributos = new HashMap<>();
         this.constructor = null;
         this.metodos = new HashMap<>();
+        lastMethodOffset = 0;
+        lastAttributeOffset = 1;
     }
 
     public String getNombre() {
@@ -264,7 +267,7 @@ public class Clase {
         TS.setClaseActual(this);
         setOffsets();
         generarVTable();
-        Main.TS.getInstructionList().add(".CODE");
+        //Main.TS.getInstructionList().add(".CODE");
 
         if (constructor != null){
             constructor.generar();
@@ -279,10 +282,10 @@ public class Clase {
     }
 
     public void generarVTable(){
-        List<Metodo> metodosValidos = new ArrayList<>();
+        HashMap<Integer, String> metodosValidos = new HashMap<>();
         for(Metodo m : metodos.values()){
-            if (m.getModificador() != null && !m.getModificador().getTokenId().equals(TokenId.kw_static)){
-                metodosValidos.add(m);
+            if (m.getModificador() == null || (m.getModificador() != null && !m.getModificador().getTokenId().equals(TokenId.kw_static))){
+                metodosValidos.put(m.getOffset(), m.getClase()+"_"+m.getNombre());
             }
         }
         if (!metodosValidos.isEmpty()){
@@ -290,7 +293,6 @@ public class Clase {
             StringBuilder labelMet = new StringBuilder();
             for (int i = 0; i < lastMethodOffset; i++) {
                 if (metodosValidos.get(i) != null) {
-                    labelMet.append(nombre.getLexeme()).append("_");
                     labelMet.append(metodosValidos.get(i));
                 }
                 else {
@@ -303,7 +305,7 @@ public class Clase {
             Main.TS.getInstructionList().add("VT_"+getNombre()+": DW "+labelMet+" ; Etiquetas de metodo de " + getNombre());
         } else {
             Main.TS.getInstructionList().add(".DATA");
-            Main.TS.getInstructionList().add("VT_"+getNombre()+": NOP ; Clase sin metodos dinamicos");
+            Main.TS.getInstructionList().add("VT_"+getNombre()+": NOP ");
         }
         Main.TS.getInstructionList().add("");
     }
@@ -327,53 +329,48 @@ public class Clase {
     }
 
     private void setOffsetsMetodos() {
-        int offset = 1;
-        if (methodsOffseted){
-            return;
-        }
-        if (padre != null && !padre.getLexeme().equals("Object")){
+        if (!methodsOffseted){
             Clase clasePadre = TS.getClase(padre.getLexeme());
-            if (clasePadre != null) {
-                clasePadre.setOffsetsMetodos();
-                offset += clasePadre.getLastMethodOffset();
+            if (!padre.getLexeme().equals("Object")){
+                if (clasePadre != null) {
+                    clasePadre.setOffsetsMetodos();
+                }
             }
-        }
-        for (Metodo m : metodos.values()) {
-            int offsetAux = methodIsInherited(m);
-            if (offsetAux != 0) {
-                m.setOffset(offsetAux);
-            } else {
-                m.setOffset(offset);
-                offset++;
+            lastMethodOffset = clasePadre.getLastMethodOffset();
+            for (Metodo m : metodos.values()) {
+                m.setParametersOffset();
+                if (m.getModificador() == null || !m.getModificador().getTokenId().equals(TokenId.kw_static)){
+                    if (TS.getClase(padre.getLexeme()).getMetodos().get(m.getNombre()) == null){
+                        m.setOffset(lastMethodOffset++);
+                    } else {
+                        m.setOffset(TS.getClase(padre.getLexeme()).getMetodos().get(m.getNombre()).getOffset());
+                    }
+
+                }
             }
+            methodsOffseted = true;
         }
-        lastMethodOffset = offset;
-        methodsOffseted = true;
+
     }
 
     private void setOffsetsAtributos(){
-        int offset = 1;
-        if (attributesOffseted){
-            return;
-        }
-        if (padre != null && !padre.getLexeme().equals("Object")){
+        if (!attributesOffseted){
             Clase clasePadre = TS.getClase(padre.getLexeme());
-            if (clasePadre != null) {
-                clasePadre.setOffsetsAtributos();
-                offset += clasePadre.getLastAttributeOffset();
+            if (!padre.getLexeme().equals("Object")){
+                if (clasePadre != null) {
+                    clasePadre.setOffsetsAtributos();
+                }
             }
-        }
-        for(Atributo a : atributos.values()){
-            int offsetAux = attributeIsInherited(a);
-            if (offsetAux != 0) {
-                a.setOffset(offsetAux);
-            } else {
-                a.setOffset(offset);
-                offset++;
+            lastAttributeOffset = clasePadre.getLastAttributeOffset();
+            for (Atributo a : atributos.values()) {
+                if (TS.getClase(padre.getLexeme()).getAtributos().get(a.getNombre()) == null){
+                    a.setOffset(lastAttributeOffset++);
+                } else {
+                    a.setOffset(TS.getClase(padre.getLexeme()).getAtributos().get(a.getNombre()).getOffset());
+                }
             }
+            attributesOffseted = true;
         }
-        lastAttributeOffset = offset;
-        attributesOffseted = true;
     }
 
     public String getVTable(){

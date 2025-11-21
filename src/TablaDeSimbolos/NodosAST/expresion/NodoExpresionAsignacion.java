@@ -103,6 +103,7 @@ public class NodoExpresionAsignacion extends NodoExpresionCompuesta{
 
     @Override
     public void generar(){
+        izquierda.setEsLadoIzquierdo(true);
         derecha.generar();
         izquierda.generar();
     }

@@ -14,14 +14,12 @@ public class NodoBloque extends NodoSentencia{
     private NodoBloque bloquePadre;
     private Clase clase;
     private boolean chequeado;
-    private boolean generado;
 
     public NodoBloque() {
         this.sentencias = new ArrayList<>();
         this.variablesLocales = new HashMap<>();
         this.clase = Main.TS.getClaseActual();
         this.chequeado = false;
-        this.generado = false;
     }
 
     public void agregarSentencia(NodoSentencia sentencia) {
@@ -71,22 +69,19 @@ public class NodoBloque extends NodoSentencia{
     }
 
     public void generar(){
-        if (!generado){
-            setLocalVarsOffset();
-            bloquePadre = Main.TS.getBloqueActual();
-            Main.TS.setBloqueActual(this);
-            for (NodoSentencia s : sentencias){
-                s.generar();
-            }
-            Main.TS.setBloqueActual(bloquePadre);
+        setLocalVarsOffset();
+        bloquePadre = Main.TS.getBloqueActual();
+        Main.TS.setBloqueActual(this);
+        for (NodoSentencia s : sentencias){
+            s.generar();
         }
-        generado = true;
+        Main.TS.setBloqueActual(bloquePadre);
     }
 
     public void setLocalVarsOffset() {
-        int offset = -1;
+        int offset = 0;
         if(bloquePadre != null) {
-            offset = bloquePadre.getLastLocalVarOffset() - 1;
+            offset = bloquePadre.getLastLocalVarOffset();
         }
         for(NodoVarLocal localVar : variablesLocales.values()) {
             if(offset != 0) {
