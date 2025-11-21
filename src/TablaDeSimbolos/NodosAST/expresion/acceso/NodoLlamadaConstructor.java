@@ -54,19 +54,12 @@ public class NodoLlamadaConstructor extends NodoAcceso {
 
     @Override
     public void generar(){
-        int aux = 0;
         Main.TS.getInstructionList().add("RMEM 1 ; Reservo espacio");
-        Clase clase = Main.TS.getClase(token.getLexeme());
-
-        if (clase != null){
-            aux = clase.getLastAttributeOffset();
-        }
-
-        Main.TS.getInstructionList().add("PUSH " + aux+"; NodoLlamadaConstructor");
+        Main.TS.getInstructionList().add("PUSH " + (Main.TS.getClase(token.getLexeme()).getLastAttributeOffset()+1)+"; NodoLlamadaConstructor");
         Main.TS.getInstructionList().add("PUSH simple_malloc");
         Main.TS.getInstructionList().add("CALL");
         Main.TS.getInstructionList().add("DUP");
-        Main.TS.getInstructionList().add("PUSH " + clase.getVTable() + " ; Cargo la vtable de la clase");
+        Main.TS.getInstructionList().add("PUSH " + Main.TS.getClase(token.getLexeme()).getVTable() + " ; Cargo la vtable de la clase");
         Main.TS.getInstructionList().add("STOREREF 0 ; Almaceno la vtable en la instancia");
         Main.TS.getInstructionList().add("DUP");
 

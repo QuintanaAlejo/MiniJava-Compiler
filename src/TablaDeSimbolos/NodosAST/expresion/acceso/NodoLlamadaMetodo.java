@@ -129,7 +129,7 @@ public class NodoLlamadaMetodo extends NodoAcceso {
 //        Main.TS.getInstructionList().add("CALL");
 
         if (metodo.getModificador() != null && metodo.getModificador().getTokenId().equals(TokenId.kw_static)){
-            if (metodo.getTipoRetorno() != null && metodo.getTipoRetorno().getTokenPropio().getTokenId().equals(TokenId.kw_void)){
+            if (metodo.getTipoRetorno() != null && !metodo.getTipoRetorno().getTokenPropio().getTokenId().equals(TokenId.kw_void)){
                 Main.TS.getInstructionList().add("RMEM 1");
             }
             for (NodoExpresion arg : argumentos){
@@ -139,8 +139,8 @@ public class NodoLlamadaMetodo extends NodoAcceso {
             Main.TS.getInstructionList().add("CALL ");
         } else {
             Main.TS.getInstructionList().add("LOAD 3; Llamada metodo");
-            if (metodo.getTipoRetorno() != null && metodo.getTipoRetorno().getTokenPropio().getTokenId().equals(TokenId.kw_void)){
-                Main.TS.getInstructionList().add("RMEM 1");
+            if (metodo.getTipoRetorno() != null && !metodo.getTipoRetorno().getTokenPropio().getTokenId().equals(TokenId.kw_void)){
+                Main.TS.getInstructionList().add("RMEM 1; Llamada metodo");
                 Main.TS.getInstructionList().add("SWAP");
             }
             for (NodoExpresion arg : argumentos){

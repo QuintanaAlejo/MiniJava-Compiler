@@ -242,7 +242,7 @@ LOADSP    ; Cargo SP actual
 STOREFP   ; Actualizo FP para nuevo RA
 RMEM 1 ; Reserva memoria para la variable local x
 RMEM 1 ; Reservo espacio
-PUSH 6; NodoLlamadaConstructor
+PUSH 7; NodoLlamadaConstructor
 PUSH simple_malloc
 CALL
 DUP
@@ -254,25 +254,25 @@ CALL
 STORE 0 ; Almacena el valor de la expresion
 LOAD 0
 DUP
-LOADREF 0
-LOADREF 2; NodoMetodoLlamadaEncadenada
+LOADREF 0; Cargo VT
+LOADREF 2; Cargo el metodo seta4
 CALL
 LOAD 0
 PUSH 1234
 SWAP
 DUP
-LOADREF 0
-LOADREF 1; NodoMetodoLlamadaEncadenada
+LOADREF 0; Cargo VT
+LOADREF 1; Cargo el metodo setall
 CALL
 LOAD 0
 DUP
-LOADREF 0
-LOADREF 0; NodoMetodoLlamadaEncadenada
+LOADREF 0; Cargo VT
+LOADREF 0; Cargo el metodo m1
 CALL
 LOAD 0
 DUP
-LOADREF 0
-LOADREF 3; NodoMetodoLlamadaEncadenada
+LOADREF 0; Cargo VT
+LOADREF 3; Cargo el metodo m2
 CALL
 FMEM 1
 STOREFP   ; Restaura FP anterior

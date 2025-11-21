@@ -96,7 +96,7 @@ public class NodoReturn extends NodoSentencia{
         Main.TS.getInstructionList().add("STOREFP");
 
         int paramCount = metodoContenedor.getParametros().size();
-        if (metodoContenedor.getModificador() == null || metodoContenedor.getModificador().getTokenId().equals(TokenId.kw_static)){
+        if (metodoContenedor.getModificador() == null || !metodoContenedor.getModificador().getTokenId().equals(TokenId.kw_static)){
             paramCount++;
         }
         Main.TS.getInstructionList().add("RET " + paramCount);

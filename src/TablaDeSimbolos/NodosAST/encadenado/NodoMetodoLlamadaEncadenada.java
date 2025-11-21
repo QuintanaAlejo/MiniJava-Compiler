@@ -109,8 +109,8 @@ public class NodoMetodoLlamadaEncadenada extends NodoEncadenado{
                 Main.TS.getInstructionList().add("SWAP");
             }
             Main.TS.getInstructionList().add("DUP");
-            Main.TS.getInstructionList().add("LOADREF 0");
-            Main.TS.getInstructionList().add("LOADREF "+m.getOffset()+"; NodoMetodoLlamadaEncadenada");
+            Main.TS.getInstructionList().add("LOADREF 0; Cargo VT");
+            Main.TS.getInstructionList().add("LOADREF "+m.getOffset()+"; Cargo el metodo "+m.getNombre());
             Main.TS.getInstructionList().add("CALL");
         }
         if (siguiente != null){

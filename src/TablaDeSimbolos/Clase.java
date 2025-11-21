@@ -377,42 +377,6 @@ public class Clase {
         return "VT_"+getNombre();
     }
 
-    private int methodIsInherited(Metodo m) {
-        int toReturn = 0;
-        if(padre != null) {
-            if (!padre.getLexeme().equals("Object")) {
-                Clase aux = Main.TS.getClase(padre.getLexeme());
-                if(aux != null) {
-                    for (Metodo m2 : aux.getMetodos().values()) {
-                        if (m.getToken().getLexeme().equals(m2.getToken().getLexeme())) {
-                            toReturn = m2.getOffset();
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        return toReturn;
-    }
-
-    private int attributeIsInherited(Atributo m) {
-        int toReturn = 0;
-        if(padre != null) {
-            if (!padre.getLexeme().equals("Object")) {
-                Clase aux = Main.TS.getClase(padre.getLexeme());
-                if(aux != null) {
-                    for (Atributo m2 : aux.getAtributos().values()) {
-                        if (m.getToken().getLexeme().equals(m2.getToken().getLexeme())) {
-                            toReturn = m2.getOffset();
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        return toReturn;
-    }
-
     public int getLastMethodOffset() {
         return lastMethodOffset;
     }
